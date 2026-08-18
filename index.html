@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>長庚大學公文製作系統</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <header class="app-header">
+        <div class="logo-area">
+            <svg class="cgu-logo-svg" viewBox="0 0 100 100" width="40" height="40">
+                <polygon points="50,15 90,35 50,55 10,35" fill="#E39800" />
+                <polygon points="50,55 50,90 90,70 90,35" fill="#C58000" />
+                <polygon points="50,55 10,35 10,70 50,90" fill="#F3A91A" />
+                <path d="M50,40 L65,55 L55,55 L55,75 L45,75 L45,55 L35,55 Z" fill="#FFFFFF" />
+            </svg>
+            <div class="logo-text">
+                <h1>長庚大學 <span>公文製作系統</span></h1>
+                <p>校內發函格式專用 (1.上行文-稿簽 / 2.平行文-業務接洽便函)</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="btn-demo" class="btn btn-secondary" title="載入模擬範例資料" style="background-color: var(--primary-light); color: var(--primary-color); border-color: var(--primary-color); font-weight: 500;">
+                <i data-lucide="book-open"></i> 載入範例
+            </button>
+            <button id="btn-new" class="btn btn-secondary" title="新建公文">
+                <i data-lucide="file-plus"></i> 新建
+            </button>
+            <button id="btn-export" class="btn btn-secondary" title="匯出 JSON 草稿">
+                <i data-lucide="download"></i> 匯出草稿
+            </button>
+            <button id="btn-import-trigger" class="btn btn-secondary" title="匯入 JSON 草稿">
+                <i data-lucide="upload"></i> 匯入草稿
+            </button>
+            <input type="file" id="file-import" accept=".json" style="display: none;">
+            <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF">
+                <i data-lucide="printer"></i> 列印 / PDF
+            </button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Left Editor Panel -->
+        <aside class="editor-panel">
+            <!-- Template Selection -->
+            <section class="config-card">
+                <h2 class="card-title"><i data-lucide="settings"></i> 公文類型選擇</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="template-select">公文類別</label>
+                        <select id="template-select" style="font-weight: bold; border-color: var(--primary-color);">
+                            <option value="upward">1. 上行文 (函 - 稿簽)</option>
+                            <option value="parallel_downward">2. 平行文/下行文 (函 - 稿簽)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="preset-select">發文處室預設值</label>
+                        <select id="preset-select">
+                            <option value="custom">自訂欄位</option>
+                            <option value="president">校長室</option>
+                            <option value="academic">教務處</option>
+                            <option value="student">學務處</option>
+                            <option value="general">總務處</option>
+                            <option value="rd">研究發展處</option>
+                            <option value="info">資訊处</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-span-2">
+                        <label for="editor-font-size-select">編輯器字型大小 (14-24號字)</label>
+                        <select id="editor-font-size-select">
+                            <option value="14">14 px</option>
+                            <option value="15">15 px</option>
+                            <option value="16" selected>16 px (預設)</option>
+                            <option value="17">17 px</option>
+                            <option value="18">18 px</option>
+                            <option value="19">19 px</option>
+                            <option value="20">20 px</option>
+                            <option value="21">21 px</option>
+                            <option value="22">22 px</option>
+                            <option value="23">23 px</option>
+                            <option value="24">24 px</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Document Details Form -->
+            <form id="doc-form">
+                
+                <!-- ================= 格式 1: 函 (稿簽) 欄位 ================= -->
+                <div id="panel-upward" class="template-panel">
+                    <!-- 發文聯絡資訊 -->
+                    <div class="config-card">
+                        <h3 class="card-subtitle"><i data-lucide="phone"></i> 發文與聯絡資訊</h3>
+                        <div class="form-grid">
+                            <div class="form-group col-span-2">
+                                <label for="up-address">地址</label>
+                                <input type="text" id="up-address" value="桃園市龜山區文化一路259號">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="up-person">承辦人</label>
+                                <input type="text" id="up-person" value="木子三">
+                            </div>
+                            <div class="form-group">
+                                <label for="up-phone">電話 (分機)</label>
+                                <input type="text" id="up-phone" value="03-2118800分機1314">
+                            </div>
+                            <div class="form-group">
+                                <label for="up-fax">傳真</label>
+                                <input type="text" id="up-fax" value="03-2118700">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 基本發文資訊 -->
+                    <div class="config-card">
+                        <h3 class="card-subtitle"><i data-lucide="info"></i> 公文基本資訊</h3>
+                        <div class="form-grid">
+                            <div class="form-group col-span-2">
+                                <label for="up-receiver">受文者</label>
+                                <input type="text" id="up-receiver" value="">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label>發文日期 (民國年 / 月 / 日)</label>
+                                <div style="display: flex; align-items: center; width: 100%;">
+                                    <input type="number" id="up-date-year" value="" min="100" max="999" oninput="if(value.length>3)value=value.slice(0,3)" style="flex: 1.5; text-align: center;" placeholder="年">
+                                    <span style="margin: 0 10px;">年</span>
+                                    <input type="number" id="up-date-month" value="" min="1" max="12" oninput="if(value>12)value=12;if(value<1 && value!=='')value=1" style="flex: 1; text-align: center;" placeholder="月">
+                                    <span style="margin: 0 10px;">月</span>
+                                    <input type="number" id="up-date-day" value="" min="1" max="31" oninput="if(value>31)value=31;if(value<1 && value!=='')value=1" style="flex: 1; text-align: center;" placeholder="日">
+                                    <span style="margin: 0 0 0 10px;">日</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="up-id-num">發文字號 (字號/流水號)</label>
+                                <input type="text" id="up-id-num" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="up-speed">速別</label>
+                                <select id="up-speed">
+                                    <option value="普通件">普通件</option>
+                                    <option value="速件">速件</option>
+                                    <option value="最速件">最速件</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="up-secrecy">密等</label>
+                                <select id="up-secrecy">
+                                    <option value="">空白(無)</option>
+                                    <option value="密">密</option>
+                                    <option value="機密">機密</option>
+                                    <option value="極機密">極機密</option>
+                                    <option value="絕對機密">絕對機密</option>
+                                </select>
+                                <div id="secrecy-warning" class="helper-text" style="color: var(--red-official); font-weight: bold; display: none; margin-top: 4px; font-size: 0.75rem;">⚠️ 密等以上不得電子交換</div>
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="up-secrecy-duration">解密條件或保密期限</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <select id="up-secrecy-duration-preset" style="flex: 1;">
+                                        <option value="">空白(無)</option>
+                                        <option value="本件至  年  月  日解密">本件至某年某月某日解密</option>
+                                        <option value="本件於公布時解密">本件於公布時解密</option>
+                                        <option value="other">其他 (自行輸入)</option>
+                                    </select>
+                                    <input type="text" id="up-secrecy-duration" placeholder="請選擇或自行輸入..." style="flex: 2;">
+                                </div>
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="up-attachment">附件</label>
+                                <input type="text" id="up-attachment" value="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 本文內容 -->
+                    <div class="config-card">
+                        <h3 class="card-subtitle"><i data-lucide="align-left"></i> 本文內容</h3>
+                        <div class="quick-phrases">
+                            <span>常用用語：</span>
+                            <button type="button" class="phrase-tag" data-phrase="檢陳">檢陳</button>
+                            <button type="button" class="phrase-tag" data-phrase="請鑒核">請鑒核</button>
+                            <button type="button" class="phrase-tag" data-phrase="檢送">檢送</button>
+                            <button type="button" class="phrase-tag" data-phrase="請查照">請查照</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="up-subject">主旨</label>
+                            <textarea id="up-subject" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="up-explanation">說明</label>
+                            <textarea id="up-explanation" rows="6"></textarea>
+                        </div>
+                        <div class="form-group col-span-2">
+                            <label for="up-original">正本</label>
+                            <input type="text" id="up-original" value="">
+                        </div>
+                        <div class="form-group col-span-2">
+                            <label for="up-cc">副本</label>
+                            <input type="text" id="up-cc" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= 格式 2: 業務接洽便函 欄位 ================= -->
+                <div id="panel-parallel" class="template-panel hidden">
+                    <!-- 公文屬性與管理欄位 -->
+                    <div class="config-card">
+                        <h3 class="card-subtitle"><i data-lucide="folder"></i> 便函管理資訊</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>類別 (單選)</label>
+                                <select id="pa-category">
+                                    <option value="A">A 類</option>
+                                    <option value="B">B 類</option>
+                                    <option value="C">C 類</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-days">處理日數</label>
+                                <input type="number" id="pa-days" value="3">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-years">預定保存年限</label>
+                                <input type="text" id="pa-years" value="5年">
+                            </div>
+                            <div class="form-group">
+                                <label>機密別</label>
+                                <select id="pa-secrecy">
+                                    <option value="非機密">非機密</option>
+                                    <option value="機密">機密</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-doc-num">檔號</label>
+                                <input type="text" id="pa-doc-num" placeholder="請輸入檔號">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-close-date">銷案日期</label>
+                                <input type="text" id="pa-close-date" placeholder="年  月  日">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-id-num">發文字號</label>
+                                <div class="date-input-group">
+                                    庚大業洽字第 <input type="text" id="pa-id-serial" value="1150001" style="width: 100px;"> 號
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 發文段落 (便函上半部) -->
+                    <div class="config-card">
+                        <h3 class="card-subtitle" style="color: var(--primary-color); border-bottom-color: var(--primary-color);"><i data-lucide="arrow-up-right"></i> 1. 發文段 (上半部)</h3>
+                        <div class="form-grid">
+                            <div class="form-group col-span-2">
+                                <label for="pa-send-receiver">受文者</label>
+                                <input type="text" id="pa-send-receiver" value="總務處文書組">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-send-subject">主旨</label>
+                                <textarea id="pa-send-subject" rows="2">洽請協助進行115學年度新進教師公文系統權限設定開通事宜。</textarea>
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-send-explanation">說明</label>
+                                <textarea id="pa-send-explanation" rows="4">一、本校預計於8月新增教師3名，需提早開通公文製作系統。&#10;二、檢附新進教師名單與處室對照表各乙份。</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-send-dept">發文經辦部門</label>
+                                <input type="text" id="pa-send-dept" value="資訊處軟體發展組">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-send-person">經辦人</label>
+                                <input type="text" id="pa-send-person" value="王小明">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-send-phone">電話 (分機)</label>
+                                <input type="text" id="pa-send-phone" value="3601">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-send-attachment">附件</label>
+                                <input type="text" id="pa-send-attachment" value="新進教師名單.xlsx">
+                            </div>
+                            <div class="form-group">
+                                <label>覆文狀態</label>
+                                <select id="pa-send-reply-status">
+                                    <option value="待覆" selected>待覆</option>
+                                    <option value="免覆">免覆</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-send-reply-date">待覆日期</label>
+                                <input type="text" id="pa-send-reply-date" value="8月25日">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 覆文段落 (便函下半部) -->
+                    <div class="config-card">
+                        <h3 class="card-subtitle" style="color: #2ECC71; border-bottom-color: #2ECC71;"><i data-lucide="arrow-down-left"></i> 2. 覆文段 (下半部)</h3>
+                        <div class="form-grid">
+                            <div class="form-group col-span-2">
+                                <label for="pa-reply-receiver">受文者 (覆文)</label>
+                                <input type="text" id="pa-reply-receiver" value="資訊處軟體發展組">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-reply-subject">主旨 (覆文)</label>
+                                <textarea id="pa-reply-subject" rows="2">已完成115學年度新進教師公文系統權限設定開通，請 查照。</textarea>
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-reply-explanation">說明 (覆文)</label>
+                                <textarea id="pa-reply-explanation" rows="4">一、依 貴單位8月17日庚大業洽字第1150001號便函辦理。&#10;二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-reply-dept">覆文經辦部門</label>
+                                <input type="text" id="pa-reply-dept" value="總務處文書組">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-reply-person">經辦人 (覆文)</label>
+                                <input type="text" id="pa-reply-person" value="李四">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-reply-phone">電話 (覆文)</label>
+                                <input type="text" id="pa-reply-phone" value="3401">
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-reply-attachment">附件 (覆文)</label>
+                                <input type="text" id="pa-reply-attachment" value="無">
+                            </div>
+                            <div class="form-group">
+                                <label>銷案狀態</label>
+                                <select id="pa-reply-close-status">
+                                    <option value="銷案" selected>銷案</option>
+                                    <option value="待覆">待覆</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-reply-date">待覆日期 (覆文)</label>
+                                <input type="text" id="pa-reply-date" placeholder="月  日">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-recv-time">收文時間</label>
+                                <input type="text" id="pa-recv-time" value="115年8月18日10時00分">
+                            </div>
+                            <div class="form-group col-span-2">
+                                <label for="pa-reply-id">覆文字號</label>
+                                <input type="text" id="pa-reply-id" value="115年8月18日總大字第115000023號">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+            
+            <!-- Copyright / License Footer -->
+            <div class="sidebar-copyright">
+                <p>© 2026 長庚大學 版權所有</p>
+                <p>公文製作排版系統 v2.0</p>
+            </div>
+        </aside>
+
+        <!-- Drag Resizer Bar -->
+        <div id="drag-bar" class="drag-bar" title="左右拖動調整比例"></div>
+
+        <!-- Right Preview Panel -->
+        <main class="preview-panel">
+            <div class="preview-toolbar">
+                <div class="preview-toolbar-title">
+                    <i data-lucide="eye"></i> A4 高擬真公文排版預覽
+                </div>
+                <div class="preview-options" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dark);">
+                        <span>🔍 比例調整:</span>
+                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 100px; cursor: pointer;">
+                        <span id="zoom-value" style="font-weight: bold; min-width: 42px;">100%</span>
+                    </div>
+                    <button type="button" id="btn-refresh-preview" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" title="手動更新預覽">
+                        <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> 更新預覽
+                    </button>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle-grid" checked>
+                        <span class="slider"></span>
+                        顯示公文紅色外框格線
+                    </label>
+                </div>
+            </div>
+
+            <!-- The A4 Sheet Simulator -->
+            <div class="a4-sheet-container">
+                <div id="a4-sheet" class="a4-sheet show-grid template-upward">
+                    
+                    <!-- ================= 預覽格式 1: 長庚大學 函 ================= -->
+                    <div class="preview-layout-upward">
+                        <!-- Top Header -->
+                        <div class="red-header">
+                            <div class="cgu-title-main">長庚大學　函</div>
+                        </div>
+
+                        <!-- Contact Details Block Container -->
+                        <div class="contact-details-container">
+                            <div class="contact-details-block">
+                                <div><span id="p-up-address-label">地　　址：</span><span id="p-up-address" class="val">桃園市龜山區文化一路259號</span></div>
+                                <div>承 辦 人：<span id="p-up-person" class="val">○○○</span></div>
+                                <div>電　　話：<span id="p-up-phone" class="val">03-2118800分機○○○○</span></div>
+                                <div>傳　　真：<span id="p-up-fax" class="val">03-2118700</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Recipient Block -->
+                        <div class="recipient-row">
+                            受文者：<span id="p-up-receiver" class="val val-bold">○○○○○○○</span>
+                        </div>
+
+                        <!-- Metadata Block -->
+                        <div class="metadata-block">
+                            <div>發文日期：<span id="p-up-date" class="val">中華民國○○○年○○月○○日</span></div>
+                            <div>發文字號：<span id="p-up-id" class="val">長庚大字第○○○○○○○○○○號</span></div>
+                            <div>速　　別：<span id="p-up-speed" class="val">○○○</span></div>
+                            <div>密等及解密條件或保密期限：<span id="p-up-secrecy" class="val">○○○</span></div>
+                            <div>附　　件：<span id="p-up-attachment" class="val">○○○</span></div>
+                        </div>
+
+                        <!-- Body Content Block -->
+                        <div class="body-content">
+                            <div class="content-section section-subject">
+                                <span class="sec-title">主旨：</span>
+                                <div id="p-up-subject" class="sec-body">○○○○○○○</div>
+                            </div>
+                            <div class="content-section section-explanation" style="margin-top: 15px;">
+                                <span class="sec-title">說明：</span>
+                                <div id="p-up-explanation" class="sec-body">一、說明事項。</div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Recipients -->
+                        <div class="footer-block">
+                            <div class="cc-row">
+                                <span class="label">正本：</span><span id="p-up-original" class="val">○○○○○○</span>
+                            </div>
+                            <div class="cc-row">
+                                <span class="label">副本：</span><span id="p-up-cc" class="val">○○○○○○</span>
+                            </div>
+                        </div>
+
+                        <!-- Footer Principal Sign-off (上行文專用) -->
+                        <div id="p-up-principal-signoff" class="principal-signoff-block">
+                            校 長　湯 明 哲
+                        </div>
+
+
+                    </div>
+
+                    <!-- ================= 預覽格式 2: 業務接洽便函（稿） ================= -->
+                    <div class="preview-layout-parallel hidden">
+                        <!-- Top Metadata Info Table -->
+                        <table class="pa-top-meta-table">
+                            <tr>
+                                <td style="width: 15%;" class="lbl-cell">類 別</td>
+                                <td style="width: 25%; font-size: 11pt;">
+                                    <span id="p-pa-cat-A">□A</span>&nbsp;
+                                    <span id="p-pa-cat-B">□B</span>&nbsp;
+                                    <span id="p-pa-cat-C">□C</span>
+                                </td>
+                                <td rowspan="2" class="title-cell">
+                                    業 務 接 洽 便 函（稿）
+                                </td>
+                                <td style="width: 15%;" class="lbl-cell">銷案日期</td>
+                                <td style="width: 20%;" id="p-pa-close-date">年 月 日</td>
+                            </tr>
+                            <tr>
+                                <td class="lbl-cell">機密別</td>
+                                <td style="font-size: 11pt;">
+                                    <span id="p-pa-sec-yes">□機密</span>&nbsp;
+                                    <span id="p-pa-sec-no">□非機密</span>
+                                </td>
+                                <td class="lbl-cell">處理日數</td>
+                                <td id="p-pa-days">3</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border: none;"></td>
+                                <td style="border: none;"></td>
+                                <td class="lbl-cell">預定保存年限</td>
+                                <td id="p-pa-years">5年</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border: none;"></td>
+                                <td style="border: none;"></td>
+                                <td class="lbl-cell">檔   號</td>
+                                <td id="p-pa-doc-num"></td>
+                            </tr>
+                        </table>
+
+                        <div class="pa-serial-row">
+                            發文字號：<span id="p-pa-id" class="val">中華民國   年  月  日庚大業洽字第　　　　　　　　　　號</span>
+                        </div>
+
+                        <!-- Two-way Split layout (發文 / 覆文) -->
+                        <div class="pa-segments-container">
+                            <!-- 1. 發文段 -->
+                            <table class="pa-segment-table">
+                                <tr>
+                                    <td class="lbl-col" style="width: 12%;">受文者</td>
+                                    <td id="p-pa-send-receiver" class="val-col val-bold">總務處文書組</td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl-col">主旨：<br>說明：</td>
+                                    <td class="content-col">
+                                        <div class="pa-subject-block"><span>主旨：</span><span id="p-pa-send-subject"></span></div>
+                                        <div class="pa-explanation-block"><span>說明：</span><br><span id="p-pa-send-explanation"></span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding: 0;">
+                                        <table class="pa-inner-sig-table">
+                                            <tr>
+                                                <td class="lbl-cell" style="width: 15%;">發文經辦部門</td>
+                                                <td style="width: 25%;" id="p-pa-send-dept">資訊處</td>
+                                                <td class="lbl-cell" style="width: 10%;">經辦人</td>
+                                                <td style="width: 20%;" id="p-pa-send-person">王小明</td>
+                                                <td class="lbl-cell" style="width: 10%;">電話</td>
+                                                <td style="width: 20%;" id="p-pa-send-phone">3601</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lbl-cell">附 件</td>
+                                                <td colspan="3" id="p-pa-send-attachment">無</td>
+                                                <td colspan="2" style="font-size: 11pt; padding: 4px;">
+                                                    <span id="p-pa-status-free">□免覆</span>&nbsp;&nbsp;
+                                                    <span id="p-pa-status-wait">▓待覆</span><br>
+                                                    待覆日期：<span id="p-pa-send-reply-date">月 日</span>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div style="height: 10px;"></div>
+
+                            <!-- 2. 覆文段 -->
+                            <table class="pa-segment-table">
+                                <tr>
+                                    <td class="lbl-col" style="width: 12%;">受文者</td>
+                                    <td id="p-pa-reply-receiver" class="val-col val-bold">資訊處</td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl-col">主旨：<br>說明：</td>
+                                    <td class="content-col">
+                                        <div class="pa-subject-block"><span>主旨：</span><span id="p-pa-reply-subject"></span></div>
+                                        <div class="pa-explanation-block"><span>說明：</span><br><span id="p-pa-reply-explanation"></span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding: 0;">
+                                        <table class="pa-inner-sig-table">
+                                            <tr>
+                                                <td class="lbl-cell" style="width: 15%;">覆文經辦部門</td>
+                                                <td style="width: 25%;" id="p-pa-reply-dept">總務處文書組</td>
+                                                <td class="lbl-cell" style="width: 10%;">經辦人</td>
+                                                <td style="width: 20%;" id="p-pa-reply-person">李四</td>
+                                                <td class="lbl-cell" style="width: 10%;">電話</td>
+                                                <td style="width: 20%;" id="p-pa-reply-phone">3401</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lbl-cell">附 件</td>
+                                                <td colspan="3" id="p-pa-reply-attachment">無</td>
+                                                <td colspan="2" style="font-size: 11pt; padding: 4px;">
+                                                    <span id="p-pa-reply-status-close">□銷案</span>&nbsp;&nbsp;
+                                                    <span id="p-pa-reply-status-wait">□待覆</span><br>
+                                                    待覆日期：<span id="p-pa-reply-date-val">月 日</span>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Bottom Meta Details -->
+                        <div class="pa-bottom-info-row">
+                            <div class="pa-info-cell">
+                                收文時間：<span id="p-pa-recv-time">中華民國   年  月   日  時  分</span>
+                            </div>
+                            <div class="pa-info-cell" style="text-align: right;">
+                                覆文字號：<span id="p-pa-reply-id">中華民國   年  月  日           字第　　　　　　　　　　號</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script imports -->
+    <script src="app.js"></script>
+</body>
+</html>
