@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData[el.id] = el.value;
         });
         formData['template-select'] = templateSelect.value;
-        formData['preset-select'] = presetSelect.value;
+        if (presetSelect) formData['preset-select'] = presetSelect.value;
         localStorage.setItem('cgu_formal_doc_draft_v2', JSON.stringify(formData));
     }
 
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadedTemplate = 'upward';
                 }
                 templateSelect.value = loadedTemplate;
-                presetSelect.value = data['preset-select'] || 'custom';
+                if (presetSelect) presetSelect.value = data['preset-select'] || 'custom';
                 
                 Object.keys(data).forEach(id => {
                     const el = document.getElementById(id);
@@ -555,16 +555,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Form change bindings
-    docForm.addEventListener('input', syncPreview);
+    // Form change bindings - Auto-save draft, but do NOT update preview instantly
+    docForm.addEventListener('input', saveDraft);
     templateSelect.addEventListener('change', handleTemplateChange);
     
-    // Explicit binding to each individual element to guarantee real-time updates
+    // Explicit binding to each individual element to save draft on change/input
     const bindAllInputs = () => {
         const inputs = docForm.querySelectorAll('input, select, textarea');
         inputs.forEach(el => {
-            el.addEventListener('input', syncPreview);
-            el.addEventListener('change', syncPreview);
-            el.addEventListener('keyup', syncPreview);
+            el.addEventListener('input', saveDraft);
+            el.addEventListener('change', saveDraft);
         });
     };
     bindAllInputs();
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('cgu_formal_doc_draft_v2');
             docForm.reset();
             initDate();
-            presetSelect.value = 'custom';
+            if (presetSelect) presetSelect.value = 'custom';
             handleTemplateChange();
         }
     });
