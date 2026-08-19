@@ -543,7 +543,7 @@ body {
     font-family: var(--font-official);
     box-sizing: border-box;
     position: absolute;
-    left: 3.0em; /* Align left edge of box with right side of "副本：" colon */
+    left: 2.0em; /* Align left edge of box with the left side of "副本：" colon */
     top: 0;
 }
 
