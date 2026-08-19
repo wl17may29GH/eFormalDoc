@@ -814,6 +814,19 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(measureDiv);
         }
 
+        // Warning alert check for sending parallel/downward documents to Ministry of Education (MOE)
+        if (templateSelect && templateSelect.value === 'parallel_downward') {
+            const tempOriginalVal = document.getElementById('up-original').value || '';
+            const parseRecipients = (text) => {
+                if (!text) return [];
+                return text.split(/[、,，\n]+/).map(s => s.trim()).filter(s => s.length > 0);
+            };
+            const originals = parseRecipients(tempOriginalVal);
+            if (originals.some(org => org === '教育部' || org.includes('教育部'))) {
+                alert('發函教育部應使用上行文');
+            }
+        }
+
         // Parse receiver mode and build recipients list
         const mode = upReceiverMode ? upReceiverMode.value : 'A';
         const manualVal = upReceiverManual ? upReceiverManual.value : '';
@@ -944,7 +957,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             setSafeText('#p-up-original', document.getElementById('up-original').value || '○○○○○○');
-            setSafeText('#p-up-cc', document.getElementById('up-cc').value || '○○○○○○');
+            setSafeText('#p-up-cc', document.getElementById('up-cc').value || '');
             
             // Toggle signoff block
             const signoffBlock = measureDiv.querySelector('#p-up-principal-signoff');
