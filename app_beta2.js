@@ -1125,43 +1125,112 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentHeight + footerHeight > finalCapacity && currentPageItems.length > 0) {
                 pages.push({ isFirst: isFirstPage, items: currentPageItems });
                 isFirstPage = false;
-                pageDiv.appendChild(p1Layout);
+                pages.push({ isFirst: isFirstPage, items: [], footer: footerItems });
             } else {
-                // Page 2+: ONLY the lines! No header, no '說明：' label!
-                const pxLayout = document.createElement('div');
-                pxLayout.className = 'preview-layout-upward';
-                
-                const bodyDiv = document.createElement('div');
-                bodyDiv.className = 'body-content';
-                
-                page.items.forEach(item => {
-                    if (item.type === 'expl-line') {
-                        const lineDiv = document.createElement('div');
-                        lineDiv.className = item.class;
-                        lineDiv.innerHTML = item.html;
-                        if (item.letterSpacing) {
-                            lineDiv.style.letterSpacing = item.letterSpacing;
-                        }
-                        bodyDiv.appendChild(lineDiv);
-                    }
-                });
-                
-                pxLayout.appendChild(bodyDiv);
-                
-                if (page.footer) {
-                    page.footer.forEach(foot => pxLayout.appendChild(foot));
-                }
-                
-                pageDiv.appendChild(pxLayout);
+                pages.push({ isFirst: isFirstPage, items: currentPageItems, footer: footerItems });
             }
             
-            // Add page numbers at the bottom of EVERY page
-            const pageNumDiv = document.createElement('div');
-            pageNumDiv.className = 'page-number-footer';
-            pageNumDiv.textContent = `第 ${index + 1} 頁，共 ${pages.length} 頁`;
-            pageDiv.appendChild(pageNumDiv);
+            // Render pages inside container
+            if (recipientIndex > 0) {
+                const separator = document.createElement('div');
+                separator.className = 'document-separator';
+                container.appendChild(separator);
+            }
             
-            container.appendChild(pageDiv);
+            pages.forEach((page, index) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'a4-sheet show-grid template-upward';
+                
+                // Keep the first page of first recipient with standard ID for backward compatibility
+                const isAbsoluteFirst = (recipientIndex === 0 && index === 0);
+                pageDiv.id = isAbsoluteFirst ? 'a4-sheet' : `a4-sheet-rec-${recipientIndex}-p-${index + 1}`;
+                
+                if (page.isFirst) {
+                    const p1Layout = document.createElement('div');
+                    p1Layout.className = 'preview-layout-upward';
+                    
+                    p1Layout.appendChild(redHeader.cloneNode(true));
+                    p1Layout.appendChild(contactDetails.cloneNode(true));
+                    p1Layout.appendChild(receiverRow.cloneNode(true));
+                    p1Layout.appendChild(metadataBlock.cloneNode(true));
+                    
+                    const bodyDiv = document.createElement('div');
+                    bodyDiv.className = 'body-content';
+                    
+                    let explContainer = null;
+                    page.items.forEach(item => {
+                        if (item.type === 'subject') {
+                            const subjDiv = document.createElement('div');
+                            subjDiv.className = item.class;
+                            subjDiv.innerHTML = item.html;
+                            bodyDiv.appendChild(subjDiv);
+                        } else if (item.type === 'expl-line') {
+                            if (!explContainer) {
+                                explContainer = document.createElement('div');
+                                explContainer.className = `content-section section-explanation ${hasPoints ? 'layout-stacked' : 'layout-side-by-side'}`;
+                                const titleSpan = document.createElement('span');
+                                titleSpan.className = 'sec-title';
+                                titleSpan.textContent = '說明：';
+                                explContainer.appendChild(titleSpan);
+                                
+                                const bodyWrapper = document.createElement('div');
+                                bodyWrapper.id = 'p-up-explanation';
+                                bodyWrapper.className = 'sec-body';
+                                explContainer.appendChild(bodyWrapper);
+                                bodyDiv.appendChild(explContainer);
+                            }
+                            const lineDiv = document.createElement('div');
+                            lineDiv.className = item.class;
+                            lineDiv.innerHTML = item.html;
+                            if (item.letterSpacing) {
+                                lineDiv.style.letterSpacing = item.letterSpacing;
+                            }
+                            explContainer.querySelector('#p-up-explanation').appendChild(lineDiv);
+                        }
+                    });
+                    
+                    p1Layout.appendChild(bodyDiv);
+                    
+                    if (page.footer) {
+                        page.footer.forEach(foot => p1Layout.appendChild(foot));
+                    }
+                    
+                    pageDiv.appendChild(p1Layout);
+                } else {
+                    const pxLayout = document.createElement('div');
+                    pxLayout.className = 'preview-layout-upward';
+                    
+                    const bodyDiv = document.createElement('div');
+                    bodyDiv.className = 'body-content';
+                    
+                    page.items.forEach(item => {
+                        if (item.type === 'expl-line') {
+                            const lineDiv = document.createElement('div');
+                            lineDiv.className = item.class;
+                            lineDiv.innerHTML = item.html;
+                            if (item.letterSpacing) {
+                                lineDiv.style.letterSpacing = item.letterSpacing;
+                            }
+                            bodyDiv.appendChild(lineDiv);
+                        }
+                    });
+                    
+                    pxLayout.appendChild(bodyDiv);
+                    
+                    if (page.footer) {
+                        page.footer.forEach(foot => pxLayout.appendChild(foot));
+                    }
+                    
+                    pageDiv.appendChild(pxLayout);
+                }
+                
+                const pageNumDiv = document.createElement('div');
+                pageNumDiv.className = 'page-number-footer';
+                pageNumDiv.textContent = `第 ${index + 1} 頁，共 ${pages.length} 頁`;
+                pageDiv.appendChild(pageNumDiv);
+                
+                container.appendChild(pageDiv);
+            });
         });
         
         // Re-bind grid toggle
