@@ -1027,6 +1027,37 @@ body {
     .cgu-red-notice {
         visibility: hidden; /* Hide the "平行、下行文專用【紅色處無需印出】" text on real paper print */
     }
+
+    .document-separator {
+        page-break-before: always !important;
+        break-before: page !important;
+        display: none !important; /* Hide separator visual element when printing */
+    }
+}
+
+.document-separator {
+    width: 100%;
+    height: 1px;
+    border-top: 2px dashed var(--primary-color);
+    margin: 40px 0;
+    position: relative;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.document-separator::after {
+    content: '下一份公文 (正式分發列印)';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--bg-light);
+    padding: 2px 12px;
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
 }
 
 .sidebar-copyright {

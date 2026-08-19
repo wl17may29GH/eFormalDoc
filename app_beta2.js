@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DOM Elements
     const templateSelect = document.getElementById('template-select');
+    const upReceiverMode = document.getElementById('up-receiver-mode');
+    const upReceiverManualGroup = document.getElementById('up-receiver-manual-group');
+    const upReceiverManual = document.getElementById('up-receiver-manual');
     const presetSelect = document.getElementById('preset-select');
     const docForm = document.getElementById('doc-form');
     
@@ -370,7 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-person').value = '王大明';
             document.getElementById('up-phone').value = '03-2118800分機3302';
             document.getElementById('up-fax').value = '03-2118700';
-            document.getElementById('up-receiver').value = '教育部';
+            if (upReceiverMode) upReceiverMode.value = 'A';
+            if (upReceiverManual) upReceiverManual.value = '教育部';
             document.getElementById('up-id-num').value = '1150000001';
             document.getElementById('up-speed').value = '普通件';
             document.getElementById('up-secrecy').value = '';
@@ -386,7 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-person').value = '李專員';
             document.getElementById('up-phone').value = '03-2118800分機3401';
             document.getElementById('up-fax').value = '03-2118703';
-            document.getElementById('up-receiver').value = '長庚紀念醫院';
+            if (upReceiverMode) upReceiverMode.value = 'A';
+            if (upReceiverManual) upReceiverManual.value = '長庚紀念醫院';
             document.getElementById('up-id-num').value = '1150000002';
             document.getElementById('up-speed').value = '最速件';
             document.getElementById('up-secrecy').value = '';
@@ -457,6 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
             applyDemoData(templateSelect.value);
         }
         handleTemplateChange();
+        handleReceiverModeChange();
     }
 
     // Preset loading listener
@@ -555,6 +561,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Form change bindings
+    function handleReceiverModeChange() {
+        if (!upReceiverMode) return;
+        const mode = upReceiverMode.value;
+        if (mode === 'C') {
+            upReceiverManualGroup.classList.remove('hidden');
+        } else {
+            upReceiverManualGroup.classList.add('hidden');
+        }
+        saveDraft();
+    }
+    if (upReceiverMode) {
+        upReceiverMode.addEventListener('change', handleReceiverModeChange);
+    }
+
     // Form change bindings - Auto-save draft, but do NOT update preview instantly
     docForm.addEventListener('input', saveDraft);
     templateSelect.addEventListener('change', handleTemplateChange);
@@ -793,347 +813,318 @@ document.addEventListener('DOMContentLoaded', () => {
             measureDiv.style.minHeight = '0';
             document.body.appendChild(measureDiv);
         }
-        
-        // Populate the measure div with the template and current data
-        measureDiv.innerHTML = a4TemplateHTML;
-        
-        // Safe DOM setter helper to prevent Null Pointer ReferenceErrors
-        const setSafeText = (selector, text) => {
-            const el = measureDiv.querySelector(selector);
-            if (el) el.textContent = text;
-        };
-        const setSafeHTML = (selector, html) => {
-            const el = measureDiv.querySelector(selector);
-            if (el) el.innerHTML = html;
-        };
 
-        const upAddressLabel = document.getElementById('p-up-address-label');
-        setSafeText('#p-up-address-label', upAddressLabel ? upAddressLabel.textContent : '地　　址：');
-        setSafeText('#p-up-address', document.getElementById('up-address').value);
-        setSafeText('#p-up-person', document.getElementById('up-person').value);
-        setSafeText('#p-up-phone', document.getElementById('up-phone').value);
-        setSafeText('#p-up-fax', document.getElementById('up-fax').value);
-        setSafeText('#p-up-receiver', document.getElementById('up-receiver').value || '○○○○○○○');
+        // Parse receiver mode and build recipients list
+        const mode = upReceiverMode ? upReceiverMode.value : 'A';
+        const manualVal = upReceiverManual ? upReceiverManual.value : '';
+        const originalVal = document.getElementById('up-original').value || '';
+        const ccVal = document.getElementById('up-cc').value || '';
         
-        const rocYear = new Date().getFullYear() - 1911;
-        const upYear = document.getElementById('up-date-year').value || rocYear;
-        const upMonth = document.getElementById('up-date-month').value || (new Date().getMonth() + 1);
-        const upDay = document.getElementById('up-date-day').value || new Date().getDate();
-        setSafeText('#p-up-date', `中華民國 ${upYear} 年 ${upMonth} 月 ${upDay} 日`);
+        let recipientsList = [];
+        let mainTitle = '長庚大學　函';
         
-        const upIdNum = document.getElementById('up-id-num').value || '○○○○○○○○○○';
-        setSafeText('#p-up-id', `長庚大字第 ${upIdNum} 號`);
-        setSafeText('#p-up-speed', document.getElementById('up-speed').value);
-        
-        const secrecyVal = document.getElementById('up-secrecy').value;
-        const secrecyDurationVal = document.getElementById('up-secrecy-duration').value;
-        let combinedSecrecy = secrecyVal || '';
-        if (secrecyDurationVal) {
-            combinedSecrecy += secrecyVal ? ` (${secrecyDurationVal})` : secrecyDurationVal;
-        }
-        setSafeText('#p-up-secrecy', combinedSecrecy);
-        setSafeText('#p-up-attachment', document.getElementById('up-attachment').value || '無');
-        
-        // Body Content
-        setSafeHTML('#p-up-subject', formatHTML(document.getElementById('up-subject').value) || '○○○○○○○');
-        const pSubj = measureDiv.querySelector('#p-up-subject');
-        if (pSubj) adjustElementOrphans(pSubj);
-        
-        const explanationVal = document.getElementById('up-explanation').value.trim();
-        const hasExplanation = explanationVal !== '';
-        
-        // Detect if explanation has points
-        const explLines = explanationVal.split('\n');
-        const hasPoints = explLines.some(line => {
-            const trimmed = line.trim();
-            return /^[一二三四五六七八九十百]+[、]/.test(trimmed) ||
-                   /^[(（][一二三四五六七八九十百]+[)）]/.test(trimmed) ||
-                   /^\d+[、]/.test(trimmed) ||
-                   /^[(（]\d+[)）]/.test(trimmed) ||
-                   /^[甲乙丙丁戊己庚辛壬癸]+[、]/.test(trimmed) ||
-                   /^[(（][甲乙丙丁戊己庚辛壬癸]+[)）]/.test(trimmed);
-        });
-        
-        const explanationSection = measureDiv.querySelector('.section-explanation');
-        if (explanationSection) {
-            if (!hasExplanation) {
-                explanationSection.style.display = 'none';
-            } else {
-                explanationSection.style.display = 'block';
-                if (hasPoints) {
-                    explanationSection.classList.remove('layout-side-by-side');
-                    explanationSection.classList.add('layout-stacked');
-                } else {
-                    explanationSection.classList.remove('layout-stacked');
-                    explanationSection.classList.add('layout-side-by-side');
+        if (mode === 'A') {
+            const hasCc = ccVal.trim() !== '';
+            recipientsList = [hasCc ? '如正、副本收受者' : '如正本收受者'];
+            mainTitle = '長庚大學　函(稿)';
+        } else if (mode === 'C') {
+            recipientsList = [manualVal.trim() || '○○○○○○○'];
+            mainTitle = '長庚大學　函';
+        } else if (mode === 'B') {
+            const parseRecipients = (text) => {
+                if (!text) return [];
+                return text.split(/[、,，\n]+/)
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0);
+            };
+            const originals = parseRecipients(originalVal);
+            const ccs = parseRecipients(ccVal);
+            const combined = originals.concat(ccs);
+            
+            // Remove duplicates
+            const unique = [];
+            combined.forEach(item => {
+                if (unique.indexOf(item) === -1) {
+                    unique.push(item);
                 }
-                const pExpl = measureDiv.querySelector('#p-up-explanation');
-                if (pExpl) pExpl.innerHTML = formatExplanationHTML(explanationVal, hasPoints);
-            }
+            });
+            
+            recipientsList = unique.length > 0 ? unique : ['○○○○○○○'];
+            mainTitle = '長庚大學　函';
         }
-        
-        setSafeText('#p-up-original', document.getElementById('up-original').value || '○○○○○○');
-        setSafeText('#p-up-cc', document.getElementById('up-cc').value || '○○○○○○');
-        
-        // Toggle signoff block
-        const signoffBlock = measureDiv.querySelector('#p-up-principal-signoff');
-        if (signoffBlock) {
-            if (templateSelect.value === 'upward') {
-                signoffBlock.style.display = 'block';
-            } else {
-                signoffBlock.style.display = 'none';
-            }
-        }
-        
-        // Helper function to split paragraph into individual line elements by rendering spans
-        function splitParagraphIntoLines(el, baseClass, bodyClass) {
-            const originalHTML = el.innerHTML;
+
+        // Clear container once before rendering recipients
+        container.innerHTML = '';
+
+        recipientsList.forEach((recipient, recipientIndex) => {
+            // Populate the measure div with the template and current data
+            measureDiv.innerHTML = a4TemplateHTML;
             
-            // Find if there is a list marker span
-            const markerSpan = el.querySelector('[class^="expl-marker-"]');
-            let textToSplit = '';
-            let markerHTML = '';
-            if (markerSpan) {
-                markerHTML = markerSpan.outerHTML;
-                textToSplit = el.textContent.substring(markerSpan.textContent.length);
-            } else {
-                textToSplit = el.textContent;
+            // Set dynamic title
+            const titleMainEl = measureDiv.querySelector('.cgu-title-main');
+            if (titleMainEl) {
+                titleMainEl.textContent = mainTitle;
             }
             
-            const chars = Array.from(textToSplit);
-            el.innerHTML = markerHTML + chars.map(c => `<span>${c}</span>`).join('');
-            const spans = el.querySelectorAll('span:not([class^="expl-marker-"])');
+            // Safe DOM setter helper to prevent Null Pointer ReferenceErrors
+            const setSafeText = (selector, text) => {
+                const el = measureDiv.querySelector(selector);
+                if (el) el.textContent = text;
+            };
+            const setSafeHTML = (selector, html) => {
+                const el = measureDiv.querySelector(selector);
+                if (el) el.innerHTML = html;
+            };
+
+            const upAddressLabel = document.getElementById('p-up-address-label');
+            setSafeText('#p-up-address-label', upAddressLabel ? upAddressLabel.textContent : '地　　址：');
+            setSafeText('#p-up-address', document.getElementById('up-address').value);
+            setSafeText('#p-up-person', document.getElementById('up-person').value);
+            setSafeText('#p-up-phone', document.getElementById('up-phone').value);
+            setSafeText('#p-up-fax', document.getElementById('up-fax').value);
             
-            const lines = [];
-            if (spans.length === 0) {
-                lines.push(originalHTML);
-                el.innerHTML = originalHTML;
-                return [{ html: originalHTML, class: baseClass }];
+            // Use current loop recipient
+            setSafeText('#p-up-receiver', recipient);
+            
+            const rocYear = new Date().getFullYear() - 1911;
+            const upYear = document.getElementById('up-date-year').value || rocYear;
+            const upMonth = document.getElementById('up-date-month').value || (new Date().getMonth() + 1);
+            const upDay = document.getElementById('up-date-day').value || new Date().getDate();
+            setSafeText('#p-up-date', `中華民國 ${upYear} 年 ${upMonth} 月 ${upDay} 日`);
+            
+            const upIdNum = document.getElementById('up-id-num').value || '○○○○○○○○○○';
+            setSafeText('#p-up-id', `長庚大字第 ${upIdNum} 號`);
+            setSafeText('#p-up-speed', document.getElementById('up-speed').value);
+            
+            const secrecyVal = document.getElementById('up-secrecy').value;
+            const secrecyDurationVal = document.getElementById('up-secrecy-duration').value;
+            let combinedSecrecy = secrecyVal || '';
+            if (secrecyDurationVal) {
+                combinedSecrecy += secrecyVal ? ` (${secrecyDurationVal})` : secrecyDurationVal;
+            }
+            setSafeText('#p-up-secrecy', combinedSecrecy);
+            setSafeText('#p-up-attachment', document.getElementById('up-attachment').value || '無');
+            
+            // Body Content
+            setSafeHTML('#p-up-subject', formatHTML(document.getElementById('up-subject').value) || '○○○○○○○');
+            const pSubj = measureDiv.querySelector('#p-up-subject');
+            if (pSubj) adjustElementOrphans(pSubj);
+            
+            const explanationVal = document.getElementById('up-explanation').value.trim();
+            const hasExplanation = explanationVal !== '';
+            
+            // Detect if explanation has points
+            const explLines = explanationVal.split('\n');
+            const hasPoints = explLines.some(line => {
+                const trimmed = line.trim();
+                return /^[一二三四五六七八九十百]+[、]/.test(trimmed) ||
+                       /^[(（][一二三四五六七八九十百]+[)）]/.test(trimmed) ||
+                       /^\d+[、]/.test(trimmed) ||
+                       /^[(（]\d+[)）]/.test(trimmed) ||
+                       /^[甲乙丙丁戊己庚辛壬癸]+[、]/.test(trimmed) ||
+                       /^[(（][甲乙丙丁戊己庚辛壬癸]+[)）]/.test(trimmed);
+            });
+            
+            const explanationSection = measureDiv.querySelector('.section-explanation');
+            if (explanationSection) {
+                if (!hasExplanation) {
+                    explanationSection.style.display = 'none';
+                } else {
+                    explanationSection.style.display = 'block';
+                    if (hasPoints) {
+                        explanationSection.classList.remove('layout-side-by-side');
+                        explanationSection.classList.add('layout-stacked');
+                    } else {
+                        explanationSection.classList.remove('layout-stacked');
+                        explanationSection.classList.add('layout-side-by-side');
+                    }
+                    const pExpl = measureDiv.querySelector('#p-up-explanation');
+                    if (pExpl) pExpl.innerHTML = formatExplanationHTML(explanationVal, hasPoints);
+                }
             }
             
-            let currentTop = spans[0].getBoundingClientRect().top;
-            let currentLineText = '';
+            setSafeText('#p-up-original', document.getElementById('up-original').value || '○○○○○○');
+            setSafeText('#p-up-cc', document.getElementById('up-cc').value || '○○○○○○');
             
-            spans.forEach(span => {
-                const top = span.getBoundingClientRect().top;
-                if (Math.abs(top - currentTop) > 5) {
+            // Toggle signoff block
+            const signoffBlock = measureDiv.querySelector('#p-up-principal-signoff');
+            if (signoffBlock) {
+                if (templateSelect.value === 'upward') {
+                    signoffBlock.style.display = 'block';
+                } else {
+                    signoffBlock.style.display = 'none';
+                }
+            }
+            
+            // Helper function to split paragraph into individual line elements by rendering spans
+            function splitParagraphIntoLines(el, baseClass, bodyClass) {
+                const originalHTML = el.innerHTML;
+                
+                const markerSpan = el.querySelector('[class^="expl-marker-"]');
+                let textToSplit = '';
+                let markerHTML = '';
+                if (markerSpan) {
+                    markerHTML = markerSpan.outerHTML;
+                    textToSplit = el.textContent.substring(markerSpan.textContent.length);
+                } else {
+                    textToSplit = el.textContent;
+                }
+                
+                const chars = Array.from(textToSplit);
+                el.innerHTML = markerHTML + chars.map(c => `<span>${c}</span>`).join('');
+                const spans = el.querySelectorAll('span:not([class^="expl-marker-"])');
+                
+                const lines = [];
+                if (spans.length === 0) {
+                    lines.push(originalHTML);
+                    el.innerHTML = originalHTML;
+                    return [{ html: originalHTML, class: baseClass }];
+                }
+                
+                let currentTop = spans[0].getBoundingClientRect().top;
+                let currentLineText = '';
+                
+                spans.forEach(span => {
+                    const top = span.getBoundingClientRect().top;
+                    if (Math.abs(top - currentTop) > 5) {
+                        lines.push(currentLineText);
+                        currentLineText = '';
+                        currentTop = top;
+                    }
+                    currentLineText += span.textContent;
+                });
+                if (currentLineText) {
                     lines.push(currentLineText);
-                    currentLineText = '';
-                    currentTop = top;
                 }
-                currentLineText += span.textContent;
-            });
-            if (currentLineText) {
-                lines.push(currentLineText);
-            }
-            
-            el.innerHTML = originalHTML;
-            
-            return lines.map((lineText, idx) => {
-                const escapedText = escapeHTML(lineText).replace(/ /g, '&nbsp;');
-                const isLast = (idx === lines.length - 1);
-                const suffix = isLast ? ' expl-line-last' : ' expl-line-middle';
-                if (idx === 0) {
-                    return {
-                        html: markerHTML + escapedText,
-                        class: baseClass + suffix
-                    };
-                } else {
-                    return {
-                        html: escapedText,
-                        class: bodyClass + suffix
-                    };
-                }
-            });
-        }
-
-        // 2. Measure heights of elements
-        // Target body area height in A4 (297mm height is ~1123px at 96dpi, margin top+bottom is 2.3cm * 2 = 174px, total printable height = 949px)
-        const totalPrintableHeight = 925; 
-        
-        // Measure header height on page 1 (red-header, contact details, receiver, metadata)
-        const redHeader = measureDiv.querySelector('.red-header');
-        const contactDetails = measureDiv.querySelector('.contact-details-container');
-        const receiverRow = measureDiv.querySelector('.recipient-row');
-        const metadataBlock = measureDiv.querySelector('.metadata-block');
-        
-        const headerHeight = (redHeader ? redHeader.offsetHeight : 0) + 
-                             (contactDetails ? contactDetails.offsetHeight : 0) + 
-                             (receiverRow ? receiverRow.offsetHeight : 0) + 
-                             (metadataBlock ? metadataBlock.offsetHeight : 0) + 
-                             30; // some spacing margins
-        
-        const page1Capacity = totalPrintableHeight - headerHeight;
-        const page2Capacity = totalPrintableHeight; // Page 2+ has no headers at all!
-        
-        // Get content elements to distribute
-        const subjectBlock = measureDiv.querySelector('.section-subject');
-        const footerBlock = measureDiv.querySelector('.footer-block');
-        if (footerBlock) {
-            const sigSeal = footerBlock.querySelector('#p-up-signature-seal');
-            if (sigSeal) {
-                if (templateSelect.value === 'parallel_downward') {
-                    sigSeal.classList.remove('hidden');
-                } else {
-                    sigSeal.classList.add('hidden');
-                }
-            }
-        }
-        const principalSignoff = measureDiv.querySelector('#p-up-principal-signoff');
-        
-        // Build items list with their heights
-        const items = [];
-        if (subjectBlock && subjectBlock.offsetHeight > 0) {
-            items.push({ type: 'subject', html: subjectBlock.innerHTML, class: subjectBlock.className, height: subjectBlock.offsetHeight + 15 });
-        }
-        
-        if (hasExplanation) {
-            const allExplParagraphs = measureDiv.querySelectorAll('#p-up-explanation .expl-paragraph');
-            allExplParagraphs.forEach(p => {
-                // Auto-adjust letter spacing to avoid orphans on the last line of this paragraph
-                adjustElementOrphans(p);
-                const letterSpacing = p.style.letterSpacing || '';
                 
-                const baseClass = p.className;
-                let bodyClass = baseClass + '-body';
-                if (baseClass.includes('expl-level-1')) bodyClass = 'expl-paragraph expl-level-1-body';
-                else if (baseClass.includes('expl-level-2')) bodyClass = 'expl-paragraph expl-level-2-body';
-                else if (baseClass.includes('expl-level-3')) bodyClass = 'expl-paragraph expl-level-3-body';
-                else if (baseClass.includes('expl-level-4')) bodyClass = 'expl-paragraph expl-level-4-body';
-                else if (baseClass.includes('expl-level-5')) bodyClass = 'expl-paragraph expl-level-5-body';
-                else if (baseClass.includes('expl-level-6')) bodyClass = 'expl-paragraph expl-level-6-body';
-                else bodyClass = 'expl-paragraph';
+                el.innerHTML = originalHTML;
                 
-                const lines = splitParagraphIntoLines(p, baseClass, bodyClass);
-                lines.forEach(line => {
-                    // Measure exact line height by rendering in workspace
-                    const testDiv = document.createElement('div');
-                    testDiv.className = line.class;
-                    testDiv.innerHTML = line.html;
-                    testDiv.style.letterSpacing = letterSpacing; // Apply the spacing for accurate measurement
-                    measureDiv.appendChild(testDiv);
-                    // Add 4px margin-bottom buffer to offsetHeight
-                    const h = (testDiv.offsetHeight || 34) + 4;
-                    measureDiv.removeChild(testDiv);
+                const result = [];
+                lines.forEach((lineText, idx) => {
+                    const isLastLine = (idx === lines.length - 1);
+                    let lineClass = isLastLine ? `${baseClass} expl-line-last` : `${baseClass} expl-line-middle`;
                     
-                    items.push({
-                        type: 'expl-line',
-                        html: line.html,
-                        class: line.class,
-                        height: h,
-                        letterSpacing: letterSpacing
+                    let lineHTML = '';
+                    if (idx === 0 && markerHTML) {
+                        lineHTML = markerHTML + `<span class="${bodyClass}">${lineText}</span>`;
+                    } else {
+                        lineHTML = `<span class="${bodyClass}">${lineText}</span>`;
+                    }
+                    result.push({
+                        html: lineHTML,
+                        class: lineClass
                     });
                 });
-            });
-        }
-        
-        const footerItems = [];
-        let footerHeight = 0;
-        if (footerBlock) {
-            footerItems.push(footerBlock.cloneNode(true));
-            footerHeight += footerBlock.offsetHeight + 15;
-        }
-        if (principalSignoff && templateSelect.value === 'upward') {
-            footerItems.push(principalSignoff.cloneNode(true));
-            footerHeight += principalSignoff.offsetHeight + 15;
-        }
-        
-        // Distribute content into pages
-        const pages = [];
-        let currentPageItems = [];
-        let currentHeight = 0;
-        let isFirstPage = true;
-        
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            const capacity = isFirstPage ? page1Capacity : page2Capacity;
+                return result;
+            }
             
-            if (currentHeight + item.height > capacity && currentPageItems.length > 0) {
-                // Page is full, push page and start a new one
+            // Measure heights of elements
+            const totalPrintableHeight = 925; 
+            
+            const redHeader = measureDiv.querySelector('.red-header');
+            const contactDetails = measureDiv.querySelector('.contact-details-container');
+            const receiverRow = measureDiv.querySelector('.recipient-row');
+            const metadataBlock = measureDiv.querySelector('.metadata-block');
+            
+            const headerHeight = (redHeader ? redHeader.offsetHeight : 0) + 
+                                 (contactDetails ? contactDetails.offsetHeight : 0) + 
+                                 (receiverRow ? receiverRow.offsetHeight : 0) + 
+                                 (metadataBlock ? metadataBlock.offsetHeight : 0) + 
+                                 30; // some spacing margins
+            
+            const page1Capacity = totalPrintableHeight - headerHeight;
+            const page2Capacity = totalPrintableHeight;
+            
+            const subjectBlock = measureDiv.querySelector('.section-subject');
+            const footerBlock = measureDiv.querySelector('.footer-block');
+            if (footerBlock) {
+                const sigSeal = footerBlock.querySelector('#p-up-signature-seal');
+                if (sigSeal) {
+                    if (templateSelect.value === 'parallel_downward') {
+                        sigSeal.classList.remove('hidden');
+                    } else {
+                        sigSeal.classList.add('hidden');
+                    }
+                }
+            }
+            const principalSignoff = measureDiv.querySelector('#p-up-principal-signoff');
+            
+            const items = [];
+            
+            if (subjectBlock) {
+                items.push({
+                    type: 'subject',
+                    html: subjectBlock.innerHTML,
+                    class: 'content-section section-subject',
+                    height: subjectBlock.offsetHeight + 10
+                });
+            }
+            
+            if (hasExplanation) {
+                const explBody = measureDiv.querySelector('#p-up-explanation');
+                const paragraphs = explBody.querySelectorAll('.expl-paragraph');
+                paragraphs.forEach(p => {
+                    const letterSpacing = p.style.letterSpacing || '';
+                    const baseClass = p.className;
+                    const bodySpan = p.querySelector('.expl-body');
+                    const bodyClass = bodySpan ? bodySpan.className : '';
+                    
+                    const lines = splitParagraphIntoLines(p, baseClass, bodyClass);
+                    lines.forEach(line => {
+                        const testDiv = document.createElement('div');
+                        testDiv.className = line.class;
+                        testDiv.innerHTML = line.html;
+                        testDiv.style.letterSpacing = letterSpacing;
+                        measureDiv.appendChild(testDiv);
+                        const h = (testDiv.offsetHeight || 34) + 4;
+                        measureDiv.removeChild(testDiv);
+                        
+                        items.push({
+                            type: 'expl-line',
+                            html: line.html,
+                            class: line.class,
+                            height: h,
+                            letterSpacing: letterSpacing
+                        });
+                    });
+                });
+            }
+            
+            const footerItems = [];
+            let footerHeight = 0;
+            if (footerBlock) {
+                footerItems.push(footerBlock.cloneNode(true));
+                footerHeight += footerBlock.offsetHeight + 15;
+            }
+            if (principalSignoff && templateSelect.value === 'upward') {
+                footerItems.push(principalSignoff.cloneNode(true));
+                footerHeight += principalSignoff.offsetHeight + 15;
+            }
+            
+            const pages = [];
+            let currentPageItems = [];
+            let currentHeight = 0;
+            let isFirstPage = true;
+            
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const capacity = isFirstPage ? page1Capacity : page2Capacity;
+                
+                if (currentHeight + item.height > capacity && currentPageItems.length > 0) {
+                    pages.push({ isFirst: isFirstPage, items: currentPageItems });
+                    isFirstPage = false;
+                    currentPageItems = [item];
+                    currentHeight = item.height;
+                } else {
+                    currentPageItems.push(item);
+                    currentHeight += item.height;
+                }
+            }
+            
+            const finalCapacity = isFirstPage ? page1Capacity : page2Capacity;
+            if (currentHeight + footerHeight > finalCapacity && currentPageItems.length > 0) {
                 pages.push({ isFirst: isFirstPage, items: currentPageItems });
                 isFirstPage = false;
-                currentPageItems = [item];
-                currentHeight = item.height;
-            } else {
-                currentPageItems.push(item);
-                currentHeight += item.height;
-            }
-        }
-        
-        // Now add the footer block. Does it fit on the current page?
-        const finalCapacity = isFirstPage ? page1Capacity : page2Capacity;
-        if (currentHeight + footerHeight > finalCapacity && currentPageItems.length > 0) {
-            // Push current page
-            pages.push({ isFirst: isFirstPage, items: currentPageItems });
-            isFirstPage = false;
-            // Place footer on a new page
-            pages.push({ isFirst: isFirstPage, items: [], footer: footerItems });
-        } else {
-            // Fits on the current page
-            pages.push({ isFirst: isFirstPage, items: currentPageItems, footer: footerItems });
-        }
-        
-        // 3. Render pages inside container
-        container.innerHTML = ''; // Clear container
-        
-        pages.forEach((page, index) => {
-            const pageDiv = document.createElement('div');
-            pageDiv.className = 'a4-sheet show-grid template-upward';
-            pageDiv.id = index === 0 ? 'a4-sheet' : `a4-sheet-page-${index + 1}`;
-            
-            // Build inner HTML for page
-            if (page.isFirst) {
-                // Page 1: clone headers from measureDiv
-                const p1Layout = document.createElement('div');
-                p1Layout.className = 'preview-layout-upward';
-                
-                p1Layout.appendChild(redHeader.cloneNode(true));
-                p1Layout.appendChild(contactDetails.cloneNode(true));
-                p1Layout.appendChild(receiverRow.cloneNode(true));
-                p1Layout.appendChild(metadataBlock.cloneNode(true));
-                
-                const bodyDiv = document.createElement('div');
-                bodyDiv.className = 'body-content';
-                
-                let explContainer = null;
-                page.items.forEach(item => {
-                    if (item.type === 'subject') {
-                        const subjDiv = document.createElement('div');
-                        subjDiv.className = item.class;
-                        subjDiv.innerHTML = item.html;
-                        bodyDiv.appendChild(subjDiv);
-                    } else if (item.type === 'expl-line') {
-                        if (!explContainer) {
-                            explContainer = document.createElement('div');
-                            explContainer.className = `content-section section-explanation ${hasPoints ? 'layout-stacked' : 'layout-side-by-side'}`;
-                            const titleSpan = document.createElement('span');
-                            titleSpan.className = 'sec-title';
-                            titleSpan.textContent = '說明：';
-                            explContainer.appendChild(titleSpan);
-                            
-                            const bodyWrapper = document.createElement('div');
-                            bodyWrapper.id = 'p-up-explanation';
-                            bodyWrapper.className = 'sec-body';
-                            explContainer.appendChild(bodyWrapper);
-                            bodyDiv.appendChild(explContainer);
-                        }
-                        const lineDiv = document.createElement('div');
-                        lineDiv.className = item.class;
-                        lineDiv.innerHTML = item.html;
-                        if (item.letterSpacing) {
-                            lineDiv.style.letterSpacing = item.letterSpacing;
-                        }
-                        explContainer.querySelector('#p-up-explanation').appendChild(lineDiv);
-                    }
-                });
-                
-                p1Layout.appendChild(bodyDiv);
-                
-                // If footer is on this page
-                if (page.footer) {
-                    page.footer.forEach(foot => p1Layout.appendChild(foot));
-                }
-                
                 pageDiv.appendChild(p1Layout);
             } else {
                 // Page 2+: ONLY the lines! No header, no '說明：' label!

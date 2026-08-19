@@ -113,8 +113,16 @@
                         <h3 class="card-subtitle"><i data-lucide="info"></i> 公文基本資訊</h3>
                         <div class="form-grid">
                             <div class="form-group col-span-2">
-                                <label for="up-receiver">受文者</label>
-                                <input type="text" id="up-receiver" value="">
+                                <label for="up-receiver-mode">受文者模式</label>
+                                <select id="up-receiver-mode">
+                                    <option value="A" selected>內部陳核/草稿 (連動「如正副本」+ 標題「(稿)」)</option>
+                                    <option value="B">正式發文/個別列印 (依正副本對象分頁列印)</option>
+                                    <option value="C">手動輸入</option>
+                                </select>
+                            </div>
+                            <div id="up-receiver-manual-group" class="form-group col-span-2 hidden">
+                                <label for="up-receiver-manual">手動輸入受文者</label>
+                                <input type="text" id="up-receiver-manual" value="">
                             </div>
                             <div class="form-group col-span-2">
                                 <label>發文日期 (民國年 / 月 / 日)</label>
