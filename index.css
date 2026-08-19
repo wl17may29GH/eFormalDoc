@@ -491,6 +491,37 @@ body {
     margin-top: 12pt; /* Exactly 1 line of 12pt size */
     text-align: left;
     font-family: var(--font-official);
+    display: flex;
+    align-items: center; /* Vertically align name and box */
+}
+
+/* Seal indicator box (Beta2) */
+.seal-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 2.3cm;
+    height: 2.3cm;
+    border: 1.5px solid #ff0000;
+    color: #ff0000;
+    font-family: var(--font-official);
+    line-height: 1.1;
+    margin-left: 1cm; /* Exactly 1cm gap to the right of the name */
+    box-sizing: border-box;
+}
+
+.seal-box-title,
+.seal-box-desc {
+    font-size: 11.5pt; /* Clean 11.5pt for DFKai Chinese text */
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.seal-box-size {
+    font-size: 7.5pt;
+    font-weight: normal;
+    margin-top: 2px;
 }
 
 /* Metadata block for Letter - 5 independent left-aligned lines */
