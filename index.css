@@ -491,24 +491,29 @@ body {
     margin-top: 12pt; /* Exactly 1 line of 12pt size */
     text-align: left;
     font-family: var(--font-official);
+    position: relative; /* Anchor for absolute positioned seal box */
+    line-height: 22pt;
+    height: 22pt; /* Lock height to match text line height to prevent layout shifts */
 }
 
 /* Seal indicator box (Beta2) - Hidden by default, shown only when grid is active */
 .seal-box {
     display: none; 
+    position: absolute;
+    left: 9.0em; /* Precisely 1cm (approx 1.8em) space to the right of "校 長  湯 明 哲" */
+    top: 50%;
+    transform: translateY(-50%);
     width: 2.3cm;
     height: 2.3cm;
     border: 1.5px solid #ff0000;
     color: #ff0000;
     font-family: var(--font-official);
     line-height: 1.1;
-    margin-left: 1cm; /* Exactly 1cm gap to the right of the name */
     box-sizing: border-box;
-    vertical-align: middle; /* Vertically align name and box on the same line */
 }
 
 .show-grid .seal-box {
-    display: inline-flex; /* Use inline-flex to sit inline with the name text */
+    display: flex; /* Flex layout inside the box to center text */
     flex-direction: column;
     justify-content: center;
     align-items: center;
