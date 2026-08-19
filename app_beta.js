@@ -660,6 +660,192 @@ document.addEventListener('DOMContentLoaded', () => {
             const pageFooters = clone.querySelectorAll('.page-number-footer');
             pageFooters.forEach(f => f.remove());
             
+            // Process each sheet individually to make it Word-compatible
+            const sheets = clone.querySelectorAll('.a4-sheet');
+            let contentHtml = '';
+            
+            sheets.forEach(sheet => {
+                // 1. Convert contact details container to table (Template 1)
+                const contactContainer = sheet.querySelector('.contact-details-container');
+                if (contactContainer) {
+                    const contactBlock = contactContainer.querySelector('.contact-details-block');
+                    const metadataBlock = sheet.querySelector('.metadata-block');
+                    
+                    let contactHTML = contactBlock ? contactBlock.innerHTML : '';
+                    let metadataHTML = metadataBlock ? metadataBlock.innerHTML : '';
+                    
+                    const table = document.createElement('table');
+                    table.setAttribute('border', '0');
+                    table.setAttribute('cellpadding', '0');
+                    table.setAttribute('cellspacing', '0');
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.borderTop = '1.5px solid #ff0000';
+                    table.style.borderBottom = '1.5px solid #ff0000';
+                    table.style.fontSize = '12pt';
+                    table.style.fontFamily = "'標楷體', DFKai-SB, serif";
+                    table.style.lineHeight = '1.5';
+                    table.style.marginBottom = '10px';
+                    
+                    table.innerHTML = `
+                        <tr>
+                            <td style="width: 48%; vertical-align: top; padding: 6px 0; font-family: '標楷體', DFKai-SB, serif;">
+                                ${contactHTML}
+                            </td>
+                            <td style="width: 4%; vertical-align: top;"></td>
+                            <td style="width: 48%; vertical-align: top; padding: 6px 0; padding-left: 10px; font-family: '標楷體', DFKai-SB, serif;">
+                                ${metadataHTML}
+                            </td>
+                        </tr>
+                    `;
+                    contactContainer.parentNode.replaceChild(table, contactContainer);
+                    if (metadataBlock) metadataBlock.remove();
+                }
+                
+                // 2. Convert all .content-section elements (Subject, Explanation, etc.) to tables
+                const sections = sheet.querySelectorAll('.content-section');
+                sections.forEach(sec => {
+                    const titleSpan = sec.querySelector('.sec-title');
+                    const bodyDiv = sec.querySelector('.sec-body');
+                    
+                    if (titleSpan && bodyDiv) {
+                        const titleHTML = titleSpan.innerHTML;
+                        const isStacked = sec.classList.contains('layout-stacked');
+                        
+                        const table = document.createElement('table');
+                        table.setAttribute('border', '0');
+                        table.setAttribute('cellpadding', '0');
+                        table.setAttribute('cellspacing', '0');
+                        table.style.width = '100%';
+                        table.style.borderCollapse = 'collapse';
+                        table.style.fontFamily = "'標楷體', DFKai-SB, serif";
+                        table.style.fontSize = '16pt';
+                        table.style.marginTop = '10px';
+                        table.style.marginBottom = '10px';
+                        
+                        if (isStacked) {
+                            table.innerHTML = `
+                                <tr>
+                                    <td style="width: 100%; vertical-align: top; font-weight: bold; line-height: 22pt; padding-bottom: 4px; font-family: '標楷體', DFKai-SB, serif;">
+                                        ${titleHTML}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%; vertical-align: top; line-height: 22pt; font-family: '標楷體', DFKai-SB, serif;">
+                                        ${bodyDiv.innerHTML}
+                                    </td>
+                                </tr>
+                            `;
+                        } else {
+                            const isSubject = sec.classList.contains('section-subject');
+                            const boldStyle = isSubject ? 'font-weight: bold;' : 'font-weight: normal;';
+                            
+                            table.innerHTML = `
+                                <tr>
+                                    <td style="width: 3.2em; vertical-align: top; font-weight: bold; line-height: 22pt; font-family: '標楷體', DFKai-SB, serif;">
+                                        ${titleHTML}
+                                    </td>
+                                    <td style="vertical-align: top; line-height: 22pt; text-align: justify; ${boldStyle} font-family: '標楷體', DFKai-SB, serif;">
+                                        ${bodyDiv.innerHTML}
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                        sec.parentNode.replaceChild(table, sec);
+                    }
+                });
+                
+                // 3. Convert .pa-flow-sigs (flex list) to table (Template 2)
+                const flowSigsContainers = sheet.querySelectorAll('.pa-flow-sigs');
+                flowSigsContainers.forEach(container => {
+                    const cells = container.querySelectorAll('.pa-flow-sig-cell');
+                    if (cells.length > 0) {
+                        const table = document.createElement('table');
+                        table.setAttribute('border', '0');
+                        table.setAttribute('cellpadding', '0');
+                        table.setAttribute('cellspacing', '0');
+                        table.style.width = '100%';
+                        table.style.borderCollapse = 'collapse';
+                        table.style.borderLeft = '1px solid #ff0000';
+                        table.style.borderTop = '1px solid #ff0000';
+                        table.style.borderBottom = '1px solid #ff0000';
+                        
+                        let trHTML = '<tr>';
+                        cells.forEach((cell, idx) => {
+                            const cellWidth = (100 / cells.length) + '%';
+                            const cellHTML = cell.innerHTML;
+                            const isLast = (idx === cells.length - 1);
+                            const borderRight = isLast ? 'none' : '1px solid #ff0000';
+                            trHTML += `
+                                <td style="width: ${cellWidth}; height: 48px; border-right: 1px solid #ff0000; vertical-align: top; text-align: center; background-color: #ffffff; padding: 2px;">
+                                    ${cellHTML}
+                                </td>
+                            `;
+                        });
+                        trHTML += '</tr>';
+                        table.innerHTML = trHTML;
+                        container.parentNode.replaceChild(table, container);
+                    }
+                });
+                
+                // 4. Ensure all paragraph lines inside explanation have appropriate styling
+                const lineDivs = sheet.querySelectorAll('.expl-paragraph, [class^="expl-level-"]');
+                lineDivs.forEach(div => {
+                    div.style.display = 'block';
+                    div.style.lineHeight = '22pt';
+                    div.style.fontSize = '16pt';
+                    div.style.fontFamily = "'標楷體', DFKai-SB, serif";
+                    
+                    if (div.classList.contains('expl-line-middle')) {
+                        div.style.textAlign = 'justify';
+                        div.style.textAlignLast = 'justify';
+                    } else {
+                        div.style.textAlign = 'justify';
+                        div.style.textAlignLast = 'left';
+                    }
+                });
+                
+                // 5. Explicitly apply red borders to signature flow tables (Template 1)
+                const sigTable = sheet.querySelector('.sig-flow-table');
+                if (sigTable) {
+                    sigTable.setAttribute('border', '1');
+                    sigTable.setAttribute('cellpadding', '4');
+                    sigTable.style.width = '100%';
+                    sigTable.style.borderCollapse = 'collapse';
+                    sigTable.style.border = '1.5px solid #ff0000';
+                    
+                    const tds = sigTable.querySelectorAll('td');
+                    tds.forEach(td => {
+                        td.style.border = '1.5px solid #ff0000';
+                        td.style.fontSize = '12pt';
+                        td.style.fontFamily = "'標楷體', DFKai-SB, serif";
+                        if (td.classList.contains('sig-title')) {
+                            td.style.backgroundColor = '#ffffff';
+                            td.style.color = '#ff0000';
+                            td.style.fontWeight = 'bold';
+                            td.style.textAlign = 'center';
+                        }
+                    });
+                }
+                
+                // 6. Support for A4 sheet border frame matching web preview
+                const hasGrid = toggleGrid.checked;
+                let sheetHTML = sheet.innerHTML;
+                if (hasGrid) {
+                    sheetHTML = `
+                        <table border="1" cellpadding="0" cellspacing="0" style="width: 100%; height: 900px; border-collapse: collapse; border: 1.5px solid #ff0000;">
+                            <tr>
+                                <td style="vertical-align: top; border: 1.5px solid #ff0000; padding: 15px;">
+                                    ${sheetHTML}
+                                </td>
+                            </tr>
+                        </table>
+                    `;
+                }
+                
+                contentHtml += `<div class="a4-sheet">${sheetHTML}</div>`;
+            });
+            
             // Get the stylesheets styles to embed inside the doc
             let styles = '';
             const stylesheets = document.styleSheets;
@@ -670,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         styles += rules[j].cssText;
                     }
                 } catch (e) {
-                    // Ignore cross-origin stylesheet access errors
+                    // Ignore
                 }
             }
             
@@ -720,13 +906,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 ${styles}
             `;
-            
-            // Get pages markup
-            let contentHtml = '';
-            const sheets = clone.querySelectorAll('.a4-sheet');
-            sheets.forEach(sheet => {
-                contentHtml += `<div class="a4-sheet">${sheet.innerHTML}</div>`;
-            });
             
             // Wrap everything in a full HTML page
             const fullHtml = `
