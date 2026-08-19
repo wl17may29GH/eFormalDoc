@@ -969,6 +969,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get content elements to distribute
         const subjectBlock = measureDiv.querySelector('.section-subject');
         const footerBlock = measureDiv.querySelector('.footer-block');
+        if (footerBlock) {
+            const sigSeal = footerBlock.querySelector('#p-up-signature-seal');
+            if (sigSeal) {
+                if (templateSelect.value === 'parallel_downward') {
+                    sigSeal.classList.remove('hidden');
+                } else {
+                    sigSeal.classList.add('hidden');
+                }
+            }
+        }
         const principalSignoff = measureDiv.querySelector('#p-up-principal-signoff');
         
         // Build items list with their heights
