@@ -180,12 +180,18 @@
                     <!-- 本文內容 -->
                     <div class="config-card">
                         <h3 class="card-subtitle"><i data-lucide="align-left"></i> 本文內容</h3>
-                        <div class="quick-phrases">
-                            <span>常用用語：</span>
-                            <button type="button" class="phrase-tag" data-phrase="檢陳">檢陳</button>
-                            <button type="button" class="phrase-tag" data-phrase="請鑒核">請鑒核</button>
-                            <button type="button" class="phrase-tag" data-phrase="檢送">檢送</button>
-                            <button type="button" class="phrase-tag" data-phrase="請查照">請查照</button>
+                        <div class="quick-phrases-container" style="margin-bottom: 12px; font-size: 0.85rem;">
+                            <span style="font-weight: bold; font-size: 0.85rem; color: var(--text-dark); display: block; margin-bottom: 6px;">常見公函用語：</span>
+                            <div class="quick-phrases" style="margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                                <span class="phrase-group-label" style="font-weight: 500; color: var(--text-muted); min-width: 80px;">上行文：</span>
+                                <button type="button" class="phrase-tag" data-phrase="檢陳">檢陳</button>
+                                <button type="button" class="phrase-tag" data-phrase="請鑒核">請鑒核</button>
+                            </div>
+                            <div class="quick-phrases" style="margin-bottom: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                                <span class="phrase-group-label" style="font-weight: 500; color: var(--text-muted); min-width: 80px;">平下行文：</span>
+                                <button type="button" class="phrase-tag" data-phrase="檢送">檢送</button>
+                                <button type="button" class="phrase-tag" data-phrase="請查照">請查照</button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="up-subject">主旨</label>
