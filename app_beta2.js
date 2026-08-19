@@ -638,12 +638,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const blob = new Blob([draftJSON], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         
-        // Get current Date (Gregorian YYYYMMDD)
+        // Get current Date & Time (Gregorian YYYYMMDDhhmm, 24h format)
         const d = new Date();
         const yyyy = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const dd = String(d.getDate()).padStart(2, '0');
-        const dateStr = `${yyyy}${mm}${dd}`;
+        const hh = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const dateStr = `${yyyy}${mm}${dd}${hh}${min}`;
         
         // Get Subject Value based on template
         let subjectVal = '';
