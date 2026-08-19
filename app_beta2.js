@@ -638,10 +638,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const blob = new Blob([draftJSON], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         
+        // Get current Date (Gregorian YYYYMMDD)
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}${mm}${dd}`;
+        
+        // Get Subject Value based on template
+        let subjectVal = '';
+        if (templateSelect.value === 'upward' || templateSelect.value === 'parallel_downward') {
+            const subjEl = document.getElementById('up-subject');
+            if (subjEl) subjectVal = subjEl.value.trim();
+        } else {
+            const subjEl = document.getElementById('pa-send-subject');
+            if (subjEl) subjectVal = subjEl.value.trim();
+        }
+        
+        // Clean illegal characters from filename
+        subjectVal = subjectVal.replace(/[\\/:*?"<>|\r\n]/g, ' ').trim();
+        if (subjectVal.length > 60) {
+            subjectVal = subjectVal.substring(0, 60);
+        }
+        if (!subjectVal) {
+            subjectVal = '無主旨';
+        }
+        
         const a = document.createElement('a');
         a.href = url;
-        const name = templateSelect.value === 'upward' ? '上行文' : (templateSelect.value === 'parallel_downward' ? '平行下行文' : '業洽函');
-        a.download = `長庚發函草稿_${name}.json`;
+        a.download = `${dateStr}_${subjectVal}.json`;
         a.click();
         
         URL.revokeObjectURL(url);
