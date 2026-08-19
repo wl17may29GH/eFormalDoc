@@ -526,6 +526,36 @@ body {
     letter-spacing: 1px;
 }
 
+/* Parallel/Downward signature seal block (Beta2) */
+.signature-seal-block {
+    display: block;
+    margin-top: 1cm; /* Exactly 1cm below CC "副本：" row */
+    position: relative;
+    height: 2.2cm; /* Lock height to avoid layout shifts when grid toggles */
+}
+
+.signature-seal-box {
+    display: none; /* Hidden by default */
+    width: 8cm;
+    height: 2.2cm;
+    border: 1.5px solid #ff0000;
+    color: #ff0000;
+    font-family: var(--font-official);
+    box-sizing: border-box;
+    position: absolute;
+    left: 3.0em; /* Align left edge of box with right side of "副本：" colon */
+    top: 0;
+}
+
+.show-grid .signature-seal-box {
+    display: flex; /* Flex layout inside the box to center text */
+    justify-content: center;
+    align-items: center;
+    font-size: 16pt;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
 /* Metadata block for Letter - 5 independent left-aligned lines */
 .metadata-block {
     font-size: 12pt;
@@ -953,7 +983,8 @@ body {
     .app-header,
     .editor-panel,
     .preview-toolbar,
-    .seal-box {
+    .seal-box,
+    .signature-seal-box {
         display: none !important;
     }
 

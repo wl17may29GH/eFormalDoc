@@ -243,6 +243,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         principalSignoff.classList.add('hidden');
                     }
                 }
+                
+                // Toggle parallel signature seal visibility (parallel_downward only) (Beta2)
+                const signatureSeal = document.getElementById('p-up-signature-seal');
+                if (signatureSeal) {
+                    if (value === 'parallel_downward') {
+                        signatureSeal.classList.remove('hidden');
+                    } else {
+                        signatureSeal.classList.add('hidden');
+                    }
+                }
             } else {
                 activeSheet.classList.add('template-parallel');
                 panelUpward.classList.add('hidden');
