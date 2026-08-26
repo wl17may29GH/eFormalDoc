@@ -1103,6 +1103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const explBody = measureDiv.querySelector('#p-up-explanation');
                 const paragraphs = explBody.querySelectorAll('.expl-paragraph');
                 paragraphs.forEach(p => {
+                    adjustElementOrphans(p);
                     const letterSpacing = p.style.letterSpacing || '';
                     const baseClass = p.className;
                     let bodyClass = baseClass + '-body';
