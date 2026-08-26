@@ -1039,23 +1039,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 el.innerHTML = originalHTML;
                 
-                const result = [];
-                lines.forEach((lineText, idx) => {
-                    const isLastLine = (idx === lines.length - 1);
-                    let lineClass = isLastLine ? `${baseClass} expl-line-last` : `${baseClass} expl-line-middle`;
-                    
-                    let lineHTML = '';
-                    if (idx === 0 && markerHTML) {
-                        lineHTML = markerHTML + `<span class="${bodyClass}">${lineText}</span>`;
+                return lines.map((lineText, idx) => {
+                    const escapedText = escapeHTML(lineText).replace(/ /g, '&nbsp;');
+                    const isLast = (idx === lines.length - 1);
+                    const suffix = isLast ? ' expl-line-last' : ' expl-line-middle';
+                    if (idx === 0) {
+                        return {
+                            html: markerHTML + escapedText,
+                            class: baseClass + suffix
+                        };
                     } else {
-                        lineHTML = `<span class="${bodyClass}">${lineText}</span>`;
+                        return {
+                            html: escapedText,
+                            class: bodyClass + suffix
+                        };
                     }
-                    result.push({
-                        html: lineHTML,
-                        class: lineClass
-                    });
                 });
-                return result;
             }
             
             // Measure heights of elements
@@ -1106,8 +1105,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 paragraphs.forEach(p => {
                     const letterSpacing = p.style.letterSpacing || '';
                     const baseClass = p.className;
-                    const bodySpan = p.querySelector('.expl-body');
-                    const bodyClass = bodySpan ? bodySpan.className : '';
+                    let bodyClass = baseClass + '-body';
+                    if (baseClass.includes('expl-level-1')) bodyClass = 'expl-paragraph expl-level-1-body';
+                    else if (baseClass.includes('expl-level-2')) bodyClass = 'expl-paragraph expl-level-2-body';
+                    else if (baseClass.includes('expl-level-3')) bodyClass = 'expl-paragraph expl-level-3-body';
+                    else if (baseClass.includes('expl-level-4')) bodyClass = 'expl-paragraph expl-level-4-body';
+                    else if (baseClass.includes('expl-level-5')) bodyClass = 'expl-paragraph expl-level-5-body';
+                    else if (baseClass.includes('expl-level-6')) bodyClass = 'expl-paragraph expl-level-6-body';
+                    else bodyClass = 'expl-paragraph';
                     
                     const lines = splitParagraphIntoLines(p, baseClass, bodyClass);
                     lines.forEach(line => {
