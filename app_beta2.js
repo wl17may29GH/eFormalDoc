@@ -970,7 +970,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!hasExplanation) {
                     explanationSection.style.display = 'none';
                 } else {
-                    explanationSection.style.display = 'block';
+                    explanationSection.style.display = '';
                     if (hasPoints) {
                         explanationSection.classList.remove('layout-side-by-side');
                         explanationSection.classList.add('layout-stacked');
