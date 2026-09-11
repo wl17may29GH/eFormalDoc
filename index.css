@@ -683,28 +683,33 @@ body {
     text-justify: inter-ideograph !important;
 }
 
-.expl-marker-w1 {
+.expl-marker-w1, .expl-marker-w15, .expl-marker-w2, .expl-marker-w3, .expl-marker-w4, [class^="expl-marker-"] {
     display: inline-block;
-    width: 1em;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
     text-align: left;
     text-indent: 0 !important;
     vertical-align: top;
+}
+
+.expl-marker-w1 {
+    width: 1em;
 }
 
 .expl-marker-w15 {
-    display: inline-block;
     width: 1.5em;
-    text-align: left;
-    text-indent: 0 !important;
-    vertical-align: top;
 }
 
 .expl-marker-w2 {
-    display: inline-block;
     width: 2em;
-    text-align: left;
-    text-indent: 0 !important;
-    vertical-align: top;
+}
+
+.expl-marker-w3 {
+    width: 3em;
+}
+
+.expl-marker-w4 {
+    width: 4em;
 }
 
 .expl-level-1 {
@@ -715,13 +720,37 @@ body {
     padding-left: 3em;
     text-indent: 0;
 }
+.expl-level-1-w3 {
+    padding-left: 4em; /* Left 1em + Hanging 3em (e.g. 十一、) */
+    text-indent: -3em;
+}
+.expl-level-1-w3-body {
+    padding-left: 4em;
+    text-indent: 0;
+}
 
 .expl-level-2 {
-    padding-left: 4em; /* Left 2em + Hanging 2em */
+    padding-left: 4em; /* Left 2em + Hanging 2em (e.g. (一)) */
     text-indent: -2em;
 }
 .expl-level-2-body {
     padding-left: 4em;
+    text-indent: 0;
+}
+.expl-level-2-w3 {
+    padding-left: 5em; /* Left 2em + Hanging 3em (e.g. (十一)) */
+    text-indent: -3em;
+}
+.expl-level-2-w3-body {
+    padding-left: 5em;
+    text-indent: 0;
+}
+.expl-level-2-w4 {
+    padding-left: 6em; /* Left 2em + Hanging 4em (e.g. （十一） full-width) */
+    text-indent: -4em;
+}
+.expl-level-2-w4-body {
+    padding-left: 6em;
     text-indent: 0;
 }
 
@@ -733,6 +762,22 @@ body {
     padding-left: 4.5em;
     text-indent: 0;
 }
+.expl-level-3-w2 {
+    padding-left: 5em; /* Left 3em + Hanging 2em (e.g. 10、) */
+    text-indent: -2em;
+}
+.expl-level-3-w2-body {
+    padding-left: 5em;
+    text-indent: 0;
+}
+.expl-level-3-w3 {
+    padding-left: 6em; /* Left 3em + Hanging 3em */
+    text-indent: -3em;
+}
+.expl-level-3-w3-body {
+    padding-left: 6em;
+    text-indent: 0;
+}
 
 .expl-level-4 {
     padding-left: 5.5em; /* Left 4em + Hanging 1.5em (Align with right side of ')') */
@@ -740,6 +785,22 @@ body {
 }
 .expl-level-4-body {
     padding-left: 5.5em;
+    text-indent: 0;
+}
+.expl-level-4-w2 {
+    padding-left: 6em; /* Left 4em + Hanging 2em (e.g. (10)) */
+    text-indent: -2em;
+}
+.expl-level-4-w2-body {
+    padding-left: 6em;
+    text-indent: 0;
+}
+.expl-level-4-w3 {
+    padding-left: 7em; /* Left 4em + Hanging 3em (e.g. （１）) */
+    text-indent: -3em;
+}
+.expl-level-4-w3-body {
+    padding-left: 7em;
     text-indent: 0;
 }
 
@@ -751,6 +812,14 @@ body {
     padding-left: 7em;
     text-indent: 0;
 }
+.expl-level-5-w3 {
+    padding-left: 8em; /* Left 5em + Hanging 3em */
+    text-indent: -3em;
+}
+.expl-level-5-w3-body {
+    padding-left: 8em;
+    text-indent: 0;
+}
 
 .expl-level-6 {
     padding-left: 8em; /* Left 6em + Hanging 2em (Align with right side of ')') */
@@ -758,6 +827,14 @@ body {
 }
 .expl-level-6-body {
     padding-left: 8em;
+    text-indent: 0;
+}
+.expl-level-6-w3 {
+    padding-left: 9em; /* Left 6em + Hanging 3em (e.g. （甲）) */
+    text-indent: -3em;
+}
+.expl-level-6-w3-body {
+    padding-left: 9em;
     text-indent: 0;
 }
 

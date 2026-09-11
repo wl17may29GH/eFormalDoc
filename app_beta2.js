@@ -111,12 +111,101 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/'/g, "&#039;");
     }
 
+    // Calculate dynamic marker width and responsive level styling classes for outline items
+    function getMarkerInfo(level, marker) {
+        let emWidth = 0;
+        for (const c of marker) {
+            emWidth += c.charCodeAt(0) < 128 ? 0.5 : 1.0;
+        }
+        
+        let markerWidthClass = 'expl-marker-w2';
+        let levelClass = `expl-level-${level}`;
+        let bodyClass = `expl-paragraph expl-level-${level}-body`;
+        
+        if (level === 1) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-1-w3';
+                bodyClass = 'expl-paragraph expl-level-1-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-1';
+                bodyClass = 'expl-paragraph expl-level-1-body';
+            }
+        } else if (level === 2) {
+            if (emWidth >= 3.5) {
+                markerWidthClass = 'expl-marker-w4';
+                levelClass = 'expl-level-2-w4';
+                bodyClass = 'expl-paragraph expl-level-2-w4-body';
+            } else if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-2-w3';
+                bodyClass = 'expl-paragraph expl-level-2-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-2';
+                bodyClass = 'expl-paragraph expl-level-2-body';
+            }
+        } else if (level === 3) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-3-w3';
+                bodyClass = 'expl-paragraph expl-level-3-w3-body';
+            } else if (emWidth > 1.5) {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-3-w2';
+                bodyClass = 'expl-paragraph expl-level-3-w2-body';
+            } else {
+                markerWidthClass = 'expl-marker-w15';
+                levelClass = 'expl-level-3';
+                bodyClass = 'expl-paragraph expl-level-3-body';
+            }
+        } else if (level === 4) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-4-w3';
+                bodyClass = 'expl-paragraph expl-level-4-w3-body';
+            } else if (emWidth > 1.5) {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-4-w2';
+                bodyClass = 'expl-paragraph expl-level-4-w2-body';
+            } else {
+                markerWidthClass = 'expl-marker-w15';
+                levelClass = 'expl-level-4';
+                bodyClass = 'expl-paragraph expl-level-4-body';
+            }
+        } else if (level === 5) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-5-w3';
+                bodyClass = 'expl-paragraph expl-level-5-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-5';
+                bodyClass = 'expl-paragraph expl-level-5-body';
+            }
+        } else if (level === 6) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-6-w3';
+                bodyClass = 'expl-paragraph expl-level-6-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-6';
+                bodyClass = 'expl-paragraph expl-level-6-body';
+            }
+        }
+        
+        return { markerWidthClass, levelClass, bodyClass };
+    }
+
     // Convert explanation text to HTML, supporting hanging indent blocks for numbered points (Level 1-6)
     function formatExplanationHTML(text, hasPoints) {
         if (!text) return '';
         
         const lines = text.split('\n');
         let currentLevel = 0;
+        let currentBodyClass = '';
         
         if (hasPoints) {
             return lines.map(line => {
@@ -125,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let marker = '';
                 let content = line;
                 
-                // Level 1: 一、 (Marker: 一、 (2em))
+                // Level 1: 一、 (Marker: 一、)
                 if (/^[一二三四五六七八九十百]+[、]/.test(trimmed)) {
                     detectedLevel = 1;
                     const match = line.match(/^(\s*)([一二三四五六七八九十百]+[、])(.*)/);
@@ -134,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         content = match[3];
                     }
                 }
-                // Level 2: (一) (Marker: (一) (2em))
+                // Level 2: (一) (Marker: (一))
                 else if (/^[(（][一二三四五六七八九十百]+[)）]/.test(trimmed)) {
                     detectedLevel = 2;
                     const match = line.match(/^(\s*)([(（][一二三四五六七八九十百]+[)）])(.*)/);
@@ -143,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         content = match[3];
                     }
                 }
-                // Level 3: 1、 (Marker: 1、 (1.5em))
+                // Level 3: 1、 (Marker: 1、)
                 else if (/^\d+[、]/.test(trimmed)) {
                     detectedLevel = 3;
                     const match = line.match(/^(\s*)(\d+[、])(.*)/);
@@ -152,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         content = match[3];
                     }
                 }
-                // Level 4: (1) (Marker: (1) (1.5em))
+                // Level 4: (1) (Marker: (1))
                 else if (/^[(（]\d+[)）]/.test(trimmed)) {
                     detectedLevel = 4;
                     const match = line.match(/^(\s*)([(（]\d+[)）])(.*)/);
@@ -161,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         content = match[3];
                     }
                 }
-                // Level 5: 甲、 (Marker: 甲、 (2em))
+                // Level 5: 甲、 (Marker: 甲、)
                 else if (/^[甲乙丙丁戊己庚辛壬癸]+[、]/.test(trimmed)) {
                     detectedLevel = 5;
                     const match = line.match(/^(\s*)([甲乙丙丁戊己庚辛壬癸]+[、])(.*)/);
@@ -170,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         content = match[3];
                     }
                 }
-                // Level 6: (甲) (Marker: (甲) (2em))
+                // Level 6: (甲) (Marker: (甲))
                 else if (/^[(（][甲乙丙丁戊己庚辛壬癸]+[)）]/.test(trimmed)) {
                     detectedLevel = 6;
                     const match = line.match(/^(\s*)([(（][甲乙丙丁戊己庚辛壬癸]+[)）])(.*)/);
@@ -182,14 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (detectedLevel > 0) {
                     currentLevel = detectedLevel;
+                    const markerInfo = getMarkerInfo(detectedLevel, marker);
+                    currentBodyClass = markerInfo.bodyClass;
                     const escapedMarker = escapeHTML(marker).replace(/ /g, '&nbsp;');
                     const escapedContent = escapeHTML(content).replace(/ /g, '&nbsp;');
-                    const markerWidthClass = (detectedLevel === 3 || detectedLevel === 4) ? 'expl-marker-w15' : 'expl-marker-w2';
-                    return `<div class="expl-paragraph expl-level-${detectedLevel}"><span class="${markerWidthClass}">${escapedMarker}</span>${escapedContent}</div>`;
+                    return `<div class="expl-paragraph ${markerInfo.levelClass}"><span class="${markerInfo.markerWidthClass}">${escapedMarker}</span>${escapedContent}</div>`;
                 } else {
                     const escapedLine = escapeHTML(line).replace(/ /g, '&nbsp;');
-                    if (currentLevel > 0) {
-                        return `<div class="expl-paragraph expl-level-${currentLevel}-body">${escapedLine}</div>`;
+                    if (currentLevel > 0 && currentBodyClass) {
+                        return `<div class="${currentBodyClass}">${escapedLine}</div>`;
                     } else {
                         return `<div class="expl-paragraph">${escapedLine}</div>`;
                     }
@@ -1107,11 +1197,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     const letterSpacing = p.style.letterSpacing || '';
                     const baseClass = p.className;
                     let bodyClass = baseClass + '-body';
-                    if (baseClass.includes('expl-level-1')) bodyClass = 'expl-paragraph expl-level-1-body';
+                    if (baseClass.includes('expl-level-1-w3')) bodyClass = 'expl-paragraph expl-level-1-w3-body';
+                    else if (baseClass.includes('expl-level-1')) bodyClass = 'expl-paragraph expl-level-1-body';
+                    else if (baseClass.includes('expl-level-2-w4')) bodyClass = 'expl-paragraph expl-level-2-w4-body';
+                    else if (baseClass.includes('expl-level-2-w3')) bodyClass = 'expl-paragraph expl-level-2-w3-body';
                     else if (baseClass.includes('expl-level-2')) bodyClass = 'expl-paragraph expl-level-2-body';
+                    else if (baseClass.includes('expl-level-3-w3')) bodyClass = 'expl-paragraph expl-level-3-w3-body';
+                    else if (baseClass.includes('expl-level-3-w2')) bodyClass = 'expl-paragraph expl-level-3-w2-body';
                     else if (baseClass.includes('expl-level-3')) bodyClass = 'expl-paragraph expl-level-3-body';
+                    else if (baseClass.includes('expl-level-4-w3')) bodyClass = 'expl-paragraph expl-level-4-w3-body';
+                    else if (baseClass.includes('expl-level-4-w2')) bodyClass = 'expl-paragraph expl-level-4-w2-body';
                     else if (baseClass.includes('expl-level-4')) bodyClass = 'expl-paragraph expl-level-4-body';
+                    else if (baseClass.includes('expl-level-5-w3')) bodyClass = 'expl-paragraph expl-level-5-w3-body';
                     else if (baseClass.includes('expl-level-5')) bodyClass = 'expl-paragraph expl-level-5-body';
+                    else if (baseClass.includes('expl-level-6-w3')) bodyClass = 'expl-paragraph expl-level-6-w3-body';
                     else if (baseClass.includes('expl-level-6')) bodyClass = 'expl-paragraph expl-level-6-body';
                     else bodyClass = 'expl-paragraph';
                     
