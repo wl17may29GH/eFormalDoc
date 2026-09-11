@@ -887,6 +887,7 @@ document.addEventListener('DOMContentLoaded', () => {
             measureDiv.style.minHeight = '0';
             document.body.appendChild(measureDiv);
         }
+        measureDiv.style.display = 'block';
         
         // Populate the measure div with the template and current data
         measureDiv.innerHTML = a4TemplateHTML;
@@ -1280,6 +1281,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 sheet.classList.remove('show-grid');
             }
         });
+
+        // Clean up measurement workspace to prevent ghost printing
+        if (measureDiv) {
+            measureDiv.innerHTML = '';
+            measureDiv.style.display = 'none';
+        }
     }
 
     // Drag resizing functionality for split screen

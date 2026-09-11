@@ -944,6 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
             measureDiv.style.minHeight = '0';
             document.body.appendChild(measureDiv);
         }
+        measureDiv.style.display = 'block';
 
         // Warning alert check for sending parallel/downward documents to Ministry of Education (MOE)
         if (templateSelect && templateSelect.value === 'parallel_downward') {
@@ -1406,6 +1407,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 sheet.classList.remove('show-grid');
             }
         });
+
+        // Clean up measurement workspace to prevent ghost printing
+        if (measureDiv) {
+            measureDiv.innerHTML = '';
+            measureDiv.style.display = 'none';
+        }
     }
 
     // Drag resizing functionality for split screen
