@@ -1088,8 +1088,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            setSafeText('#p-up-original', document.getElementById('up-original').value || '○○○○○○');
-            setSafeText('#p-up-cc', document.getElementById('up-cc').value || '');
+            const upOrigVal = document.getElementById('up-original').value;
+            setSafeHTML('#p-up-original', upOrigVal ? protectNoBreak(upOrigVal) : '○○○○○○');
+            const upCcVal = document.getElementById('up-cc').value;
+            setSafeHTML('#p-up-cc', upCcVal ? protectNoBreak(upCcVal) : '');
             
             // Toggle signoff block
             const signoffBlock = measureDiv.querySelector('#p-up-principal-signoff');
