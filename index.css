@@ -662,13 +662,22 @@ body {
     font-weight: bold;
     text-align: justify;
     text-justify: inter-ideograph;
-    word-break: break-all;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .expl-paragraph {
     margin-bottom: 4px;
     line-height: 22pt;
-    word-break: break-all;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.no-break {
+    white-space: nowrap !important;
+    display: inline;
 }
 
 .expl-line-middle {
@@ -843,7 +852,8 @@ body {
     white-space: pre-wrap;
     text-align: justify;
     text-justify: inter-ideograph; /* Standard Chinese left-right justification */
-    word-break: break-all;
+    word-break: normal;
+    overflow-wrap: break-word;
     font-weight: normal; /* Non-bold content */
 }
 

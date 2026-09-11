@@ -88,19 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Convert newlines to breaks and escape HTML
-    function formatHTML(text) {
-        if (!text) return '';
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            .replace(/\n/g, '<br>')
-            .replace(/ /g, '&nbsp;');
-    }
-
     function escapeHTML(str) {
         if (!str) return '';
         return str
@@ -109,6 +96,31 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+    }
+
+    // Tokenize text into atomic units: currency, dates, numbers, English words, punctuation, and CJK characters
+    function tokenizeText(text) {
+        if (!text) return [];
+        const tokenRegex = /(?:新[臺台]幣|NT\$|\$)?[\d,]+(?:\.\d+)?元(?:整)?|(?:民國)?\d+年(?:度)?|\d{1,2}月|\d{1,2}日|\d+(?:[,\.]\d+)+|[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*|\s+|./gu;
+        return text.match(tokenRegex) || [];
+    }
+
+    // Protect dates, numbers, currency amounts, and English words from being truncated across lines
+    function protectNoBreak(text) {
+        if (!text) return '';
+        const tokens = tokenizeText(text);
+        return tokens.map(t => {
+            const isAtomic = t.length > 1 && !/^\s+$/.test(t);
+            const escaped = escapeHTML(t);
+            return isAtomic ? `<span class="no-break">${escaped}</span>` : escaped;
+        }).join('');
+    }
+
+    // Convert newlines to breaks and escape HTML, protecting dates, numbers, and words
+    function formatHTML(text) {
+        if (!text) return '';
+        const lines = text.split('\n');
+        return lines.map(line => protectNoBreak(line)).join('<br>');
     }
 
     // Calculate dynamic marker width and responsive level styling classes for outline items
@@ -273,22 +285,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentLevel = detectedLevel;
                     const markerInfo = getMarkerInfo(detectedLevel, marker);
                     currentBodyClass = markerInfo.bodyClass;
-                    const escapedMarker = escapeHTML(marker).replace(/ /g, '&nbsp;');
-                    const escapedContent = escapeHTML(content).replace(/ /g, '&nbsp;');
-                    return `<div class="expl-paragraph ${markerInfo.levelClass}"><span class="${markerInfo.markerWidthClass}">${escapedMarker}</span>${escapedContent}</div>`;
+                    const escapedMarker = escapeHTML(marker);
+                    const protectedContent = protectNoBreak(content);
+                    return `<div class="expl-paragraph ${markerInfo.levelClass}"><span class="${markerInfo.markerWidthClass}">${escapedMarker}</span>${protectedContent}</div>`;
                 } else {
-                    const escapedLine = escapeHTML(line).replace(/ /g, '&nbsp;');
                     if (currentLevel > 0 && currentBodyClass) {
-                        return `<div class="${currentBodyClass}">${escapedLine}</div>`;
+                        return `<div class="${currentBodyClass}">${protectNoBreak(line)}</div>`;
                     } else {
-                        return `<div class="expl-paragraph">${escapedLine}</div>`;
+                        return `<div class="expl-paragraph">${protectNoBreak(line)}</div>`;
                     }
                 }
             }).join('');
         } else {
             return lines.map(line => {
-                const escapedLine = escapeHTML(line).replace(/ /g, '&nbsp;');
-                return `<div class="expl-paragraph">${escapedLine}</div>`;
+                return `<div class="expl-paragraph">${protectNoBreak(line)}</div>`;
             }).join('');
         }
     }
@@ -864,10 +874,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (textToSplit.length <= 2) return;
         
         function getLastLineCharCount() {
-            const chars = Array.from(textToSplit);
-            // Re-render wrapping the text characters in span tags, keeping the marker span intact
-            el.innerHTML = markerHTML + chars.map(c => `<span>${c}</span>`).join('');
-            const spans = el.querySelectorAll('span:not([class^="expl-marker-"])');
+            const tokens = tokenizeText(textToSplit);
+            // Re-render wrapping the text tokens in span tags, keeping the marker span intact
+            el.innerHTML = markerHTML + tokens.map(t => {
+                const isAtomic = t.length > 1 && !/^\s+$/.test(t);
+                const escaped = escapeHTML(t);
+                return isAtomic ? `<span class="no-break">${escaped}</span>` : `<span>${escaped}</span>`;
+            }).join('');
+            const spans = el.querySelectorAll(':scope > span:not([class^="expl-marker-"])');
             if (spans.length === 0) return 0;
             
             const lines = [];
@@ -1100,9 +1114,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     textToSplit = el.textContent;
                 }
                 
-                const chars = Array.from(textToSplit);
-                el.innerHTML = markerHTML + chars.map(c => `<span>${c}</span>`).join('');
-                const spans = el.querySelectorAll('span:not([class^="expl-marker-"])');
+                const tokens = tokenizeText(textToSplit);
+                el.innerHTML = markerHTML + tokens.map(t => {
+                    const isAtomic = t.length > 1 && !/^\s+$/.test(t);
+                    const escaped = escapeHTML(t);
+                    return isAtomic ? `<span class="no-break">${escaped}</span>` : `<span>${escaped}</span>`;
+                }).join('');
+                const spans = el.querySelectorAll(':scope > span:not([class^="expl-marker-"])');
                 
                 const lines = [];
                 if (spans.length === 0) {
@@ -1130,17 +1148,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.innerHTML = originalHTML;
                 
                 return lines.map((lineText, idx) => {
-                    const escapedText = escapeHTML(lineText).replace(/ /g, '&nbsp;');
+                    const protectedHTML = protectNoBreak(lineText);
                     const isLast = (idx === lines.length - 1);
                     const suffix = isLast ? ' expl-line-last' : ' expl-line-middle';
                     if (idx === 0) {
                         return {
-                            html: markerHTML + escapedText,
+                            html: markerHTML + protectedHTML,
                             class: baseClass + suffix
                         };
                     } else {
                         return {
-                            html: escapedText,
+                            html: protectedHTML,
                             class: bodyClass + suffix
                         };
                     }
