@@ -50,38 +50,50 @@
     <div class="app-container">
         <!-- Left Editor Panel -->
         <aside class="editor-panel">
-            <!-- Template Selection -->
-            <section class="config-card">
-                <h2 class="card-title"><i data-lucide="settings"></i> 公文類型選擇</h2>
-                <div class="form-grid">
-                    <div class="form-group col-span-2">
-                        <label for="template-select">公文類別</label>
-                        <select id="template-select" style="font-weight: bold; border-color: var(--primary-color);">
-                            <option value="upward">1. 上行文 (函 - 稿簽)</option>
-                            <option value="parallel_downward">2. 平行文/下行文 (函 - 稿簽)</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-span-2">
-                        <label for="editor-font-size-select">編輯器字型大小 (14-24號字)</label>
-                        <select id="editor-font-size-select">
-                            <option value="14">14 px</option>
-                            <option value="15">15 px</option>
-                            <option value="16" selected>16 px (預設)</option>
-                            <option value="17">17 px</option>
-                            <option value="18">18 px</option>
-                            <option value="19">19 px</option>
-                            <option value="20">20 px</option>
-                            <option value="21">21 px</option>
-                            <option value="22">22 px</option>
-                            <option value="23">23 px</option>
-                            <option value="24">24 px</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
             <!-- Document Details Form -->
             <form id="doc-form">
+                
+                <!-- Template & Mode Selection -->
+                <section class="config-card">
+                    <h2 class="card-title"><i data-lucide="settings"></i> 公文選擇</h2>
+                    <div class="form-grid">
+                        <div class="form-group col-span-2">
+                            <label for="template-select">一、類別</label>
+                            <select id="template-select" style="font-weight: bold; border-color: var(--primary-color);">
+                                <option value="upward">1. 上行文(函)</option>
+                                <option value="parallel_downward">2. 平行文/下行文(函)</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-span-2">
+                            <label for="up-receiver-mode">二、模式</label>
+                            <select id="up-receiver-mode" style="font-weight: bold; border-color: var(--primary-color);">
+                                <option value="A" selected>1. 內部陳核</option>
+                                <option value="B">2. 正式發文</option>
+                                <option value="C">3. 手動輸入</option>
+                            </select>
+                        </div>
+                        <div id="up-receiver-manual-group" class="form-group col-span-2 hidden">
+                            <label for="up-receiver-manual">手動輸入受文者</label>
+                            <input type="text" id="up-receiver-manual" value="" placeholder="請輸入受文者名稱">
+                        </div>
+                        <div class="form-group col-span-2">
+                            <label for="editor-font-size-select">編輯器字型大小 (14-24號字)</label>
+                            <select id="editor-font-size-select">
+                                <option value="14">14 px</option>
+                                <option value="15">15 px</option>
+                                <option value="16" selected>16 px (預設)</option>
+                                <option value="17">17 px</option>
+                                <option value="18">18 px</option>
+                                <option value="19">19 px</option>
+                                <option value="20">20 px</option>
+                                <option value="21">21 px</option>
+                                <option value="22">22 px</option>
+                                <option value="23">23 px</option>
+                                <option value="24">24 px</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
                 
                 <!-- ================= 格式 1: 函 (稿簽) 欄位 ================= -->
                 <div id="panel-upward" class="template-panel">
@@ -112,18 +124,6 @@
                     <div class="config-card">
                         <h3 class="card-subtitle"><i data-lucide="info"></i> 公文基本資訊</h3>
                         <div class="form-grid">
-                            <div class="form-group col-span-2">
-                                <label for="up-receiver-mode">受文者模式</label>
-                                <select id="up-receiver-mode">
-                                    <option value="A" selected>內部陳核/草稿 (連動「如正副本」+ 標題「(稿)」)</option>
-                                    <option value="B">正式發文/個別列印 (依正副本對象分頁列印)</option>
-                                    <option value="C">手動輸入</option>
-                                </select>
-                            </div>
-                            <div id="up-receiver-manual-group" class="form-group col-span-2 hidden">
-                                <label for="up-receiver-manual">手動輸入受文者</label>
-                                <input type="text" id="up-receiver-manual" value="">
-                            </div>
                             <div class="form-group col-span-2">
                                 <label>發文日期 (民國年 / 月 / 日)</label>
                                 <div style="display: flex; align-items: center; width: 100%;">

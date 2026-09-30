@@ -462,6 +462,8 @@ document.addEventListener('DOMContentLoaded', () => {
             formData[el.id] = el.value;
         });
         formData['template-select'] = templateSelect.value;
+        if (upReceiverMode) formData['up-receiver-mode'] = upReceiverMode.value;
+        if (upReceiverManual) formData['up-receiver-manual'] = upReceiverManual.value;
         if (presetSelect) formData['preset-select'] = presetSelect.value;
         localStorage.setItem('cgu_formal_doc_draft_v3', JSON.stringify(formData));
     }
@@ -671,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
             upReceiverManualGroup.classList.add('hidden');
         }
         saveDraft();
+        syncPreview();
     }
     if (upReceiverMode) {
         upReceiverMode.addEventListener('change', handleReceiverModeChange);
@@ -728,6 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initDate();
             if (presetSelect) presetSelect.value = 'custom';
             handleTemplateChange();
+            handleReceiverModeChange();
         }
     });
 
