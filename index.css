@@ -1218,3 +1218,273 @@ body {
 .sidebar-copyright p {
     margin-bottom: 2px;
 }
+
+/* ================= Beta 4: 業務接洽便函 專用排版 ================= */
+.pa-beta4-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-ui);
+    color: #000000;
+}
+
+/* 頂端 Table 1: 屬性資訊表 */
+.pa-top-meta-table-b4 {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5px solid #000000;
+    margin-bottom: 3px;
+    table-layout: fixed;
+    font-family: var(--font-ui);
+}
+
+.pa-top-meta-table-b4 td {
+    border: 1px solid #000000;
+    padding: 3px 6px;
+    font-size: 9.5pt;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.pa-top-meta-table-b4 td.lbl-cell {
+    background-color: #F8F9FA;
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+}
+
+.pa-top-meta-table-b4 td.title-cell {
+    font-family: var(--font-official);
+    font-size: 19pt;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 3px;
+    padding: 4px;
+    vertical-align: middle;
+}
+
+/* 發文字號列 */
+.pa-serial-row-b4 {
+    font-family: var(--font-official);
+    font-size: 12pt;
+    margin-bottom: 3px;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.2;
+}
+
+/* 發文區 / 回文區 固定總高度區塊: 98mm */
+.pa-segment-block {
+    height: 98mm;
+    max-height: 98mm;
+    min-height: 98mm;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    border: 1.5px solid #000000;
+}
+
+/* 發文區 - 黃底區 */
+.pa-send-block {
+    background-color: #FEFDE6; /* Soft official warm yellow */
+}
+
+.pa-send-block .cell-lbl {
+    background-color: #FDF9D3;
+}
+
+/* 回文區 - 藍底區 */
+.pa-reply-block {
+    background-color: #F0F7FD; /* Soft official sky blue */
+}
+
+.pa-reply-block .cell-lbl {
+    background-color: #DFEDF9;
+}
+
+/* 發文區與回文區間隔 */
+.pa-block-divider {
+    height: 3.5mm;
+    min-height: 3.5mm;
+}
+
+/* Table 2 主表格 (發文段 / 覆文段) */
+.pa-main-table-b4 {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: var(--font-ui);
+}
+
+.pa-main-table-b4 td {
+    border: 1px solid #000000;
+    padding: 2px 4px;
+    box-sizing: border-box;
+}
+
+.pa-main-table-b4 td.cell-lbl {
+    font-weight: bold;
+    text-align: center;
+    font-size: 9.5pt;
+    vertical-align: middle;
+}
+
+.pa-main-table-b4 td.cell-val {
+    font-size: 10pt;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.pa-main-table-b4 td.cell-bold {
+    font-weight: bold;
+}
+
+.pa-main-table-b4 td.cell-center {
+    text-align: center;
+}
+
+/* 內容區塊 (主旨 + 說明) */
+.pa-main-table-b4 td.cell-content {
+    vertical-align: top;
+    padding: 5px 8px;
+    height: 100%;
+}
+
+.pa-content-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: var(--font-official);
+}
+
+.pa-subj-line {
+    font-size: 12pt;
+    line-height: 1.35;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.25);
+    padding-bottom: 3px;
+    flex-shrink: 0;
+}
+
+.pa-expl-line {
+    font-size: 12pt;
+    line-height: 1.4;
+    flex: 1;
+    overflow: hidden;
+    white-space: pre-wrap;
+    text-align: justify;
+    text-justify: inter-ideograph;
+}
+
+.pa-expl-line.font-tight {
+    font-size: 11pt;
+    line-height: 1.3;
+}
+
+.pa-expl-line.font-compact {
+    font-size: 10pt;
+    line-height: 1.25;
+}
+
+.content-tag {
+    font-weight: bold;
+}
+
+/* 簽核抬頭列 */
+.row-sig-headers td {
+    height: 22px;
+}
+
+/* 簽核蓋章格 */
+.pa-main-table-b4 td.cell-sig-box {
+    height: 48px;
+    min-height: 48px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.sig-placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+/* 底部收文時間與覆文字號列 */
+.pa-bottom-info-row-b4 {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-ui);
+    font-size: 9.5pt;
+    margin-top: 3px;
+    line-height: 1.2;
+}
+
+/* 編輯面板專用提示卡片色彩 */
+.card-theme-send {
+    border-left: 4px solid #F1C40F !important;
+}
+.card-theme-send .card-subtitle {
+    color: #B7950B !important;
+    border-bottom-color: #F1C40F !important;
+}
+
+.card-theme-reply {
+    border-left: 4px solid #3498DB !important;
+}
+.card-theme-reply .card-subtitle {
+    color: #2980B9 !important;
+    border-bottom-color: #3498DB !important;
+}
+
+.badge-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.badge-yellow {
+    background-color: #FEF9E7;
+    color: #B7950B;
+    border: 1px solid #F1C40F;
+}
+.badge-blue {
+    background-color: #EBF5FB;
+    color: #2980B9;
+    border: 1px solid #3498DB;
+}
+
+@media print {
+    .pa-send-block {
+        background-color: #FEFDE6 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .pa-send-block .cell-lbl {
+        background-color: #FDF9D3 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .pa-reply-block {
+        background-color: #F0F7FD !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .pa-reply-block .cell-lbl {
+        background-color: #DFEDF9 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .pa-segment-block {
+        height: 98mm !important;
+        max-height: 98mm !important;
+        min-height: 98mm !important;
+    }
+}
