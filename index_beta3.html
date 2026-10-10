@@ -76,8 +76,8 @@
                             <label for="up-receiver-manual">手動輸入受文者</label>
                             <input type="text" id="up-receiver-manual" value="" placeholder="請輸入受文者名稱">
                         </div>
-                        <div class="form-group col-span-2">
-                            <label for="editor-font-size-select">編輯器字型大小 (14-24號字)</label>
+                        <div class="form-group">
+                            <label for="editor-font-size-select">編輯器字型大小</label>
                             <select id="editor-font-size-select">
                                 <option value="14">14 px</option>
                                 <option value="15">15 px</option>
@@ -92,14 +92,21 @@
                                 <option value="24">24 px</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="preview-mode-select">預覽更新方式</label>
+                            <select id="preview-mode-select" style="font-weight: 500;">
+                                <option value="live" selected>即時更新預覽</option>
+                                <option value="manual">手動更新預覽</option>
+                            </select>
+                        </div>
                     </div>
                 </section>
                 
                 <!-- ================= 格式 1: 函 (稿簽) 欄位 ================= -->
                 <div id="panel-upward" class="template-panel">
-                    <!-- 發文聯絡資訊 -->
+                    <!-- 聯絡資訊 -->
                     <div class="config-card">
-                        <h3 class="card-subtitle"><i data-lucide="phone"></i> 發文與聯絡資訊</h3>
+                        <h3 class="card-subtitle"><i data-lucide="phone"></i> 聯絡資訊</h3>
                         <div class="form-grid">
                             <div class="form-group col-span-2">
                                 <label for="up-address">地址</label>
@@ -120,9 +127,9 @@
                         </div>
                     </div>
 
-                    <!-- 基本發文資訊 -->
+                    <!-- 基本資訊 -->
                     <div class="config-card">
-                        <h3 class="card-subtitle"><i data-lucide="info"></i> 公文基本資訊</h3>
+                        <h3 class="card-subtitle"><i data-lucide="info"></i> 基本資訊</h3>
                         <div class="form-grid">
                             <div class="form-group col-span-2">
                                 <label>發文日期 (民國年 / 月 / 日)</label>
@@ -380,9 +387,14 @@
                 <div class="preview-options" style="display: flex; align-items: center; gap: 15px;">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dark);">
                         <span>🔍 比例調整:</span>
-                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 100px; cursor: pointer;">
+                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 90px; cursor: pointer;">
                         <span id="zoom-value" style="font-weight: bold; min-width: 42px;">100%</span>
                     </div>
+                    <label class="toggle-switch" title="切換輸入時即時更新預覽或手動點選更新預覽">
+                        <input type="checkbox" id="toggle-live-preview" checked>
+                        <span class="slider"></span>
+                        即時更新預覽
+                    </label>
                     <button type="button" id="btn-refresh-preview" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" title="手動更新預覽">
                         <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> 更新預覽
                     </button>

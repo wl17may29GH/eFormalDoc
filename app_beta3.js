@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const upReceiverManual = document.getElementById('up-receiver-manual');
     const presetSelect = document.getElementById('preset-select');
     const docForm = document.getElementById('doc-form');
+    const previewModeSelect = document.getElementById('preview-mode-select');
+    const toggleLivePreview = document.getElementById('toggle-live-preview');
     
     // Panels
     const panelUpward = document.getElementById('panel-upward');
@@ -566,6 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         handleTemplateChange();
         handleReceiverModeChange();
+        setLivePreviewMode(localStorage.getItem('cgu_formal_doc_live_preview') !== 'false', false);
     }
 
     // Preset loading listener
@@ -679,24 +682,76 @@ document.addEventListener('DOMContentLoaded', () => {
         upReceiverMode.addEventListener('change', handleReceiverModeChange);
     }
 
-    // Form change bindings - Auto-save draft, but do NOT update preview instantly
-    docForm.addEventListener('input', saveDraft);
-    templateSelect.addEventListener('change', handleTemplateChange);
-    
-    // Explicit binding to each individual element to save draft on change/input
-    const bindAllInputs = () => {
-        const inputs = docForm.querySelectorAll('input, select, textarea');
-        inputs.forEach(el => {
-            el.addEventListener('input', saveDraft);
-            el.addEventListener('change', saveDraft);
+    // Live preview vs manual preview switching logic
+    const btnRefreshPreview = document.getElementById('btn-refresh-preview');
+    let isLivePreview = localStorage.getItem('cgu_formal_doc_live_preview') !== 'false'; // default true
+    let previewDebounceTimer = null;
+
+    function setLivePreviewMode(isLive, shouldSyncNow = false) {
+        isLivePreview = !!isLive;
+        localStorage.setItem('cgu_formal_doc_live_preview', isLivePreview ? 'true' : 'false');
+        if (previewModeSelect) {
+            previewModeSelect.value = isLivePreview ? 'live' : 'manual';
+        }
+        if (toggleLivePreview) {
+            toggleLivePreview.checked = isLivePreview;
+        }
+        if (btnRefreshPreview) {
+            if (isLivePreview) {
+                btnRefreshPreview.classList.remove('btn-primary');
+                btnRefreshPreview.classList.add('btn-secondary');
+                btnRefreshPreview.title = '即時模式：隨時可點擊強制更新預覽';
+            } else {
+                btnRefreshPreview.classList.remove('btn-secondary');
+                btnRefreshPreview.classList.add('btn-primary');
+                btnRefreshPreview.title = '手動模式：點擊立即更新預覽';
+            }
+        }
+        if (shouldSyncNow) {
+            if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+            syncPreview();
+        }
+    }
+
+    if (previewModeSelect) {
+        previewModeSelect.addEventListener('change', () => {
+            const isLive = previewModeSelect.value === 'live';
+            setLivePreviewMode(isLive, isLive);
         });
-    };
-    bindAllInputs();
+    }
+
+    if (toggleLivePreview) {
+        toggleLivePreview.addEventListener('change', () => {
+            const isLive = toggleLivePreview.checked;
+            setLivePreviewMode(isLive, isLive);
+        });
+    }
+
+    function handleFormInput() {
+        saveDraft();
+        if (isLivePreview) {
+            if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+            previewDebounceTimer = setTimeout(() => {
+                syncPreview();
+            }, 250);
+        }
+    }
+
+    // Form change bindings
+    docForm.addEventListener('input', handleFormInput);
+    docForm.addEventListener('change', (e) => {
+        if (e.target !== templateSelect && e.target !== upReceiverMode && e.target !== previewModeSelect) {
+            handleFormInput();
+        }
+    });
+    templateSelect.addEventListener('change', handleTemplateChange);
 
     // Manual Refresh button binding
-    const btnRefreshPreview = document.getElementById('btn-refresh-preview');
     if (btnRefreshPreview) {
-        btnRefreshPreview.addEventListener('click', syncPreview);
+        btnRefreshPreview.addEventListener('click', () => {
+            if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+            syncPreview();
+        });
     }
 
     toggleGrid.addEventListener('change', () => {
@@ -732,6 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (presetSelect) presetSelect.value = 'custom';
             handleTemplateChange();
             handleReceiverModeChange();
+            setLivePreviewMode(localStorage.getItem('cgu_formal_doc_live_preview') !== 'false', true);
         }
     });
 

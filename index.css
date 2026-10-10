@@ -158,10 +158,16 @@ body {
     background-color: var(--primary-color);
 }
 
+#doc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
 .template-panel {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 }
 
 /* Right Preview Panel */
@@ -252,6 +258,8 @@ body {
     align-items: center;
     gap: 8px;
     color: var(--text-dark);
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 6px;
 }
 
 .card-subtitle {
