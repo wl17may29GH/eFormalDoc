@@ -352,6 +352,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Auto-fit dynamic proportional font scaling for main content box (主旨 + 說明) within fixed 68mm height
+    function autoFitContentBox(boxEl) {
+        if (!boxEl) return;
+        
+        // Reset styles first to measure base layout at standard 12pt
+        boxEl.style.fontSize = '';
+        boxEl.style.lineHeight = '';
+        
+        const clientH = boxEl.clientHeight;
+        if (clientH <= 0) return;
+        
+        // Font sizes to test in descending order (pt)
+        const fontSizes = [12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7];
+        
+        for (let i = 0; i < fontSizes.length; i++) {
+            const sz = fontSizes[i];
+            boxEl.style.fontSize = `${sz}pt`;
+            const lh = sz <= 8.5 ? 1.25 : (sz <= 10 ? 1.3 : 1.35);
+            boxEl.style.lineHeight = `${lh}`;
+            
+            // If scrollHeight fits within clientHeight, we found optimal font size
+            if (boxEl.scrollHeight <= clientH + 1) {
+                break;
+            }
+        }
+    }
+
     // Sync input fields to preview pane
     function syncPreview() {
         try {
@@ -447,18 +474,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pStatusWait) pStatusWait.textContent = sendReplyStatus === '待覆' ? '■待覆' : '□待覆';
             if (pSendReplyDate) pSendReplyDate.textContent = sendReplyDate;
 
-            // Adaptive font scaling for Send Explanation within fixed 84mm main content height
-            if (sendExplWrapper) {
-                sendExplWrapper.classList.remove('font-tight', 'font-compact');
-                const explLength = sendExplanation.length;
-                const lineCount = (sendExplanation.match(/\n/g) || []).length + 1;
-                if (explLength > 200 || lineCount >= 7) {
-                    sendExplWrapper.classList.add('font-compact');
-                } else if (explLength > 120 || lineCount >= 5) {
-                    sendExplWrapper.classList.add('font-tight');
-                }
-            }
-
             // 3. Lower Block: 覆文段 (Requirement 6: 左右分離、標題固定、內容自適應)
             const replyReceiver = document.getElementById('pa-reply-receiver').value || '';
             const replySubject = document.getElementById('pa-reply-subject').value || '';
@@ -511,17 +526,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pRecvTime) pRecvTime.textContent = recvTime;
             if (pReplyId) pReplyId.textContent = replyId;
 
-            // Adaptive font scaling for Reply Explanation within fixed 84mm main content height
-            if (replyExplWrapper) {
-                replyExplWrapper.classList.remove('font-tight', 'font-compact');
-                const explLength = replyExplanation.length;
-                const lineCount = (replyExplanation.match(/\n/g) || []).length + 1;
-                if (explLength > 200 || lineCount >= 7) {
-                    replyExplWrapper.classList.add('font-compact');
-                } else if (explLength > 120 || lineCount >= 5) {
-                    replyExplWrapper.classList.add('font-tight');
-                }
-            }
+            // Requirement 2: 主要說明欄(主旨+說明) 依固定68mm高度自動最佳化等比例縮小字體
+            const sendMainBox = document.getElementById('p-pa-send-main-box');
+            const replyMainBox = document.getElementById('p-pa-reply-main-box');
+            if (sendMainBox) autoFitContentBox(sendMainBox);
+            if (replyMainBox) autoFitContentBox(replyMainBox);
 
             syncUsageUI();
             adjustPreviewScale();
