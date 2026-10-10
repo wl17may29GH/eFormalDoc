@@ -1235,82 +1235,147 @@ body {
     background-color: #FFFFFF;
 }
 
-/* 頂端 Table 1: 屬性資訊表 (4 列，每列行高完全一致 8.5mm) */
-.pa-top-meta-table-b4 {
+/* 頂端 Table 1: 容器 (第三次優化：左上 4 行高 = 右上 6 行高，總高固定 36mm) */
+.pa-top-meta-container-b4 {
+    display: flex;
+    flex-direction: row;
     width: 100%;
-    border-collapse: collapse;
-    border: 1.5px solid #000000;
+    height: 36mm;
+    min-height: 36mm;
+    max-height: 36mm;
+    box-sizing: border-box;
     margin-bottom: 2mm;
-    table-layout: fixed;
     background-color: #FFFFFF;
 }
 
-.pa-top-meta-table-b4 tr {
-    height: 8.5mm;
-    min-height: 8.5mm;
-    max-height: 8.5mm;
+/* 左上角紅框區: 類別 2 行高 + 機密別 2 行高，總共 4 行高 (4 列，每列 9mm，總高 36mm) */
+.pa-meta-table-left-b4 {
+    width: 42mm;
+    min-width: 42mm;
+    max-width: 42mm;
+    height: 36mm;
+    max-height: 36mm;
+    border-collapse: collapse;
+    border: 1.5px solid #000000;
+    border-right: none;
+    table-layout: fixed;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+}
+
+.pa-meta-table-left-b4 tr {
+    height: 9mm;
+    min-height: 9mm;
+    max-height: 9mm;
     box-sizing: border-box;
 }
 
-.pa-top-meta-table-b4 td {
+.pa-meta-table-left-b4 td {
     border: 1px solid #000000;
     padding: 1px 3px;
     font-size: 9.5pt;
     vertical-align: middle;
+    text-align: center;
     box-sizing: border-box;
     background-color: #FFFFFF;
     color: #000000;
     line-height: 1.25;
 }
 
-.pa-top-meta-table-b4 td.lbl-cell {
+.pa-meta-table-left-b4 td.lbl-cell {
     font-weight: bold;
     text-align: center;
 }
 
-.pa-top-meta-table-b4 td.lbl-cell-sub {
+.pa-meta-table-left-b4 td.lbl-cell-sub {
     font-weight: bold;
     text-align: center;
     font-size: 10pt;
 }
 
-.pa-top-meta-table-b4 td.lbl-cell-multiline {
-    font-weight: bold;
-    text-align: center;
-    font-size: 8.5pt;
-    line-height: 1.15;
-    padding: 0 1px;
-}
-
-.pa-top-meta-table-b4 td.chk-cell {
+.pa-meta-table-left-b4 td.chk-cell {
     text-align: center;
     font-weight: bold;
     font-size: 13pt;
-    height: 8.5mm;
     line-height: 1;
 }
 
-/* 業務接洽便函(稿) 標題欄：單行置中、無多餘空格、無上下邊框、僅左右框線連結兩區 */
-.pa-top-meta-table-b4 td.title-cell-b4 {
+/* 中央標題欄：單行置中、無多餘空格、無上下邊框、左右各一條實線 (連結左上與右上兩區) */
+.pa-meta-title-box-b4 {
+    width: 82mm;
+    min-width: 82mm;
+    max-width: 82mm;
+    height: 36mm;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 18pt;
     font-weight: bold;
     text-align: center;
-    vertical-align: middle;
-    border-top: hidden !important;
-    border-bottom: hidden !important;
+    border-top: none !important;
+    border-bottom: none !important;
     border-left: 1.5px solid #000000 !important;
     border-right: 1.5px solid #000000 !important;
     white-space: nowrap;
     letter-spacing: 0;
     padding: 0 4px;
+    background-color: #FFFFFF;
 }
 
-.pa-top-meta-table-b4 td.val-cell-center {
+/* 右上角藍框區: 銷案 2 行高 + 處理 2 行高 + 檔號 2 行高，總共 6 行高 (3 段每段 12mm，總高 36mm) */
+.pa-meta-table-right-b4 {
+    width: 60mm;
+    min-width: 60mm;
+    max-width: 60mm;
+    height: 36mm;
+    max-height: 36mm;
+    border-collapse: collapse;
+    border: 1.5px solid #000000;
+    border-left: none;
+    table-layout: fixed;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+}
+
+.pa-meta-table-right-b4 tr {
+    height: 12mm;
+    min-height: 12mm;
+    max-height: 12mm;
+    box-sizing: border-box;
+}
+
+.pa-meta-table-right-b4 td {
+    border: 1px solid #000000;
+    padding: 1px 3px;
+    font-size: 9.5pt;
+    vertical-align: middle;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    color: #000000;
+    line-height: 1.25;
+}
+
+.pa-meta-table-right-b4 td.lbl-cell {
+    font-weight: bold;
+    text-align: center;
+}
+
+.pa-meta-table-right-b4 td.lbl-cell-multiline {
+    font-weight: bold;
+    text-align: center;
+    font-size: 9pt;
+    line-height: 1.2;
+    padding: 0 1px;
+}
+
+.pa-meta-table-right-b4 td.val-cell-center {
     text-align: center;
     font-size: 9.5pt;
 }
 
-.pa-top-meta-table-b4 td.handwriting-space {
+.pa-meta-table-right-b4 td.handwriting-space {
     letter-spacing: 2px;
     font-size: 11pt;
     white-space: nowrap;
