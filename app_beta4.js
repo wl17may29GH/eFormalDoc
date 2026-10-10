@@ -163,7 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (secYes) secYes.textContent = (secrecy === '機密') ? '✓' : '';
             if (secNo) secNo.textContent = (secrecy === '非機密') ? '✓' : '';
 
-            const closeDate = document.getElementById('pa-close-date').value || '年　月　日';
+            const closeDateInput = document.getElementById('pa-close-date');
+            const closeDate = (closeDateInput && closeDateInput.value.trim()) ? closeDateInput.value : '　　年　　月　　日';
             const days = document.getElementById('pa-days').value || '3';
             const years = document.getElementById('pa-years').value || '5年';
             const docNum = document.getElementById('pa-doc-num').value || '';

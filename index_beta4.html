@@ -125,7 +125,7 @@
                                 <input type="number" id="pa-days" value="3">
                             </div>
                             <div class="form-group">
-                                <label for="pa-years">預定保存年限</label>
+                                <label for="pa-years">預定保存期限</label>
                                 <input type="text" id="pa-years" value="5年">
                             </div>
                             <div class="form-group">
@@ -134,7 +134,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="pa-close-date">銷案日期</label>
-                                <input type="text" id="pa-close-date" placeholder="年  月  日" value="">
+                                <input type="text" id="pa-close-date" placeholder="　　年　　月　　日" value="">
                             </div>
                             <div class="form-group col-span-2">
                                 <label for="pa-id-serial">發文字號流水號</label>
@@ -318,7 +318,7 @@
                 <div id="a4-sheet" class="a4-sheet show-grid" style="padding: 13mm; box-sizing: border-box;">
                     
                     <div class="pa-beta4-wrapper">
-                        <!-- Table 1: Top Metadata Info Table (4 rows) -->
+                        <!-- Table 1: Top Metadata Info Table (4 rows, symmetric 8.5mm per row) -->
                         <table class="pa-top-meta-table-b4">
                             <colgroup>
                                 <col style="width: 15mm;">
@@ -327,9 +327,9 @@
                                 <col style="width: 11mm;">
                                 <col style="width: 82mm;">
                                 <col style="width: 15mm;">
-                                <col style="width: 11mm;">
+                                <col style="width: 12mm;">
                                 <col style="width: 16mm;">
-                                <col style="width: 18mm;">
+                                <col style="width: 17mm;">
                             </colgroup>
                             <tbody>
                                 <!-- Row 1: 類別 header & A B C headers -->
@@ -340,8 +340,8 @@
                                     <td class="lbl-cell-sub">C</td>
                                     <!-- Center Title: rowspan 4, NO top/bottom border, single line, no spaces -->
                                     <td rowspan="4" class="title-cell-b4" id="p-pa-main-title">業務接洽便函(稿)</td>
-                                    <td class="lbl-cell" rowspan="2">銷案日期</td>
-                                    <td class="val-cell-center" colspan="3" rowspan="2" id="p-pa-close-date">年　月　日</td>
+                                    <td class="lbl-cell" rowspan="2">銷案<br>日期</td>
+                                    <td class="val-cell-center handwriting-space" colspan="3" rowspan="2" id="p-pa-close-date">　　年　　月　　日</td>
                                 </tr>
                                 <!-- Row 2: Checkmark cells under A, B, C -->
                                 <tr>
@@ -354,16 +354,16 @@
                                     <td class="lbl-cell" rowspan="2">機密別</td>
                                     <td class="lbl-cell-sub" colspan="2">機密</td>
                                     <td class="lbl-cell-sub">非機密</td>
-                                    <td class="lbl-cell">處理日數</td>
+                                    <td class="lbl-cell lbl-cell-multiline">處理<br>日數</td>
                                     <td class="val-cell-center" id="p-pa-days-box"><span id="p-pa-days">3</span> 日</td>
-                                    <td class="lbl-cell">預定保存年限</td>
+                                    <td class="lbl-cell lbl-cell-multiline">預定保<br>存期限</td>
                                     <td class="val-cell-center" id="p-pa-years-box"><span id="p-pa-years">5年</span></td>
                                 </tr>
                                 <!-- Row 4: Checkmark cells under 機密, 非機密 -->
                                 <tr>
                                     <td class="chk-cell" colspan="2" id="p-pa-sec-yes"></td>
                                     <td class="chk-cell" id="p-pa-sec-no">✓</td>
-                                    <td class="lbl-cell">檔　　號</td>
+                                    <td class="lbl-cell">檔號</td>
                                     <td class="val-cell-center" colspan="3" id="p-pa-doc-num"></td>
                                 </tr>
                             </tbody>

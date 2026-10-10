@@ -1220,36 +1220,47 @@ body {
 }
 
 /* ================= Beta 4: 業務接洽便函 專用排版 ================= */
+.pa-beta4-wrapper,
+.pa-beta4-wrapper * {
+    font-family: '標楷體', 'BiauKai', 'DFKai-SB', 'KaiTi', serif !important;
+}
+
 .pa-beta4-wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    font-family: var(--font-ui);
     color: #000000;
     background-color: #FFFFFF;
 }
 
-/* 頂端 Table 1: 屬性資訊表 */
+/* 頂端 Table 1: 屬性資訊表 (4 列，每列行高完全一致 8.5mm) */
 .pa-top-meta-table-b4 {
     width: 100%;
     border-collapse: collapse;
     border: 1.5px solid #000000;
     margin-bottom: 2mm;
     table-layout: fixed;
-    font-family: var(--font-ui);
     background-color: #FFFFFF;
+}
+
+.pa-top-meta-table-b4 tr {
+    height: 8.5mm;
+    min-height: 8.5mm;
+    max-height: 8.5mm;
+    box-sizing: border-box;
 }
 
 .pa-top-meta-table-b4 td {
     border: 1px solid #000000;
-    padding: 2px 4px;
+    padding: 1px 3px;
     font-size: 9.5pt;
     vertical-align: middle;
     box-sizing: border-box;
     background-color: #FFFFFF;
     color: #000000;
+    line-height: 1.25;
 }
 
 .pa-top-meta-table-b4 td.lbl-cell {
@@ -1260,28 +1271,35 @@ body {
 .pa-top-meta-table-b4 td.lbl-cell-sub {
     font-weight: bold;
     text-align: center;
-    font-size: 9.5pt;
+    font-size: 10pt;
+}
+
+.pa-top-meta-table-b4 td.lbl-cell-multiline {
+    font-weight: bold;
+    text-align: center;
+    font-size: 8.5pt;
+    line-height: 1.15;
+    padding: 0 1px;
 }
 
 .pa-top-meta-table-b4 td.chk-cell {
     text-align: center;
     font-weight: bold;
     font-size: 13pt;
-    height: 6mm;
+    height: 8.5mm;
     line-height: 1;
 }
 
-/* 業務接洽便函(稿) 標題欄：單行置中、無多餘空格、無上下邊框 */
+/* 業務接洽便函(稿) 標題欄：單行置中、無多餘空格、無上下邊框、僅左右框線連結兩區 */
 .pa-top-meta-table-b4 td.title-cell-b4 {
-    font-family: var(--font-official);
     font-size: 18pt;
     font-weight: bold;
     text-align: center;
     vertical-align: middle;
-    border-top: none !important;
-    border-bottom: none !important;
-    border-left: 1.5px solid #000000;
-    border-right: 1.5px solid #000000;
+    border-top: hidden !important;
+    border-bottom: hidden !important;
+    border-left: 1.5px solid #000000 !important;
+    border-right: 1.5px solid #000000 !important;
     white-space: nowrap;
     letter-spacing: 0;
     padding: 0 4px;
@@ -1292,20 +1310,25 @@ body {
     font-size: 9.5pt;
 }
 
+.pa-top-meta-table-b4 td.handwriting-space {
+    letter-spacing: 2px;
+    font-size: 11pt;
+    white-space: nowrap;
+}
+
 /* 發文字號列 (單行) */
 .pa-serial-row-b4 {
-    font-family: var(--font-official);
     font-size: 12pt;
     margin-bottom: 2.5mm;
     text-align: left;
     line-height: 1.2;
 }
 
-/* 發文區 / 回文區 固定總高度區塊: 103mm (無底色，純白底黑框) */
+/* 發文區 / 回文區 固定總高度區塊: 102mm (無底色，純白底黑框) */
 .pa-segment-container-b4 {
-    height: 103mm;
-    max-height: 103mm;
-    min-height: 103mm;
+    height: 102mm;
+    max-height: 102mm;
+    min-height: 102mm;
     width: 100%;
     box-sizing: border-box;
     border: 1.5px solid #000000;
@@ -1415,16 +1438,15 @@ body {
     background-color: #FFFFFF;
 }
 
-/* 右側主要說明欄 (主旨 + 說明): 佔滿上方最大空間 (約 81mm) */
+/* 右側主要說明欄 (主旨 + 說明): 佔滿上方最大空間 (約 80mm) */
 .pa-main-content-box {
     flex: 1;
-    height: 81mm;
+    height: 80mm;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     padding: 4px 6px;
-    font-family: var(--font-official);
 }
 
 .pa-subj-line {
@@ -1529,7 +1551,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5mm;
-    font-family: var(--font-official);
     font-size: 11pt;
     margin-top: 2.5mm;
     line-height: 1.25;
@@ -1578,9 +1599,9 @@ body {
         background-color: #FFFFFF !important;
     }
     .pa-segment-container-b4 {
-        height: 103mm !important;
-        max-height: 103mm !important;
-        min-height: 103mm !important;
+        height: 102mm !important;
+        max-height: 102mm !important;
+        min-height: 102mm !important;
         background-color: #FFFFFF !important;
     }
 }
