@@ -475,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const sendPhone = document.getElementById('pa-send-phone').value || '';
             const sendAttachment = document.getElementById('pa-send-attachment').value || '無';
             const sendReplyStatus = document.getElementById('pa-send-reply-status').value || '待覆';
-            const sendReplyDate = document.getElementById('pa-send-reply-date').value || '月　日';
+            const sendReplyDate = document.getElementById('pa-send-reply-date').value || '115年8月25日';
 
             const pSendReceiver = document.getElementById('p-pa-send-receiver');
             const pSendSubject = document.getElementById('p-pa-send-subject');
@@ -519,9 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const replyPhone = document.getElementById('pa-reply-phone').value || '';
             const replyAttachment = document.getElementById('pa-reply-attachment').value || '無';
             const replyCloseStatus = document.getElementById('pa-reply-close-status').value || '銷案';
-            const replyDate = document.getElementById('pa-reply-date').value || '月　日';
-            const recvTime = document.getElementById('pa-recv-time').value || '　年　月　日　時　分';
-            const replyId = document.getElementById('pa-reply-id').value || '　年　月　日　字第　號';
+            const replyDate = document.getElementById('pa-reply-date').value || '';
 
             const pReplyReceiver = document.getElementById('p-pa-reply-receiver');
             const pReplySubject = document.getElementById('p-pa-reply-subject');
@@ -556,11 +554,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pReplyAttachment) pReplyAttachment.textContent = replyAttachment;
             if (pReplyStatusClose) pReplyStatusClose.textContent = replyCloseStatus === '銷案' ? '■銷案' : '□銷案';
             if (pReplyStatusWait) pReplyStatusWait.textContent = replyCloseStatus === '待覆' ? '■待覆' : '□待覆';
-            if (pReplyDateVal) pReplyDateVal.textContent = replyDate || '月　日';
+            if (pReplyDateVal) pReplyDateVal.textContent = replyDate || '　年　月　日';
 
-            // Requirement 2: 收文時間及覆文字號兩行，固定內容文字彼此間維持適當的空位，供手寫內容
-            if (pRecvTime) pRecvTime.textContent = formatRecvTime(recvTime);
-            if (pReplyId) pReplyId.textContent = formatReplyId(replyId);
+            // Requirement 1 (第七次優化): 收文時間及覆文字號固定留空供手寫，字號固定「庚大業洽字第」
+            if (pRecvTime) pRecvTime.textContent = '　　　年　　月　　日　　時　　分';
+            if (pReplyId) pReplyId.textContent = '　　　年　　月　　日庚大業洽字第　　　　　號';
 
             // Requirement 1: 主要說明欄(主旨+說明) 填寫空間最大化為 84mm，若內容過多自動等比例縮小字體
             const sendMainBox = document.getElementById('p-pa-send-main-box');
@@ -608,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pa-send-phone').value = '3601';
         document.getElementById('pa-send-attachment').value = '新進教師名單.xlsx';
         document.getElementById('pa-send-reply-status').value = '待覆';
-        document.getElementById('pa-send-reply-date').value = '8月25日';
+        document.getElementById('pa-send-reply-date').value = '115年8月25日';
 
         // Lower: Reply段
         document.getElementById('pa-reply-receiver').value = '資訊處軟體發展組';
@@ -620,8 +618,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pa-reply-attachment').value = '無';
         document.getElementById('pa-reply-close-status').value = '銷案';
         document.getElementById('pa-reply-date').value = '';
-        document.getElementById('pa-recv-time').value = '';
-        document.getElementById('pa-reply-id').value = '';
     }
 
     // Load Draft from LocalStorage

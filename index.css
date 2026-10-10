@@ -410,6 +410,14 @@ body {
     pointer-events: none;
 }
 
+.a4-sheet:has(.pa-beta4-wrapper).show-grid::before {
+    top: 13mm;
+    bottom: 13mm;
+    left: 13mm;
+    right: 13mm;
+}
+
+
 /* Official Document Layout Styling */
 .preview-layout-upward,
 .preview-layout-parallel {
@@ -1244,7 +1252,7 @@ body {
     min-height: 36mm;
     max-height: 36mm;
     box-sizing: border-box;
-    margin-bottom: 2mm;
+    margin-bottom: 0;
     background-color: #FFFFFF;
 }
 
@@ -1253,6 +1261,7 @@ body {
     width: 42mm;
     min-width: 42mm;
     max-width: 42mm;
+    flex-shrink: 0;
     height: 36mm;
     max-height: 36mm;
     border-collapse: collapse;
@@ -1300,11 +1309,10 @@ body {
     line-height: 1;
 }
 
-/* 中央標題欄：單行置中、無多餘空格、無上下邊框、左右各一條實線 (連結左上與右上兩區) */
+/* 中央標題欄：單行置中、無多餘空格、無上下邊框、左右各一條實線 (連結左上與右上兩區，彈性吸收寬度使右上框線完美對齊下方表格) */
 .pa-meta-title-box-b4 {
-    width: 82mm;
-    min-width: 82mm;
-    max-width: 82mm;
+    flex: 1;
+    min-width: 0;
     height: 36mm;
     box-sizing: border-box;
     display: flex;
@@ -1328,6 +1336,7 @@ body {
     width: 60mm;
     min-width: 60mm;
     max-width: 60mm;
+    flex-shrink: 0;
     height: 36mm;
     max-height: 36mm;
     border-collapse: collapse;
@@ -1381,12 +1390,13 @@ body {
     white-space: nowrap;
 }
 
-/* 發文字號列 (單行) */
+/* 發文字號列 (單行行高，與前段行距0.5行，與後段無行距) */
 .pa-serial-row-b4 {
     font-size: 12pt;
-    margin-bottom: 2.5mm;
+    line-height: 1.25;
+    margin-top: 0.5em;
+    margin-bottom: 0 !important;
     text-align: left;
-    line-height: 1.2;
 }
 
 /* 發文區 / 回文區 固定總高度區塊: 102mm (無底色，純白底黑框) */
