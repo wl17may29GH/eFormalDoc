@@ -1416,24 +1416,26 @@ body {
     background-color: #FFFFFF;
 }
 
-/* 左側標題列: 高度固定 5mm */
+/* 左側標題列 (紅框): 高度固定 6mm */
 .pa-left-title-bar {
-    height: 5mm;
-    min-height: 5mm;
-    max-height: 5mm;
+    height: 6mm;
+    min-height: 6mm;
+    max-height: 6mm;
     box-sizing: border-box;
     border-bottom: 1px solid #000000;
     font-weight: bold;
     font-size: 9.5pt;
     text-align: center;
-    line-height: 5mm;
+    line-height: 6mm;
     background-color: #FFFFFF;
 }
 
-/* 左側內容列 (受文者 / 經辦部門): 自適應高度平均分配剩餘空間 */
+/* 左側內容列 (綠框 - 受文者 / 經辦部門): 扣除紅框後等高，固定 30mm */
 .pa-left-content-val {
-    flex: 1;
-    min-height: 18px;
+    height: 30mm;
+    min-height: 30mm;
+    max-height: 30mm;
+    flex: none;
     box-sizing: border-box;
     border-bottom: 1px solid #000000;
     display: flex;
@@ -1447,16 +1449,16 @@ body {
     background-color: #FFFFFF;
 }
 
-/* 左側分割列 (經辦人 / 電話 / 附件 / 覆文狀態 / 待覆日期): 高度固定 6.5mm */
+/* 左側分割列 (紅框 - 經辦人 / 電話 / 附件 / 覆文狀態 / 待覆日期): 高度固定 6mm */
 .pa-left-split-row {
-    height: 6.5mm;
-    min-height: 6.5mm;
-    max-height: 6.5mm;
+    height: 6mm;
+    min-height: 6mm;
+    max-height: 6mm;
     box-sizing: border-box;
     border-bottom: 1px solid #000000;
     display: flex;
     flex-direction: row;
-    line-height: 6.5mm;
+    line-height: 6mm;
     font-size: 9.5pt;
     background-color: #FFFFFF;
 }
@@ -1472,12 +1474,14 @@ body {
     border-right: 1px solid #000000;
     font-weight: bold;
     text-align: center;
+    line-height: 6mm;
     box-sizing: border-box;
 }
 
 .pa-left-split-val {
     flex: 1;
     text-align: center;
+    line-height: 6mm;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1485,10 +1489,19 @@ body {
     box-sizing: border-box;
 }
 
+/* 粉紅框: 文字置中對齊 */
 .pa-left-split-center {
     width: 100%;
+    height: 6mm;
+    min-height: 6mm;
+    max-height: 6mm;
+    line-height: 6mm;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     font-size: 9.5pt;
+    box-sizing: border-box;
 }
 
 /* 右側欄位容器: 寬度固定 142mm, 高度 100% */
@@ -1503,62 +1516,116 @@ body {
     background-color: #FFFFFF;
 }
 
-/* 右側主要說明欄 (主旨 + 說明): 佔滿上方最大空間 (約 80mm) */
+/* 右側主要說明欄 (紫框 - 主旨 + 說明): 完全比照一般公函，高度固定 84mm */
 .pa-main-content-box {
-    flex: 1;
-    height: 80mm;
+    width: 100%;
+    height: 84mm;
+    min-height: 84mm;
+    max-height: 84mm;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 4px 6px;
+    padding: 5px 8px;
+    border-bottom: 1px solid #000000;
+    background-color: #FFFFFF;
 }
 
-.pa-subj-line {
-    font-size: 12pt;
-    line-height: 1.35;
-    margin-bottom: 3px;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
-    padding-bottom: 3px;
-    flex-shrink: 0;
-}
-
-.pa-expl-line {
+.pa-main-content-box .content-section {
     font-size: 12pt;
     line-height: 1.45;
+}
+
+.pa-main-content-box .section-subject {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 5px;
+}
+
+.pa-main-content-box .sec-title {
+    width: 3em;
+    min-width: 3em;
+    flex-shrink: 0;
+    font-weight: normal;
+    text-align: left;
+}
+
+.pa-main-content-box .section-subject .sec-body {
     flex: 1;
-    overflow: hidden;
-    white-space: pre-wrap;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.pa-main-content-box .section-explanation.layout-stacked {
+    display: block;
+}
+
+.pa-main-content-box .section-explanation.layout-stacked .sec-title {
+    display: block;
+    margin-bottom: 2px;
+    text-align: left;
+}
+
+.pa-main-content-box .section-explanation.layout-stacked .sec-body {
+    display: block;
+    padding-left: 0;
+}
+
+.pa-main-content-box .section-explanation.layout-side-by-side {
+    display: flex;
+    align-items: flex-start;
+}
+
+.pa-main-content-box .section-explanation.layout-side-by-side .sec-title {
+    width: 3em;
+    min-width: 3em;
+    flex-shrink: 0;
+    text-align: left;
+}
+
+.pa-main-content-box .section-explanation.layout-side-by-side .sec-body {
+    flex: 1;
     text-align: justify;
     text-justify: inter-ideograph;
 }
 
-.pa-expl-line.font-tight {
-    font-size: 11pt;
-    line-height: 1.35;
+.pa-main-content-box .expl-paragraph {
+    margin-bottom: 2px;
+    line-height: 1.45 !important;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: break-word;
+    text-align: justify;
+    text-justify: inter-ideograph;
 }
 
-.pa-expl-line.font-compact {
-    font-size: 10pt;
-    line-height: 1.25;
+.pa-main-content-box .font-tight,
+.pa-main-content-box.font-tight .content-section,
+.pa-main-content-box.font-tight .expl-paragraph {
+    font-size: 11pt !important;
+    line-height: 1.35 !important;
 }
 
-.content-tag {
-    font-weight: bold;
+.pa-main-content-box .font-compact,
+.pa-main-content-box.font-compact .content-section,
+.pa-main-content-box.font-compact .expl-paragraph {
+    font-size: 10pt !important;
+    line-height: 1.25 !important;
 }
 
-/* 右側下方簽核欄: 高度固定 22mm */
+/* 右側下方簽核欄: 高度固定 18mm (標題 6mm + 簽名空白 12mm) */
 .pa-sig-grid-box {
-    height: 22mm;
-    min-height: 22mm;
-    max-height: 22mm;
+    height: 18mm;
+    min-height: 18mm;
+    max-height: 18mm;
     box-sizing: border-box;
-    border-top: 1px solid #000000;
     display: flex;
     flex-direction: column;
 }
 
-/* 各級人員標題列: 高度固定 6mm */
+/* 各級人員標題列 (紅框): 高度固定 6mm */
 .pa-sig-header-row {
     height: 6mm;
     min-height: 6mm;
@@ -1577,17 +1644,18 @@ body {
     font-size: 9.5pt;
     border-right: 1px solid #000000;
     box-sizing: border-box;
+    line-height: 6mm;
 }
 
 .pa-sig-header-cell:last-child {
     border-right: none;
 }
 
-/* 簽名空格欄: 高度固定 16mm */
+/* 簽名空格欄: 高度固定 12mm */
 .pa-sig-space-row {
-    height: 16mm;
-    min-height: 16mm;
-    max-height: 16mm;
+    height: 12mm;
+    min-height: 12mm;
+    max-height: 12mm;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;

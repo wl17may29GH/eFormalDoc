@@ -52,9 +52,223 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/'/g, "&#039;");
     }
 
+    // Tokenize text into atomic units: currency, dates, numbers, English words, punctuation, and CJK characters
+    function tokenizeText(text) {
+        if (!text) return [];
+        const tokenRegex = /(?:新[臺台]幣|NT\$|\$)?[\d,]+(?:\.\d+)?元(?:整)?|(?:民國)?\d+年(?:度)?|\d{1,2}月|\d{1,2}日|\d+(?:[,\.]\d+)+|[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*|\s+|./gu;
+        return text.match(tokenRegex) || [];
+    }
+
+    // Protect dates, numbers, currency amounts, and English words from being truncated across lines
+    function protectNoBreak(text) {
+        if (!text) return '';
+        const tokens = tokenizeText(text);
+        return tokens.map(t => {
+            const isAtomic = t.length > 1 && !/^\s+$/.test(t);
+            const escaped = escapeHTML(t);
+            return isAtomic ? `<span class="no-break">${escaped}</span>` : escaped;
+        }).join('');
+    }
+
     function formatHTML(text) {
         if (!text) return '';
         return escapeHTML(text).replace(/\n/g, '<br>');
+    }
+
+    // Calculate dynamic marker width and responsive level styling classes for outline items
+    function getMarkerInfo(level, marker) {
+        let emWidth = 0;
+        for (const c of marker) {
+            emWidth += c.charCodeAt(0) < 128 ? 0.5 : 1.0;
+        }
+        
+        let markerWidthClass = 'expl-marker-w2';
+        let levelClass = `expl-level-${level}`;
+        let bodyClass = `expl-paragraph expl-level-${level}-body`;
+        
+        if (level === 1) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-1-w3';
+                bodyClass = 'expl-paragraph expl-level-1-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-1';
+                bodyClass = 'expl-paragraph expl-level-1-body';
+            }
+        } else if (level === 2) {
+            if (emWidth >= 3.5) {
+                markerWidthClass = 'expl-marker-w4';
+                levelClass = 'expl-level-2-w4';
+                bodyClass = 'expl-paragraph expl-level-2-w4-body';
+            } else if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-2-w3';
+                bodyClass = 'expl-paragraph expl-level-2-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-2';
+                bodyClass = 'expl-paragraph expl-level-2-body';
+            }
+        } else if (level === 3) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-3-w3';
+                bodyClass = 'expl-paragraph expl-level-3-w3-body';
+            } else if (emWidth > 1.5) {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-3-w2';
+                bodyClass = 'expl-paragraph expl-level-3-w2-body';
+            } else {
+                markerWidthClass = 'expl-marker-w15';
+                levelClass = 'expl-level-3';
+                bodyClass = 'expl-paragraph expl-level-3-body';
+            }
+        } else if (level === 4) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-4-w3';
+                bodyClass = 'expl-paragraph expl-level-4-w3-body';
+            } else if (emWidth > 1.5) {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-4-w2';
+                bodyClass = 'expl-paragraph expl-level-4-w2-body';
+            } else {
+                markerWidthClass = 'expl-marker-w15';
+                levelClass = 'expl-level-4';
+                bodyClass = 'expl-paragraph expl-level-4-body';
+            }
+        } else if (level === 5) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-5-w3';
+                bodyClass = 'expl-paragraph expl-level-5-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-5';
+                bodyClass = 'expl-paragraph expl-level-5-body';
+            }
+        } else if (level === 6) {
+            if (emWidth > 2.0) {
+                markerWidthClass = 'expl-marker-w3';
+                levelClass = 'expl-level-6-w3';
+                bodyClass = 'expl-paragraph expl-level-6-w3-body';
+            } else {
+                markerWidthClass = 'expl-marker-w2';
+                levelClass = 'expl-level-6';
+                bodyClass = 'expl-paragraph expl-level-6-body';
+            }
+        }
+        
+        return { markerWidthClass, levelClass, bodyClass };
+    }
+
+    // Check if explanation has outline points
+    function checkHasPoints(text) {
+        if (!text) return false;
+        const lines = text.split('\n');
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (/^[一二三四五六七八九十百]+[、]/.test(trimmed) ||
+                /^[(（][一二三四五六七八九十百]+[)）]/.test(trimmed) ||
+                /^\d+[、]/.test(trimmed) ||
+                /^[(（]\d+[)）]/.test(trimmed) ||
+                /^[甲乙丙丁戊己庚辛壬癸]+[、]/.test(trimmed) ||
+                /^[(（][甲乙丙丁戊己庚辛壬癸]+[)）]/.test(trimmed)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Convert explanation text to HTML, supporting hanging indent blocks for numbered points (Level 1-6)
+    function formatExplanationHTML(text, hasPoints) {
+        if (!text) return '';
+        
+        const lines = text.split('\n');
+        let currentLevel = 0;
+        let currentBodyClass = '';
+        
+        return lines.map(line => {
+            const trimmed = line.trim();
+            if (hasPoints) {
+                let detectedLevel = 0;
+                let marker = '';
+                let content = line;
+                
+                // Level 1: 一、
+                if (/^[一二三四五六七八九十百]+[、]/.test(trimmed)) {
+                    detectedLevel = 1;
+                    const match = line.match(/^(\s*)([一二三四五六七八九十百]+[、])(.*)/);
+                    if (match) {
+                        marker = match[2];
+                        content = match[3];
+                    }
+                }
+                // Level 2: (一)
+                else if (/^[(（][一二三四五六七八九十百]+[)）]/.test(trimmed)) {
+                    detectedLevel = 2;
+                    const match = line.match(/^(\s*)([(（][一二三四五六七八九十百]+[)）])(.*)/);
+                    if (match) {
+                        marker = match[2];
+                        content = match[3];
+                    }
+                }
+                // Level 3: 1、
+                else if (/^\d+[、]/.test(trimmed)) {
+                    detectedLevel = 3;
+                    const match = line.match(/^(\s*)(\d+[、])(.*)/);
+                    if (match) {
+                        marker = match[2];
+                        content = match[3];
+                    }
+                }
+                // Level 4: (1)
+                else if (/^[(（]\d+[)）]/.test(trimmed)) {
+                    detectedLevel = 4;
+                    const match = line.match(/^(\s*)([(（]\d+[)）])(.*)/);
+                    if (match) {
+                        marker = match[2];
+                        content = match[3];
+                    }
+                }
+                // Level 5: 甲、
+                else if (/^[甲乙丙丁戊己庚辛壬癸]+[、]/.test(trimmed)) {
+                    detectedLevel = 5;
+                    const match = line.match(/^(\s*)([甲乙丙丁戊己庚辛壬癸]+[、])(.*)/);
+                    if (match) {
+                        marker = match[2];
+                        content = match[3];
+                    }
+                }
+                // Level 6: (甲)
+                else if (/^[(（][甲乙丙丁戊己庚辛壬癸]+[)）]/.test(trimmed)) {
+                    detectedLevel = 6;
+                    const match = line.match(/^(\s*)([(（][甲乙丙丁戊己庚辛壬癸]+[)）])(.*)/);
+                    if (match) {
+                        marker = match[2];
+                        content = match[3];
+                    }
+                }
+                
+                if (detectedLevel > 0) {
+                    currentLevel = detectedLevel;
+                    const markerInfo = getMarkerInfo(detectedLevel, marker);
+                    currentBodyClass = markerInfo.bodyClass;
+                    const escapedMarker = escapeHTML(marker);
+                    const protectedContent = protectNoBreak(content);
+                    return `<div class="expl-paragraph ${markerInfo.levelClass}"><span class="${markerInfo.markerWidthClass}">${escapedMarker}</span>${protectedContent}</div>`;
+                } else {
+                    if (currentLevel > 0 && currentBodyClass) {
+                        return `<div class="${currentBodyClass}">${protectNoBreak(line)}</div>`;
+                    } else {
+                        return `<div class="expl-paragraph">${protectNoBreak(line)}</div>`;
+                    }
+                }
+            } else {
+                return `<div class="expl-paragraph">${protectNoBreak(line)}</div>`;
+            }
+        }).join('');
     }
 
     // Prepopulate date automatically with current ROC date
@@ -212,8 +426,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const pSendReplyDate = document.getElementById('p-pa-send-reply-date');
 
             if (pSendReceiver) pSendReceiver.textContent = sendReceiver;
-            if (pSendSubject) pSendSubject.innerHTML = formatHTML(sendSubject);
-            if (pSendExplanation) pSendExplanation.innerHTML = formatHTML(sendExplanation);
+            if (pSendSubject) pSendSubject.innerHTML = protectNoBreak(sendSubject);
+            const sendHasPoints = checkHasPoints(sendExplanation);
+            const sendExplWrapper = document.getElementById('p-pa-send-expl-wrapper');
+            if (sendExplWrapper) {
+                if (sendHasPoints) {
+                    sendExplWrapper.classList.remove('layout-side-by-side');
+                    sendExplWrapper.classList.add('layout-stacked');
+                } else {
+                    sendExplWrapper.classList.remove('layout-stacked');
+                    sendExplWrapper.classList.add('layout-side-by-side');
+                }
+            }
+            if (pSendExplanation) pSendExplanation.innerHTML = formatExplanationHTML(sendExplanation, sendHasPoints);
             if (pSendDept) pSendDept.textContent = sendDept;
             if (pSendPerson) pSendPerson.textContent = sendPerson;
             if (pSendPhone) pSendPhone.textContent = sendPhone;
@@ -222,8 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pStatusWait) pStatusWait.textContent = sendReplyStatus === '待覆' ? '■待覆' : '□待覆';
             if (pSendReplyDate) pSendReplyDate.textContent = sendReplyDate;
 
-            // Adaptive font scaling for Send Explanation within fixed 81mm main content height
-            const sendExplWrapper = document.getElementById('p-pa-send-expl-wrapper');
+            // Adaptive font scaling for Send Explanation within fixed 84mm main content height
             if (sendExplWrapper) {
                 sendExplWrapper.classList.remove('font-tight', 'font-compact');
                 const explLength = sendExplanation.length;
@@ -262,8 +486,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const pReplyId = document.getElementById('p-pa-reply-id');
 
             if (pReplyReceiver) pReplyReceiver.textContent = replyReceiver || '（受文者）';
-            if (pReplySubject) pReplySubject.innerHTML = formatHTML(replySubject);
-            if (pReplyExplanation) pReplyExplanation.innerHTML = formatHTML(replyExplanation);
+            if (pReplySubject) pReplySubject.innerHTML = protectNoBreak(replySubject);
+            const replyHasPoints = checkHasPoints(replyExplanation);
+            const replyExplWrapper = document.getElementById('p-pa-reply-expl-wrapper');
+            if (replyExplWrapper) {
+                if (replyHasPoints) {
+                    replyExplWrapper.classList.remove('layout-side-by-side');
+                    replyExplWrapper.classList.add('layout-stacked');
+                } else {
+                    replyExplWrapper.classList.remove('layout-stacked');
+                    replyExplWrapper.classList.add('layout-side-by-side');
+                }
+            }
+            if (pReplyExplanation) pReplyExplanation.innerHTML = formatExplanationHTML(replyExplanation, replyHasPoints);
             if (pReplyDept) pReplyDept.textContent = replyDept;
             if (pReplyPerson) pReplyPerson.textContent = replyPerson;
             if (pReplyPhone) pReplyPhone.textContent = replyPhone;
@@ -276,8 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pRecvTime) pRecvTime.textContent = recvTime;
             if (pReplyId) pReplyId.textContent = replyId;
 
-            // Adaptive font scaling for Reply Explanation within fixed 81mm main content height
-            const replyExplWrapper = document.getElementById('p-pa-reply-expl-wrapper');
+            // Adaptive font scaling for Reply Explanation within fixed 84mm main content height
             if (replyExplWrapper) {
                 replyExplWrapper.classList.remove('font-tight', 'font-compact');
                 const explLength = replyExplanation.length;
