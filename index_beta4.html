@@ -133,8 +133,12 @@
                                 <input type="text" id="pa-doc-num" placeholder="請輸入檔號" value="">
                             </div>
                             <div class="form-group">
-                                <label for="pa-close-date">銷案日期</label>
-                                <input type="text" id="pa-close-date" placeholder="　　年　　月　　日" value="">
+                                <label>銷案日期</label>
+                                <div class="date-input-group">
+                                    <input type="number" id="pa-close-year" value="" style="width: 48px; text-align: center;" placeholder="年"> 年
+                                    <input type="number" id="pa-close-month" value="" style="width: 40px; text-align: center;" placeholder="月"> 月
+                                    <input type="number" id="pa-close-day" value="" style="width: 40px; text-align: center;" placeholder="日"> 日
+                                </div>
                             </div>
                             <div class="form-group col-span-2">
                                 <label for="pa-id-serial">發文字號流水號</label>

@@ -1263,10 +1263,8 @@ body {
     max-width: 42mm;
     flex-shrink: 0;
     height: 36mm;
-    max-height: 36mm;
     border-collapse: collapse;
     border: 1.5px solid #000000;
-    border-right: none;
     table-layout: fixed;
     box-sizing: border-box;
     background-color: #FFFFFF;
@@ -1281,14 +1279,14 @@ body {
 
 .pa-meta-table-left-b4 td {
     border: 1px solid #000000;
-    padding: 1px 3px;
+    padding: 1px 2px;
     font-size: 9.5pt;
     vertical-align: middle;
     text-align: center;
     box-sizing: border-box;
     background-color: #FFFFFF;
     color: #000000;
-    line-height: 1.25;
+    line-height: 1.2;
 }
 
 .pa-meta-table-left-b4 td.lbl-cell {
@@ -1299,7 +1297,9 @@ body {
 .pa-meta-table-left-b4 td.lbl-cell-sub {
     font-weight: bold;
     text-align: center;
-    font-size: 10pt;
+    font-size: 9.5pt;
+    line-height: 1.1;
+    padding: 0 1px;
 }
 
 .pa-meta-table-left-b4 td.chk-cell {
@@ -1309,7 +1309,7 @@ body {
     line-height: 1;
 }
 
-/* 中央標題欄：單行置中、無多餘空格、無上下邊框、左右各一條實線 (連結左上與右上兩區，彈性吸收寬度使右上框線完美對齊下方表格) */
+/* 中央標題欄：單行置中、無多餘空格、無上下框線、由左右表格的外框線自然界定 (完全消除重疊覆蓋線) */
 .pa-meta-title-box-b4 {
     flex: 1;
     min-width: 0;
@@ -1321,10 +1321,7 @@ body {
     font-size: 18pt;
     font-weight: bold;
     text-align: center;
-    border-top: none !important;
-    border-bottom: none !important;
-    border-left: 1.5px solid #000000 !important;
-    border-right: 1.5px solid #000000 !important;
+    border: none !important;
     white-space: nowrap;
     letter-spacing: 0;
     padding: 0 4px;
@@ -1338,10 +1335,8 @@ body {
     max-width: 60mm;
     flex-shrink: 0;
     height: 36mm;
-    max-height: 36mm;
     border-collapse: collapse;
     border: 1.5px solid #000000;
-    border-left: none;
     table-layout: fixed;
     box-sizing: border-box;
     background-color: #FFFFFF;

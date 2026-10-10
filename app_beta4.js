@@ -440,8 +440,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (secYes) secYes.textContent = (secrecy === '機密') ? '✓' : '';
             if (secNo) secNo.textContent = (secrecy === '非機密') ? '✓' : '';
 
-            const closeDateInput = document.getElementById('pa-close-date');
-            const closeDate = (closeDateInput && closeDateInput.value.trim()) ? closeDateInput.value : '　　年　　月　　日';
+            // Requirement 2 (第九次優化): 銷案日期改為「OOO年OO月OO日」，只能填寫OO的部分，年月日為固定文字
+            const closeYear = document.getElementById('pa-close-year') ? document.getElementById('pa-close-year').value.trim() : '';
+            const closeMonth = document.getElementById('pa-close-month') ? document.getElementById('pa-close-month').value.trim() : '';
+            const closeDay = document.getElementById('pa-close-day') ? document.getElementById('pa-close-day').value.trim() : '';
+            let closeDate = '　　年　　月　　日';
+            if (closeYear || closeMonth || closeDay) {
+                closeDate = `${closeYear || '　'}年${closeMonth || '　'}月${closeDay || '　'}日`;
+            }
             const days = document.getElementById('pa-days').value || '3';
             const years = document.getElementById('pa-years').value || '5年';
             const docNum = document.getElementById('pa-doc-num').value || '';
@@ -608,7 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pa-days').value = '3';
         document.getElementById('pa-years').value = '5年';
         document.getElementById('pa-doc-num').value = 'CGU-2026-0089';
-        document.getElementById('pa-close-date').value = '';
+        if (document.getElementById('pa-close-year')) document.getElementById('pa-close-year').value = '';
+        if (document.getElementById('pa-close-month')) document.getElementById('pa-close-month').value = '';
+        if (document.getElementById('pa-close-day')) document.getElementById('pa-close-day').value = '';
         document.getElementById('pa-id-serial').value = '1150001';
 
         // Upper: Send段
@@ -650,6 +658,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         el.value = data[id];
                     }
                 });
+                // Backwards compatibility for legacy pa-close-date
+                if (data['pa-close-date'] && !data['pa-close-year']) {
+                    const m = String(data['pa-close-date']).match(/(?:(\d{2,3})[年\/\-])?\s*(\d{1,2})[月\/\-]\s*(\d{1,2})/);
+                    if (m) {
+                        if (document.getElementById('pa-close-year') && m[1]) document.getElementById('pa-close-year').value = m[1];
+                        if (document.getElementById('pa-close-month') && m[2]) document.getElementById('pa-close-month').value = m[2];
+                        if (document.getElementById('pa-close-day') && m[3]) document.getElementById('pa-close-day').value = m[3];
+                    }
+                }
                 // Backwards compatibility for legacy pa-send-reply-date
                 if (data['pa-send-reply-date'] && !data['pa-send-reply-year']) {
                     const m = String(data['pa-send-reply-date']).match(/(?:(\d{2,3})[年\/\-])?\s*(\d{1,2})[月\/\-]\s*(\d{1,2})/);
