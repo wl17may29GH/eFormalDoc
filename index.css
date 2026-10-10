@@ -1390,11 +1390,11 @@ body {
     white-space: nowrap;
 }
 
-/* 發文字號列 (單行行高，與前段行距0.5行，與後段無行距) */
+/* 發文字號列 (單行行高，與前段行距為1行高，與後段無行距) */
 .pa-serial-row-b4 {
     font-size: 12pt;
     line-height: 1.25;
-    margin-top: 0.5em;
+    margin-top: 1.25em;
     margin-bottom: 0 !important;
     text-align: left;
 }
@@ -1537,8 +1537,9 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0 3px;
+    padding: 0 2px;
     box-sizing: border-box;
+    font-size: 9pt;
 }
 
 /* 粉紅框: 文字置中對齊 */
@@ -1726,20 +1727,31 @@ body {
     max-height: 3mm;
 }
 
-/* 底端收文時間與覆文字號: 維持兩行設計，保留適當手寫空位 */
+/* 底端收文時間與覆文字號: 維持兩行設計，靠左對齊，與前段無行距，保留適當手寫空位 */
 .pa-bottom-info-block-b4 {
     display: flex;
     flex-direction: column;
-    gap: 1.5mm;
+    gap: 0;
     font-size: 11pt;
-    margin-top: 2.5mm;
+    margin-top: 0 !important;
+    margin-bottom: 0;
     line-height: 1.25;
+    width: 100%;
+    text-align: left;
+    align-items: flex-start;
 }
 
 .pa-bottom-line {
+    width: 100%;
     text-align: left;
-    white-space: pre-wrap;
+    white-space: normal;
     letter-spacing: 0.5px;
+    margin: 0;
+    padding: 0;
+}
+
+.pa-bottom-line span {
+    white-space: pre;
 }
 
 /* 列印專用鎖定規則 (A4 單頁, 1.3cm 邊界, 無底色) */
