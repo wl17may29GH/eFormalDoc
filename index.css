@@ -1558,12 +1558,12 @@ body {
     background-color: #FFFFFF;
 }
 
-/* 右側主要說明欄 (紫框 - 主旨 + 說明): 完全比照一般公函，高度固定 68mm，支援動態等比例縮小字體 */
+/* 右側主要說明欄 (紫框 - 主旨 + 說明): 完全比照一般公函，空間最大化為 84mm，支援動態等比例縮小字體 */
 .pa-main-content-box {
     width: 100%;
-    height: 68mm;
-    min-height: 68mm;
-    max-height: 68mm;
+    height: 84mm;
+    min-height: 84mm;
+    max-height: 84mm;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -1652,11 +1652,11 @@ body {
     font-size: 1em;
 }
 
-/* 右側下方簽核欄: 高度固定 34mm (標題 6mm + 簽名空白 28mm，與左側 附件22mm + 免覆待覆6mm + 待覆日期6mm = 34mm 完美對齊) */
+/* 右側下方簽核欄: 高度固定 18mm (標題 6mm + 簽名空白 12mm，以主要說明欄填寫空間最大化為優先) */
 .pa-sig-grid-box {
-    height: 34mm;
-    min-height: 34mm;
-    max-height: 34mm;
+    height: 18mm;
+    min-height: 18mm;
+    max-height: 18mm;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -1688,11 +1688,11 @@ body {
     border-right: none;
 }
 
-/* 簽名空格欄: 高度固定 28mm */
+/* 簽名空格欄: 高度固定 12mm (適度容納簽章，避免佔用說明空間) */
 .pa-sig-space-row {
-    height: 28mm;
-    min-height: 28mm;
-    max-height: 28mm;
+    height: 12mm;
+    min-height: 12mm;
+    max-height: 12mm;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -1716,7 +1716,7 @@ body {
     max-height: 3mm;
 }
 
-/* 底端收文時間與覆文字號: 維持兩行設計 */
+/* 底端收文時間與覆文字號: 維持兩行設計，保留適當手寫空位 */
 .pa-bottom-info-block-b4 {
     display: flex;
     flex-direction: column;
@@ -1728,6 +1728,8 @@ body {
 
 .pa-bottom-line {
     text-align: left;
+    white-space: pre-wrap;
+    letter-spacing: 0.5px;
 }
 
 /* 列印專用鎖定規則 (A4 單頁, 1.3cm 邊界, 無底色) */

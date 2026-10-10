@@ -379,6 +379,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Format handwriting spaces for 收文時間 (Requirement 2)
+    function formatRecvTime(val) {
+        if (!val || !val.trim()) {
+            return '　　　年　　月　　日　　時　　分';
+        }
+        const s = val.trim();
+        const m = s.match(/^(\d+)?\s*年\s*(\d+)?\s*月\s*(\d+)?\s*日(?:\s*(\d+)?\s*時)?(?:\s*(\d+)?\s*分)?$/);
+        if (m) {
+            const y = m[1] ? `　${m[1]}　` : '　　　';
+            const mon = m[2] ? `　${m[2]}　` : '　　';
+            const d = m[3] ? `　${m[3]}　` : '　　';
+            const h = m[4] ? `　${m[4]}　` : '　　';
+            const min = m[5] ? `　${m[5]}　` : '　　';
+            return `${y}年${mon}月${d}日${h}時${min}分`;
+        }
+        return s;
+    }
+
+    // Format handwriting spaces for 覆文字號 (Requirement 2)
+    function formatReplyId(val) {
+        if (!val || !val.trim()) {
+            return '　　　年　　月　　日　　　　　字第　　　　　　　　號';
+        }
+        const s = val.trim();
+        const m = s.match(/^(?:(\d+)?\s*年)?(?:\s*(\d+)?\s*月)?(?:\s*(\d+)?\s*日)?(?:\s*([^\s字第號]+)?\s*字第)?(?:\s*([^\s號]+)?\s*號)?$/);
+        if (m && (m[1] || m[2] || m[3] || m[4] || m[5])) {
+            const y = m[1] ? `　${m[1]}　` : '　　　';
+            const mon = m[2] ? `　${m[2]}　` : '　　';
+            const d = m[3] ? `　${m[3]}　` : '　　';
+            const org = m[4] ? `　${m[4]}　` : '　　　　　';
+            const num = m[5] ? `　${m[5]}　` : '　　　　　　　　';
+            return `${y}年${mon}月${d}日${org}字第${num}號`;
+        }
+        return s;
+    }
+
     // Sync input fields to preview pane
     function syncPreview() {
         try {
@@ -522,11 +558,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pReplyStatusWait) pReplyStatusWait.textContent = replyCloseStatus === '待覆' ? '■待覆' : '□待覆';
             if (pReplyDateVal) pReplyDateVal.textContent = replyDate || '月　日';
 
-            // Requirement 5: 收文時間及覆文字號兩行分開呈現
-            if (pRecvTime) pRecvTime.textContent = recvTime;
-            if (pReplyId) pReplyId.textContent = replyId;
+            // Requirement 2: 收文時間及覆文字號兩行，固定內容文字彼此間維持適當的空位，供手寫內容
+            if (pRecvTime) pRecvTime.textContent = formatRecvTime(recvTime);
+            if (pReplyId) pReplyId.textContent = formatReplyId(replyId);
 
-            // Requirement 2: 主要說明欄(主旨+說明) 依固定68mm高度自動最佳化等比例縮小字體
+            // Requirement 1: 主要說明欄(主旨+說明) 填寫空間最大化為 84mm，若內容過多自動等比例縮小字體
             const sendMainBox = document.getElementById('p-pa-send-main-box');
             const replyMainBox = document.getElementById('p-pa-reply-main-box');
             if (sendMainBox) autoFitContentBox(sendMainBox);
@@ -584,8 +620,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pa-reply-attachment').value = '無';
         document.getElementById('pa-reply-close-status').value = '銷案';
         document.getElementById('pa-reply-date').value = '';
-        document.getElementById('pa-recv-time').value = '115年8月18日10時00分';
-        document.getElementById('pa-reply-id').value = '115年8月18日總大字第115000023號';
+        document.getElementById('pa-recv-time').value = '';
+        document.getElementById('pa-reply-id').value = '';
     }
 
     // Load Draft from LocalStorage
