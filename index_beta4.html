@@ -8,13 +8,6 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Beta 4 specific enhancements */
-        .badge-usage-hint {
-            font-size: 0.8rem;
-            font-weight: normal;
-            color: var(--text-muted);
-            margin-left: 8px;
-        }
         .section-muted {
             opacity: 0.6;
             transition: opacity 0.3s;
@@ -69,16 +62,16 @@
                         <div class="form-group col-span-2">
                             <label for="pa-doc-mode">一、模式 (稿 / 正式發文)</label>
                             <select id="pa-doc-mode" style="font-weight: bold; border-color: var(--primary-color);">
-                                <option value="A" selected>1. 內部陳核（標題顯示「業務接洽便函（稿）」）</option>
+                                <option value="A" selected>1. 內部陳核（標題顯示「業務接洽便函(稿)」）</option>
                                 <option value="B">2. 正式發文（標題顯示「業務接洽便函」）</option>
                             </select>
                         </div>
                         <div class="form-group col-span-2">
                             <label for="pa-usage-mode">二、用途 (填寫區塊選擇)</label>
                             <select id="pa-usage-mode" style="font-weight: bold; border-color: var(--primary-color);">
-                                <option value="send" selected>1. 發文 (內容填寫於黃底區)</option>
-                                <option value="reply">2. 回文 (內容填寫於藍底區)</option>
-                                <option value="both">3. 發文＋回文 (兩區皆完整填寫)</option>
+                                <option value="send" selected>1. 發文 (填寫發文段)</option>
+                                <option value="reply">2. 回文 (填寫覆文段)</option>
+                                <option value="both">3. 發文＋回文 (兩段皆填寫)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -160,12 +153,9 @@
                         </div>
                     </div>
 
-                    <!-- Card 3: 1. 發文資訊 (黃底區) -->
-                    <div class="config-card card-theme-send" id="card-send">
-                        <h3 class="card-subtitle">
-                            <i data-lucide="arrow-up-right"></i> 1. 發文資訊
-                            <span class="badge-tag badge-yellow">黃底發文區</span>
-                        </h3>
+                    <!-- Card 3: 1. 發文資訊 -->
+                    <div class="config-card" id="card-send">
+                        <h3 class="card-subtitle"><i data-lucide="arrow-up-right"></i> 1. 發文資訊</h3>
                         <div class="form-grid">
                             <div class="form-group col-span-2">
                                 <label for="pa-send-receiver">受文者</label>
@@ -220,12 +210,9 @@
                         </div>
                     </div>
 
-                    <!-- Card 4: 2. 回文資訊 (藍底區) -->
-                    <div class="config-card card-theme-reply" id="card-reply">
-                        <h3 class="card-subtitle">
-                            <i data-lucide="arrow-down-left"></i> 2. 回文資訊
-                            <span class="badge-tag badge-blue">藍底回文區</span>
-                        </h3>
+                    <!-- Card 4: 2. 回文資訊 -->
+                    <div class="config-card" id="card-reply">
+                        <h3 class="card-subtitle"><i data-lucide="arrow-down-left"></i> 2. 回文資訊</h3>
                         <div class="form-grid">
                             <div class="form-group col-span-2">
                                 <label for="pa-reply-receiver">受文者 (覆文)</label>
@@ -326,229 +313,198 @@
                 </div>
             </div>
 
-            <!-- The A4 Sheet Simulator (Single Page Standard Layout) -->
+            <!-- The A4 Sheet Simulator (Single Page Standard Layout - 1.3cm Padding) -->
             <div class="a4-sheet-container">
-                <div id="a4-sheet" class="a4-sheet show-grid" style="padding: 14mm 16mm; box-sizing: border-box;">
+                <div id="a4-sheet" class="a4-sheet show-grid" style="padding: 13mm; box-sizing: border-box;">
                     
                     <div class="pa-beta4-wrapper">
-                        <!-- Table 1: Top Metadata Info Table -->
+                        <!-- Table 1: Top Metadata Info Table (4 rows) -->
                         <table class="pa-top-meta-table-b4">
                             <colgroup>
-                                <col style="width: 7%;">
-                                <col style="width: 5.5%;">
-                                <col style="width: 5.5%;">
-                                <col style="width: 5.5%;">
-                                <col style="width: 48%;">
-                                <col style="width: 14%;">
-                                <col style="width: 14.5%;">
+                                <col style="width: 15mm;">
+                                <col style="width: 8mm;">
+                                <col style="width: 8mm;">
+                                <col style="width: 11mm;">
+                                <col style="width: 82mm;">
+                                <col style="width: 15mm;">
+                                <col style="width: 11mm;">
+                                <col style="width: 16mm;">
+                                <col style="width: 18mm;">
                             </colgroup>
-                            <tr>
-                                <td class="lbl-cell">類　別</td>
-                                <td style="text-align: center; font-weight: bold;" id="p-pa-cat-A">■A</td>
-                                <td style="text-align: center; font-weight: bold;" id="p-pa-cat-B">□B</td>
-                                <td style="text-align: center; font-weight: bold;" id="p-pa-cat-C">□C</td>
-                                <td rowspan="4" class="title-cell" id="p-pa-main-title">
-                                    業 務 接 洽 便 函（稿）
-                                </td>
-                                <td class="lbl-cell">銷案日期</td>
-                                <td id="p-pa-close-date" style="text-align: center; font-size: 9.5pt;">年　月　日</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl-cell" rowspan="3">機密別</td>
-                                <td colspan="3" style="text-align: center; font-size: 10pt;" id="p-pa-sec-val">
-                                    <span id="p-pa-sec-yes">□機密</span><br>
-                                    <span id="p-pa-sec-no">■非機密</span>
-                                </td>
-                                <td class="lbl-cell">處理日數</td>
-                                <td style="text-align: center;"><span id="p-pa-days">3</span> 日</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" rowspan="2" style="background-color: #FAFAFA;"></td>
-                                <td class="lbl-cell">預定保存年限</td>
-                                <td id="p-pa-years" style="text-align: center;">5年</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl-cell">檔　　號</td>
-                                <td id="p-pa-doc-num" style="text-align: center;"></td>
-                            </tr>
+                            <tbody>
+                                <!-- Row 1: 類別 header & A B C headers -->
+                                <tr>
+                                    <td class="lbl-cell" rowspan="2">類　別</td>
+                                    <td class="lbl-cell-sub">A</td>
+                                    <td class="lbl-cell-sub">B</td>
+                                    <td class="lbl-cell-sub">C</td>
+                                    <!-- Center Title: rowspan 4, NO top/bottom border, single line, no spaces -->
+                                    <td rowspan="4" class="title-cell-b4" id="p-pa-main-title">業務接洽便函(稿)</td>
+                                    <td class="lbl-cell" rowspan="2">銷案日期</td>
+                                    <td class="val-cell-center" colspan="3" rowspan="2" id="p-pa-close-date">年　月　日</td>
+                                </tr>
+                                <!-- Row 2: Checkmark cells under A, B, C -->
+                                <tr>
+                                    <td class="chk-cell" id="p-pa-cat-A">✓</td>
+                                    <td class="chk-cell" id="p-pa-cat-B"></td>
+                                    <td class="chk-cell" id="p-pa-cat-C"></td>
+                                </tr>
+                                <!-- Row 3: 機密別 header & 機密/非機密 headers -->
+                                <tr>
+                                    <td class="lbl-cell" rowspan="2">機密別</td>
+                                    <td class="lbl-cell-sub" colspan="2">機密</td>
+                                    <td class="lbl-cell-sub">非機密</td>
+                                    <td class="lbl-cell">處理日數</td>
+                                    <td class="val-cell-center" id="p-pa-days-box"><span id="p-pa-days">3</span> 日</td>
+                                    <td class="lbl-cell">預定保存年限</td>
+                                    <td class="val-cell-center" id="p-pa-years-box"><span id="p-pa-years">5年</span></td>
+                                </tr>
+                                <!-- Row 4: Checkmark cells under 機密, 非機密 -->
+                                <tr>
+                                    <td class="chk-cell" colspan="2" id="p-pa-sec-yes"></td>
+                                    <td class="chk-cell" id="p-pa-sec-no">✓</td>
+                                    <td class="lbl-cell">檔　　號</td>
+                                    <td class="val-cell-center" colspan="3" id="p-pa-doc-num"></td>
+                                </tr>
+                            </tbody>
                         </table>
 
-                        <!-- Serial Row -->
+                        <!-- Serial Row (Single Line) -->
                         <div class="pa-serial-row-b4">
-                            <span>發文字號：<span id="p-pa-date-roc">115 年 10 月 10 日</span>庚大業洽字第<span id="p-pa-id-serial" style="font-weight: bold; letter-spacing: 1px;">　1150001　</span>號</span>
+                            發文字號：<span id="p-pa-date-roc">115 年 10 月 10 日</span>庚大業洽字第<span id="p-pa-id-serial">　1150001　</span>號
                         </div>
 
-                        <!-- 1. 發文段 (Upper Block - Fixed Height 98mm - 黃底區) -->
-                        <div class="pa-segment-block pa-send-block" id="preview-send-block">
-                            <table class="pa-main-table-b4">
-                                <colgroup>
-                                    <col style="width: 8.5%;">
-                                    <col style="width: 14.5%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                </colgroup>
-                                <tbody>
-                                    <!-- Row 1: 受文者 Header -->
-                                    <tr>
-                                        <td colspan="2" class="cell-lbl">受　文　者</td>
-                                        <!-- Content spans rows 1 to 6 on right -->
-                                        <td colspan="5" rowspan="6" class="cell-content">
-                                            <div class="pa-content-inner">
-                                                <div class="pa-subj-line">
-                                                    <span class="content-tag">主旨：</span><span id="p-pa-send-subject">洽請協助進行115學年度新進教師公文系統權限設定開通事宜。</span>
-                                                </div>
-                                                <div class="pa-expl-line" id="p-pa-send-expl-wrapper">
-                                                    <span class="content-tag">說明：</span><br><span id="p-pa-send-explanation">一、本校預計於8月新增教師3名，需提早開通公文製作系統。<br>二、檢附新進教師名單與處室對照表各乙份。</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Row 2: 受文者 Value -->
-                                    <tr>
-                                        <td colspan="2" class="cell-val cell-bold" id="p-pa-send-receiver">總務處文書組</td>
-                                    </tr>
-                                    <!-- Row 3: 發文經辦部門 Header -->
-                                    <tr>
-                                        <td colspan="2" class="cell-lbl">發文經辦部門</td>
-                                    </tr>
-                                    <!-- Row 4: 發文經辦部門 Value -->
-                                    <tr>
-                                        <td colspan="2" class="cell-val" id="p-pa-send-dept">資訊處軟體發展組</td>
-                                    </tr>
-                                    <!-- Row 5: 經辦人 -->
-                                    <tr>
-                                        <td class="cell-lbl">經辦人</td>
-                                        <td class="cell-val" id="p-pa-send-person">王小明</td>
-                                    </tr>
-                                    <!-- Row 6: 電話 -->
-                                    <tr>
-                                        <td class="cell-lbl">電　話</td>
-                                        <td class="cell-val" id="p-pa-send-phone">3601</td>
-                                    </tr>
-                                    <!-- Row 7: 附件 on left, 5 signature titles on right -->
-                                    <tr class="row-sig-headers">
-                                        <td class="cell-lbl">附　件</td>
-                                        <td class="cell-val" id="p-pa-send-attachment" style="font-size: 8.5pt;">新進教師名單.xlsx</td>
-                                        <td class="cell-lbl">校長</td>
-                                        <td class="cell-lbl">會稿</td>
-                                        <td class="cell-lbl">院(處)長</td>
-                                        <td class="cell-lbl">單位主管</td>
-                                        <td class="cell-lbl">經辦</td>
-                                    </tr>
-                                    <!-- Row 8: 免覆/待覆 on left, 5 signature boxes on right (rowspan 2) -->
-                                    <tr>
-                                        <td colspan="2" class="cell-center" style="font-size: 10pt;">
-                                            <span id="p-pa-status-free">□免覆</span>&nbsp;&nbsp;
-                                            <span id="p-pa-status-wait">■待覆</span>
-                                        </td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                    </tr>
-                                    <!-- Row 9: 待覆日期 on left -->
-                                    <tr>
-                                        <td class="cell-lbl">待覆日期</td>
-                                        <td class="cell-val" id="p-pa-send-reply-date">8月25日</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- 1. 發文段 (Upper Block - Fixed Height 103mm - Decoupled Left & Right) -->
+                        <div class="pa-segment-container-b4" id="preview-send-block">
+                            <!-- Left Column (42mm) -->
+                            <div class="pa-col-left">
+                                <div class="pa-left-title-bar">受　文　者</div>
+                                <div class="pa-left-content-val" style="font-weight: bold;" id="p-pa-send-receiver">總務處文書組</div>
+                                <div class="pa-left-title-bar">發文經辦部門</div>
+                                <div class="pa-left-content-val" id="p-pa-send-dept">資訊處軟體發展組</div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">經辦人</div>
+                                    <div class="pa-left-split-val" id="p-pa-send-person">王小明</div>
+                                </div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">電　話</div>
+                                    <div class="pa-left-split-val" id="p-pa-send-phone">3601</div>
+                                </div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">附　件</div>
+                                    <div class="pa-left-split-val" id="p-pa-send-attachment">新進教師名單.xlsx</div>
+                                </div>
+                                <div class="pa-left-split-row pa-left-split-center">
+                                    <span id="p-pa-status-free">□免覆</span>&nbsp;&nbsp;
+                                    <span id="p-pa-status-wait">■待覆</span>
+                                </div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">待覆日期</div>
+                                    <div class="pa-left-split-val" id="p-pa-send-reply-date">8月25日</div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column (142mm) -->
+                            <div class="pa-col-right">
+                                <!-- Top: 主要說明欄 (主旨 + 說明) -->
+                                <div class="pa-main-content-box">
+                                    <div class="pa-subj-line">
+                                        <span class="content-tag">主旨：</span><span id="p-pa-send-subject">洽請協助進行115學年度新進教師公文系統權限設定開通事宜。</span>
+                                    </div>
+                                    <div class="pa-expl-line" id="p-pa-send-expl-wrapper">
+                                        <span class="content-tag">說明：</span><br><span id="p-pa-send-explanation">一、本校預計於8月新增教師3名，需提早開通公文製作系統。<br>二、檢附新進教師名單與處室對照表各乙份。</span>
+                                    </div>
+                                </div>
+                                <!-- Bottom: 簽核欄 (Fixed 22mm) -->
+                                <div class="pa-sig-grid-box">
+                                    <div class="pa-sig-header-row">
+                                        <div class="pa-sig-header-cell">校長</div>
+                                        <div class="pa-sig-header-cell">會稿</div>
+                                        <div class="pa-sig-header-cell">院(處)長</div>
+                                        <div class="pa-sig-header-cell">單位主管</div>
+                                        <div class="pa-sig-header-cell">經辦</div>
+                                    </div>
+                                    <div class="pa-sig-space-row">
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Divider between Upper and Lower Blocks -->
-                        <div class="pa-block-divider"></div>
+                        <!-- Divider between Upper and Lower Blocks (3mm) -->
+                        <div class="pa-block-divider-b4"></div>
 
-                        <!-- 2. 覆文段 (Lower Block - Fixed Height 98mm - 藍底區) -->
-                        <div class="pa-segment-block pa-reply-block" id="preview-reply-block">
-                            <table class="pa-main-table-b4">
-                                <colgroup>
-                                    <col style="width: 8.5%;">
-                                    <col style="width: 14.5%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                    <col style="width: 15.4%;">
-                                </colgroup>
-                                <tbody>
-                                    <!-- Row 1: 受文者 Header -->
-                                    <tr>
-                                        <td colspan="2" class="cell-lbl">受　文　者</td>
-                                        <!-- Content spans rows 1 to 6 on right -->
-                                        <td colspan="5" rowspan="6" class="cell-content">
-                                            <div class="pa-content-inner">
-                                                <div class="pa-subj-line">
-                                                    <span class="content-tag">主旨：</span><span id="p-pa-reply-subject">已完成115學年度新進教師公文系統權限設定開通，請 查照。</span>
-                                                </div>
-                                                <div class="pa-expl-line" id="p-pa-reply-expl-wrapper">
-                                                    <span class="content-tag">說明：</span><br><span id="p-pa-reply-explanation">一、依 貴單位8月17日庚大業洽字第1150001號便函辦理。<br>二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Row 2: 受文者 Value -->
-                                    <tr>
-                                        <td colspan="2" class="cell-val cell-bold" id="p-pa-reply-receiver">資訊處軟體發展組</td>
-                                    </tr>
-                                    <!-- Row 3: 覆文經辦部門 Header -->
-                                    <tr>
-                                        <td colspan="2" class="cell-lbl">覆文經辦部門</td>
-                                    </tr>
-                                    <!-- Row 4: 覆文經辦部門 Value -->
-                                    <tr>
-                                        <td colspan="2" class="cell-val" id="p-pa-reply-dept">總務處文書組</td>
-                                    </tr>
-                                    <!-- Row 5: 經辦人 -->
-                                    <tr>
-                                        <td class="cell-lbl">經辦人</td>
-                                        <td class="cell-val" id="p-pa-reply-person">李四</td>
-                                    </tr>
-                                    <!-- Row 6: 電話 -->
-                                    <tr>
-                                        <td class="cell-lbl">電　話</td>
-                                        <td class="cell-val" id="p-pa-reply-phone">3401</td>
-                                    </tr>
-                                    <!-- Row 7: 附件 on left, 5 signature titles on right -->
-                                    <tr class="row-sig-headers">
-                                        <td class="cell-lbl">附　件</td>
-                                        <td class="cell-val" id="p-pa-reply-attachment" style="font-size: 8.5pt;">無</td>
-                                        <td class="cell-lbl">校長</td>
-                                        <td class="cell-lbl">會稿</td>
-                                        <td class="cell-lbl">院(處)長</td>
-                                        <td class="cell-lbl">單位主管</td>
-                                        <td class="cell-lbl">經辦</td>
-                                    </tr>
-                                    <!-- Row 8: 銷案/待覆 on left, 5 signature boxes on right (rowspan 2) -->
-                                    <tr>
-                                        <td colspan="2" class="cell-center" style="font-size: 10pt;">
-                                            <span id="p-pa-reply-status-close">■銷案</span>&nbsp;&nbsp;
-                                            <span id="p-pa-reply-status-wait">□待覆</span>
-                                        </td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                        <td rowspan="2" class="cell-sig-box"><div class="sig-placeholder"></div></td>
-                                    </tr>
-                                    <!-- Row 9: 待覆日期 on left -->
-                                    <tr>
-                                        <td class="cell-lbl">待覆日期</td>
-                                        <td class="cell-val" id="p-pa-reply-date-val">月　日</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- 2. 覆文段 (Lower Block - Fixed Height 103mm - Decoupled Left & Right) -->
+                        <div class="pa-segment-container-b4" id="preview-reply-block">
+                            <!-- Left Column (42mm) -->
+                            <div class="pa-col-left">
+                                <div class="pa-left-title-bar">受　文　者</div>
+                                <div class="pa-left-content-val" style="font-weight: bold;" id="p-pa-reply-receiver">資訊處軟體發展組</div>
+                                <div class="pa-left-title-bar">覆文經辦部門</div>
+                                <div class="pa-left-content-val" id="p-pa-reply-dept">總務處文書組</div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">經辦人</div>
+                                    <div class="pa-left-split-val" id="p-pa-reply-person">李四</div>
+                                </div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">電　話</div>
+                                    <div class="pa-left-split-val" id="p-pa-reply-phone">3401</div>
+                                </div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">附　件</div>
+                                    <div class="pa-left-split-val" id="p-pa-reply-attachment">無</div>
+                                </div>
+                                <div class="pa-left-split-row pa-left-split-center">
+                                    <span id="p-pa-reply-status-close">■銷案</span>&nbsp;&nbsp;
+                                    <span id="p-pa-reply-status-wait">□待覆</span>
+                                </div>
+                                <div class="pa-left-split-row">
+                                    <div class="pa-left-split-lbl">待覆日期</div>
+                                    <div class="pa-left-split-val" id="p-pa-reply-date-val">月　日</div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column (142mm) -->
+                            <div class="pa-col-right">
+                                <!-- Top: 主要說明欄 (主旨 + 說明) -->
+                                <div class="pa-main-content-box">
+                                    <div class="pa-subj-line">
+                                        <span class="content-tag">主旨：</span><span id="p-pa-reply-subject">已完成115學年度新進教師公文系統權限設定開通，請 查照。</span>
+                                    </div>
+                                    <div class="pa-expl-line" id="p-pa-reply-expl-wrapper">
+                                        <span class="content-tag">說明：</span><br><span id="p-pa-reply-explanation">一、依 貴單位8月17日庚大業洽字第1150001號便函辦理。<br>二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。</span>
+                                    </div>
+                                </div>
+                                <!-- Bottom: 簽核欄 (Fixed 22mm) -->
+                                <div class="pa-sig-grid-box">
+                                    <div class="pa-sig-header-row">
+                                        <div class="pa-sig-header-cell">校長</div>
+                                        <div class="pa-sig-header-cell">會稿</div>
+                                        <div class="pa-sig-header-cell">院(處)長</div>
+                                        <div class="pa-sig-header-cell">單位主管</div>
+                                        <div class="pa-sig-header-cell">經辦</div>
+                                    </div>
+                                    <div class="pa-sig-space-row">
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                        <div class="pa-sig-space-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Bottom Meta Details -->
-                        <div class="pa-bottom-info-row-b4">
-                            <div class="pa-info-cell">
+                        <!-- Bottom Details (Two distinct lines) -->
+                        <div class="pa-bottom-info-block-b4">
+                            <div class="pa-bottom-line">
                                 收文時間：<span id="p-pa-recv-time">115年8月18日10時00分</span>
                             </div>
-                            <div class="pa-info-cell" style="text-align: right;">
+                            <div class="pa-bottom-line">
                                 覆文字號：<span id="p-pa-reply-id">115年8月18日總大字第115000023號</span>
                             </div>
                         </div>

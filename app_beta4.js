@@ -146,26 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const catA = document.getElementById('p-pa-cat-A');
             const catB = document.getElementById('p-pa-cat-B');
             const catC = document.getElementById('p-pa-cat-C');
-            if (catA) catA.textContent = cat === 'A' ? '■A' : '□A';
-            if (catB) catB.textContent = cat === 'B' ? '■B' : '□B';
-            if (catC) catC.textContent = cat === 'C' ? '■C' : '□C';
+            if (catA) catA.textContent = (cat === 'A') ? '✓' : '';
+            if (catB) catB.textContent = (cat === 'B') ? '✓' : '';
+            if (catC) catC.textContent = (cat === 'C') ? '✓' : '';
 
-            // Title: 稿 vs 正式發文 (Requirement 1: 差別只有「（稿）」這幾個字的有無)
+            // Title: 稿 vs 正式發文 (Requirement 4: 單行置中、無多餘空格、無上下邊框)
             const mode = paDocMode ? paDocMode.value : 'A';
             const mainTitle = document.getElementById('p-pa-main-title');
             if (mainTitle) {
-                if (mode === 'A') {
-                    mainTitle.textContent = '業 務 接 洽 便 函（稿）';
-                } else {
-                    mainTitle.textContent = '業 務 接 洽 便 函';
-                }
+                mainTitle.textContent = (mode === 'A') ? '業務接洽便函(稿)' : '業務接洽便函';
             }
 
             const secrecy = document.getElementById('pa-secrecy').value;
             const secYes = document.getElementById('p-pa-sec-yes');
             const secNo = document.getElementById('p-pa-sec-no');
-            if (secYes) secYes.textContent = secrecy === '機密' ? '■機密' : '□機密';
-            if (secNo) secNo.textContent = secrecy === '非機密' ? '■非機密' : '□非機密';
+            if (secYes) secYes.textContent = (secrecy === '機密') ? '✓' : '';
+            if (secNo) secNo.textContent = (secrecy === '非機密') ? '✓' : '';
 
             const closeDate = document.getElementById('pa-close-date').value || '年　月　日';
             const days = document.getElementById('pa-days').value || '3';
@@ -181,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pYears) pYears.textContent = years;
             if (pDocNum) pDocNum.textContent = docNum;
 
-            // Serial Row
+            // Serial Row (Requirement 5: 單行發文字號)
             const yearVal = document.getElementById('pa-date-year').value || '115';
             const monthVal = document.getElementById('pa-date-month').value || '10';
             const dayVal = document.getElementById('pa-date-day').value || '10';
@@ -192,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pDateRoc) pDateRoc.textContent = `${yearVal} 年 ${monthVal} 月 ${dayVal} 日`;
             if (pIdSerial) pIdSerial.textContent = `　${serialVal}　`;
 
-            // 2. Upper Block: 發文段 (黃底區 - Requirement 2 & 3)
+            // 2. Upper Block: 發文段 (Requirement 6: 左右分離、標題固定、內容自適應)
             const sendReceiver = document.getElementById('pa-send-receiver').value || '（受文者）';
             const sendSubject = document.getElementById('pa-send-subject').value || '';
             const sendExplanation = document.getElementById('pa-send-explanation').value || '';
@@ -225,20 +221,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pStatusWait) pStatusWait.textContent = sendReplyStatus === '待覆' ? '■待覆' : '□待覆';
             if (pSendReplyDate) pSendReplyDate.textContent = sendReplyDate;
 
-            // Adaptive font scaling for Send Explanation within fixed 98mm height
+            // Adaptive font scaling for Send Explanation within fixed 81mm main content height
             const sendExplWrapper = document.getElementById('p-pa-send-expl-wrapper');
             if (sendExplWrapper) {
                 sendExplWrapper.classList.remove('font-tight', 'font-compact');
                 const explLength = sendExplanation.length;
                 const lineCount = (sendExplanation.match(/\n/g) || []).length + 1;
-                if (explLength > 180 || lineCount >= 6) {
+                if (explLength > 200 || lineCount >= 7) {
                     sendExplWrapper.classList.add('font-compact');
-                } else if (explLength > 110 || lineCount >= 4) {
+                } else if (explLength > 120 || lineCount >= 5) {
                     sendExplWrapper.classList.add('font-tight');
                 }
             }
 
-            // 3. Lower Block: 覆文段 (藍底區 - Requirement 2 & 3)
+            // 3. Lower Block: 覆文段 (Requirement 6: 左右分離、標題固定、內容自適應)
             const replyReceiver = document.getElementById('pa-reply-receiver').value || '';
             const replySubject = document.getElementById('pa-reply-subject').value || '';
             const replyExplanation = document.getElementById('pa-reply-explanation').value || '';
@@ -274,18 +270,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pReplyStatusClose) pReplyStatusClose.textContent = replyCloseStatus === '銷案' ? '■銷案' : '□銷案';
             if (pReplyStatusWait) pReplyStatusWait.textContent = replyCloseStatus === '待覆' ? '■待覆' : '□待覆';
             if (pReplyDateVal) pReplyDateVal.textContent = replyDate || '月　日';
+
+            // Requirement 5: 收文時間及覆文字號兩行分開呈現
             if (pRecvTime) pRecvTime.textContent = recvTime;
             if (pReplyId) pReplyId.textContent = replyId;
 
-            // Adaptive font scaling for Reply Explanation within fixed 98mm height
+            // Adaptive font scaling for Reply Explanation within fixed 81mm main content height
             const replyExplWrapper = document.getElementById('p-pa-reply-expl-wrapper');
             if (replyExplWrapper) {
                 replyExplWrapper.classList.remove('font-tight', 'font-compact');
                 const explLength = replyExplanation.length;
                 const lineCount = (replyExplanation.match(/\n/g) || []).length + 1;
-                if (explLength > 180 || lineCount >= 6) {
+                if (explLength > 200 || lineCount >= 7) {
                     replyExplWrapper.classList.add('font-compact');
-                } else if (explLength > 110 || lineCount >= 4) {
+                } else if (explLength > 120 || lineCount >= 5) {
                     replyExplWrapper.classList.add('font-tight');
                 }
             }
@@ -321,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pa-close-date').value = '';
         document.getElementById('pa-id-serial').value = '1150001';
 
-        // Upper: Send段 (黃底區)
+        // Upper: Send段
         document.getElementById('pa-send-receiver').value = '總務處文書組';
         document.getElementById('pa-send-subject').value = '洽請協助進行115學年度新進教師公文系統權限設定開通事宜。';
         document.getElementById('pa-send-explanation').value = '一、本校預計於8月新增教師3名，需提早開通公文製作系統。\n二、檢附新進教師名單與處室對照表各乙份。';
@@ -332,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pa-send-reply-status').value = '待覆';
         document.getElementById('pa-send-reply-date').value = '8月25日';
 
-        // Lower: Reply段 (藍底區)
+        // Lower: Reply段
         document.getElementById('pa-reply-receiver').value = '資訊處軟體發展組';
         document.getElementById('pa-reply-subject').value = '已完成115學年度新進教師公文系統權限設定開通，請 查照。';
         document.getElementById('pa-reply-explanation').value = '一、依 貴單位8月17日庚大業洽字第1150001號便函辦理。\n二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。';
