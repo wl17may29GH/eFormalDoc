@@ -581,6 +581,108 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ==========================================
+    // 挪抬 (空格) 提示檢測機制 (第五次優化)
+    // ==========================================
+    const NUOTAI_ALERT_MSG = '公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。';
+    const NUOTAI_TERMS = [
+        '請', '希', '查照', '鑒核', '鑑核', '備查',
+        '辦理見復', '辦理見復',
+        '貴', '鈞', '大'
+    ];
+    const NUOTAI_TERMS_PATTERN = '(?:' + NUOTAI_TERMS.join('|') + ')';
+    const NUOTAI_SPACE_PATTERN = '[ \\t\\u3000\\u00a0]';
+    const rxNuoTaiBefore = new RegExp(NUOTAI_SPACE_PATTERN + '+' + NUOTAI_TERMS_PATTERN);
+    const rxNuoTaiAfter = new RegExp(NUOTAI_TERMS_PATTERN + NUOTAI_SPACE_PATTERN + '+');
+
+    function hasNuoTaiSpacing(text) {
+        if (!text) return false;
+        return rxNuoTaiBefore.test(text) || rxNuoTaiAfter.test(text);
+    }
+
+    const nuoTaiFieldIds = [
+        'up-subject',
+        'up-explanation',
+        'pa-send-subject',
+        'pa-send-explanation',
+        'pa-reply-subject',
+        'pa-reply-explanation'
+    ];
+
+    const warnedNuoTaiValues = {};
+
+    function checkFieldNuoTai(fieldId, triggerAlert = false) {
+        const el = document.getElementById(fieldId);
+        if (!el) return;
+        const val = el.value || '';
+        const hintEl = document.getElementById('hint-' + fieldId);
+        const hasNuo = hasNuoTaiSpacing(val);
+
+        if (hintEl) {
+            if (hasNuo) {
+                hintEl.classList.add('show');
+            } else {
+                hintEl.classList.remove('show');
+            }
+        }
+
+        if (hasNuo) {
+            if (triggerAlert && warnedNuoTaiValues[fieldId] !== val) {
+                warnedNuoTaiValues[fieldId] = val;
+                alert(NUOTAI_ALERT_MSG);
+            }
+        } else {
+            delete warnedNuoTaiValues[fieldId];
+        }
+    }
+
+    function checkAllNuoTaiFields(triggerAlert = false) {
+        nuoTaiFieldIds.forEach(id => checkFieldNuoTai(id, triggerAlert));
+    }
+
+    function checkNuoTaiBeforePrint() {
+        const cat = docCategorySelect ? docCategorySelect.value : '';
+        let activeFields = [];
+        if (cat === 'upward' || cat === 'parallel_downward') {
+            activeFields = ['up-subject', 'up-explanation'];
+        } else if (cat === 'contact_letter') {
+            const usage = paUsageMode ? paUsageMode.value : 'both';
+            if (usage === 'send') {
+                activeFields = ['pa-send-subject', 'pa-send-explanation'];
+            } else if (usage === 'reply') {
+                activeFields = ['pa-reply-subject', 'pa-reply-explanation'];
+            } else {
+                activeFields = ['pa-send-subject', 'pa-send-explanation', 'pa-reply-subject', 'pa-reply-explanation'];
+            }
+        }
+        for (const id of activeFields) {
+            const el = document.getElementById(id);
+            if (el && hasNuoTaiSpacing(el.value || '')) {
+                if (warnedNuoTaiValues[id] !== el.value) {
+                    warnedNuoTaiValues[id] = el.value;
+                    alert(NUOTAI_ALERT_MSG);
+                    break;
+                }
+            }
+        }
+    }
+
+    function setupNuoTaiWarning() {
+        nuoTaiFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', () => {
+                checkFieldNuoTai(id, false);
+            });
+            el.addEventListener('blur', () => {
+                checkFieldNuoTai(id, true);
+            });
+            el.addEventListener('change', () => {
+                checkFieldNuoTai(id, true);
+            });
+        });
+    }
+
     function handleCategoryChange(shouldSyncNow = true) {
         if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
         const category = docCategorySelect.value;
@@ -612,6 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
             checkMoeWarning();
         }
 
+        checkAllNuoTaiFields(false);
         initLucide();
         if (shouldSyncNow) syncPreview();
     }
@@ -1640,6 +1743,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (d.paReplyDay !== undefined) document.getElementById('pa-reply-day').value = d.paReplyDay;
 
             updateReplyDateControls();
+            checkAllNuoTaiFields(false);
             syncPreview();
         } catch (e) {
             console.error("Draft load failed", e);
@@ -1674,7 +1778,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-secrecy-duration-preset').value = '';
             document.getElementById('up-secrecy-duration').value = '';
             document.getElementById('up-attachment').value = '如主旨';
-            document.getElementById('up-subject').value = '檢陳本校115學年度發展創新教學精進計畫書乙份，請 鑒核。';
+            document.getElementById('up-subject').value = '檢陳本校115學年度發展創新教學精進計畫書乙份，請鑒核。';
             document.getElementById('up-explanation').value = '一、依據教育部115年1月15日臺高(二)字第1150001234號函辦理。\n二、本校為提升教學品質，深化數位學習成效，特研擬本計畫。\n三、隨函檢附計畫書及經費明細表各乙份。';
             document.getElementById('up-original').value = '教育部';
             document.getElementById('up-cc').value = '本校秘書室、研發處';
@@ -1693,8 +1797,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-secrecy-duration-preset').value = '';
             document.getElementById('up-secrecy-duration').value = '';
             document.getElementById('up-attachment').value = '合約書草案乙份';
-            document.getElementById('up-subject').value = '檢送本校與貴院產學合作計畫合約書草案，請 查照。';
-            document.getElementById('up-explanation').value = '一、依據雙方115年3月10日合作籌備會議決議辦理。\n二、合約內容業經本校法規會審查完竣，請 貴院審閱確認後回復。\n三、如有疑義，請洽本校研發處經辦人員。';
+            document.getElementById('up-subject').value = '檢送本校與貴院產學合作計畫合約書草案，請查照。';
+            document.getElementById('up-explanation').value = '一、依據雙方115年3月10日合作籌備會議決議辦理。\n二、合約內容業經本校法規會審查完竣，請貴院審閱確認後回復。\n三、如有疑義，請洽本校研發處經辦人員。';
             document.getElementById('up-original').value = '長庚醫療財團法人林口長庚紀念醫院';
             document.getElementById('up-cc').value = '本校研發處、總務處';
         } else if (category === 'contact_letter') {
@@ -1728,8 +1832,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Reply block
             document.getElementById('pa-reply-receiver').value = '資訊處軟體發展組';
-            document.getElementById('pa-reply-subject').value = '已完成115學年度新進教師公文系統權限設定開通，請 查照。';
-            document.getElementById('pa-reply-explanation').value = '一、依 貴單位8月17日庚大業洽字第1150001號便函辦理。\n二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。';
+            document.getElementById('pa-reply-subject').value = '已完成115學年度新進教師公文系統權限設定開通，請查照。';
+            document.getElementById('pa-reply-explanation').value = '一、依貴單位8月17日庚大業洽字第1150001號便函辦理。\n二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。';
             document.getElementById('pa-reply-dept').value = '總務處文書組';
             document.getElementById('pa-reply-person').value = '李四';
             document.getElementById('pa-reply-phone').value = '3401';
@@ -1741,6 +1845,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateReplyDateControls();
+        checkAllNuoTaiFields(false);
         if (shouldSync) syncPreview();
     }
 
@@ -1887,6 +1992,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetEl.setSelectionRange(startPos + phrase.length, startPos + phrase.length);
 
                 handleFormInput();
+                checkFieldNuoTai(targetId, false);
             });
         });
     }
@@ -2091,6 +2197,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
+            checkNuoTaiBeforePrint();
             syncPreview();
             window.print();
         });
@@ -2111,6 +2218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupQuickPhrases();
         setupResizer();
         setupSecrecyPreset();
+        setupNuoTaiWarning();
 
         const storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b5');
         if (storedLive !== null) {
@@ -2141,6 +2249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateReplyDateControls();
+        checkAllNuoTaiFields(false);
         syncPreview();
     }
 

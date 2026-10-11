@@ -206,21 +206,23 @@
                             <div class="quick-phrases" style="margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
                                 <span class="phrase-group-label" style="font-weight: 500; color: var(--text-muted); min-width: 80px;">上行文：</span>
                                 <button type="button" class="phrase-tag" data-phrase="檢陳" data-target="up-subject">檢陳</button>
-                                <button type="button" class="phrase-tag" data-phrase="請 鑒核。" data-target="up-subject">請 鑒核。</button>
+                                <button type="button" class="phrase-tag" data-phrase="請鑒核。" data-target="up-subject">請鑒核。</button>
                             </div>
                             <div class="quick-phrases" style="margin-bottom: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
                                 <span class="phrase-group-label" style="font-weight: 500; color: var(--text-muted); min-width: 80px;">平下行文：</span>
                                 <button type="button" class="phrase-tag" data-phrase="檢送" data-target="up-subject">檢送</button>
-                                <button type="button" class="phrase-tag" data-phrase="請 查照。" data-target="up-subject">請 查照。</button>
+                                <button type="button" class="phrase-tag" data-phrase="請查照。" data-target="up-subject">請查照。</button>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="up-subject">主旨</label>
                             <textarea id="up-subject" rows="2"></textarea>
+                            <div id="hint-up-subject" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                         </div>
                         <div class="form-group">
                             <label for="up-explanation">說明 <small style="color: var(--text-muted); font-weight: normal;">(支援六階層自動縮排，可輸入 <code>[分頁]</code> 強制分頁)</small></label>
                             <textarea id="up-explanation" rows="6"></textarea>
+                            <div id="hint-up-explanation" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                         </div>
                         <div class="form-group col-span-2">
                             <label for="up-original">正本 <small style="color: var(--text-muted); font-weight: normal;">(多個對象可以頓號、逗號或換行分隔)</small></label>
@@ -304,10 +306,11 @@
                                 <div class="phrase-group">
                                     <span class="phrase-tag" data-phrase="洽請協助進行" data-target="pa-send-subject">+ 洽請協助進行</span>
                                     <span class="phrase-tag" data-phrase="檢送" data-target="pa-send-subject">+ 檢送</span>
-                                    <span class="phrase-tag" data-phrase="請 查照。" data-target="pa-send-subject">+ 請 查照。</span>
-                                    <span class="phrase-tag" data-phrase="請 惠予協助辦理。" data-target="pa-send-subject">+ 請 惠予協助辦理。</span>
+                                    <span class="phrase-tag" data-phrase="請查照。" data-target="pa-send-subject">+ 請查照。</span>
+                                    <span class="phrase-tag" data-phrase="請惠予協助辦理。" data-target="pa-send-subject">+ 請惠予協助辦理。</span>
                                 </div>
                                 <textarea id="pa-send-subject" rows="2">洽請協助進行115學年度新進教師公文系統權限設定開通事宜。</textarea>
+                                <div id="hint-pa-send-subject" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                             </div>
                             <div class="form-group col-span-2">
                                 <label for="pa-send-explanation">說明 (自動適應區塊高度)</label>
@@ -317,6 +320,7 @@
                                     <span class="phrase-tag" data-phrase="三、如有疑義，請洽經辦人員。" data-target="pa-send-explanation">+ 三、如有疑義</span>
                                 </div>
                                 <textarea id="pa-send-explanation" rows="4">一、本校預計於8月新增教師3名，需提早開通公文製作系統。&#10;二、檢附新進教師名單與處室對照表各乙份。</textarea>
+                                <div id="hint-pa-send-explanation" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                             </div>
                             <div class="form-group">
                                 <label for="pa-send-dept">發文經辦部門</label>
@@ -364,18 +368,20 @@
                                 <label for="pa-reply-subject">主旨 (覆文)</label>
                                 <div class="phrase-group">
                                     <span class="phrase-tag" data-phrase="已完成" data-target="pa-reply-subject">+ 已完成</span>
-                                    <span class="phrase-tag" data-phrase="復 貴單位" data-target="pa-reply-subject">+ 復 貴單位</span>
-                                    <span class="phrase-tag" data-phrase="，請 查照。" data-target="pa-reply-subject">+ ，請 查照。</span>
+                                    <span class="phrase-tag" data-phrase="復貴單位" data-target="pa-reply-subject">+ 復貴單位</span>
+                                    <span class="phrase-tag" data-phrase="，請查照。" data-target="pa-reply-subject">+ ，請查照。</span>
                                 </div>
-                                <textarea id="pa-reply-subject" rows="2">已完成115學年度新進教師公文系統權限設定開通，請 查照。</textarea>
+                                <textarea id="pa-reply-subject" rows="2">已完成115學年度新進教師公文系統權限設定開通，請查照。</textarea>
+                                <div id="hint-pa-reply-subject" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                             </div>
                             <div class="form-group col-span-2">
                                 <label for="pa-reply-explanation">說明 (覆文)</label>
                                 <div class="phrase-group">
-                                    <span class="phrase-tag" data-phrase="一、依 貴單位" data-target="pa-reply-explanation">+ 一、依 貴單位</span>
+                                    <span class="phrase-tag" data-phrase="一、依貴單位" data-target="pa-reply-explanation">+ 一、依貴單位</span>
                                     <span class="phrase-tag" data-phrase="二、相關資料已" data-target="pa-reply-explanation">+ 二、相關資料已</span>
                                 </div>
-                                <textarea id="pa-reply-explanation" rows="4">一、依 貴單位8月17日庚大業洽字第1150001號便函辦理。&#10;二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。</textarea>
+                                <textarea id="pa-reply-explanation" rows="4">一、依貴單位8月17日庚大業洽字第1150001號便函辦理。&#10;二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。</textarea>
+                                <div id="hint-pa-reply-explanation" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                             </div>
                             <div class="form-group">
                                 <label for="pa-reply-dept">覆文經辦部門</label>
@@ -713,12 +719,12 @@
                     <div class="pa-main-content-box" id="p-pa-reply-main-box">
                         <div class="content-section section-subject">
                             <span class="sec-title">主旨：</span>
-                            <div id="p-pa-reply-subject" class="sec-body">已完成115學年度新進教師公文系統權限設定開通，請 查照。</div>
+                            <div id="p-pa-reply-subject" class="sec-body">已完成115學年度新進教師公文系統權限設定開通，請查照。</div>
                         </div>
                         <div id="p-pa-reply-expl-wrapper" class="content-section section-explanation layout-stacked">
                             <span class="sec-title">說明：</span>
                             <div id="p-pa-reply-explanation" class="sec-body">
-                                <div class="expl-paragraph expl-level-1"><span class="expl-marker-w2">一、</span>依 貴單位8月17日庚大業洽字第1150001號便函辦理。</div>
+                                <div class="expl-paragraph expl-level-1"><span class="expl-marker-w2">一、</span>依貴單位8月17日庚大業洽字第1150001號便函辦理。</div>
                                 <div class="expl-paragraph expl-level-1"><span class="expl-marker-w2">二、</span>系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。</div>
                             </div>
                         </div>

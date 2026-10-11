@@ -350,6 +350,24 @@ body {
     opacity: 0.65;
 }
 
+/* 挪抬 (空格) 提示標籤 (第五次優化) */
+.nuotai-hint {
+    display: none;
+    color: #b45309;
+    background-color: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    margin-top: 4px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+.nuotai-hint.show {
+    display: block !important;
+}
+
 .form-group textarea {
     resize: vertical;
 }
