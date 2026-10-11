@@ -186,6 +186,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .preview-toolbar-title {
@@ -193,7 +195,18 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
+
+.preview-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    white-space: nowrap;
+    flex-wrap: wrap;
+}
+
 
 /* Toggle Switch */
 .toggle-switch {
@@ -410,12 +423,19 @@ body {
     pointer-events: none;
 }
 
-.a4-sheet:has(.pa-beta4-wrapper).show-grid::before {
+.a4-sheet:has(.pa-beta4-wrapper).show-grid::before,
+.a4-sheet.template-contact-letter.show-grid::before {
     top: 13mm;
     bottom: 13mm;
     left: 13mm;
     right: 13mm;
 }
+
+.a4-sheet:has(.pa-beta4-wrapper),
+.a4-sheet.template-contact-letter {
+    padding: 13mm !important;
+}
+
 
 
 /* Official Document Layout Styling */
@@ -1749,7 +1769,7 @@ body {
     white-space: pre;
 }
 
-/* 列印專用鎖定規則 (A4 單頁, 1.3cm 邊界, 無底色) */
+/* 列印專用鎖定規則 (A4 單頁/多頁 自動依公文類別套用) */
 @media print {
     @page {
         size: 210mm 297mm;
@@ -1773,7 +1793,11 @@ body {
         padding: 0 !important;
         margin: 0 !important;
     }
-    .a4-sheet {
+
+    /* 業洽函 (A4 單頁, 1.3cm 邊界, 避免分頁) */
+    body.category-contact-letter .a4-sheet,
+    .a4-sheet.template-contact-letter,
+    .a4-sheet:has(.pa-beta4-wrapper) {
         box-shadow: none !important;
         margin: 0 !important;
         padding: 13mm !important; /* 邊界為上下左右皆 1.3 公分 */
@@ -1787,6 +1811,29 @@ body {
         transform: none !important;
         background-color: #FFFFFF !important;
     }
+
+    /* 一般公函 (A4 多頁, 2.3cm 邊界, 自動跨頁分頁) */
+    body.category-formal-doc .a4-sheet,
+    .a4-sheet.template-upward {
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        padding: 2.3cm !important; /* 嚴格 2.3cm 邊界 */
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        border: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        transform: none !important;
+        background-color: #FFFFFF !important;
+    }
+    body.category-formal-doc .a4-sheet:last-of-type,
+    body.category-formal-doc .a4-sheet:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+    }
+
     .pa-segment-container-b4 {
         height: 102mm !important;
         max-height: 102mm !important;
@@ -1794,3 +1841,4 @@ body {
         background-color: #FFFFFF !important;
     }
 }
+

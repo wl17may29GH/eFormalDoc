@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>長庚大學 公文製作系統 Beta 5 使用指南</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fff;
+        }
+        h1 {
+            color: #E39800;
+            border-bottom: 2px solid #E39800;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #C58000;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2C3E50;
+            margin-top: 20px;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border-left: 4px solid #E39800;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .note {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffb300;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #b26a00;
+        }
+        .badge {
+            background-color: #E39800;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>長庚大學 公文製作系統 <span class="badge">Beta 5</span> 使用指南</h1>
+    <p style="text-align: center; color: #666;">校內公函（上行文 / 平行文 / 下行文）與業務接洽便函 雙軌整合版</p>
+
+    <h2>一、版本概述</h2>
+    <p><strong>Beta 5</strong> 是將「公函系統 (Beta 3)」與「業務接洽便函系統 (Beta 4)」進行深度架構整併的全新版本。使用者可在同一介面中，以頂層「一、類別」自由切換不同的公文種類，系統會即時動態連動相應的「模式選單」、「表單欄位」與「A4 預覽排版引擎」。</p>
+
+    <h2>二、三大類別與模式說明</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>公文類別</th>
+                <th>適用情境</th>
+                <th>可選模式</th>
+                <th>排版與印章特性</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1. 上行文 (函)</strong></td>
+                <td>陳報教育部或上級監督機關</td>
+                <td>
+                    1. 內部陳核（稿簽）<br>
+                    2. 正式發文（依正副本分頁）<br>
+                    3. 手動輸入受文者
+                </td>
+                <td>
+                    • 上下左右嚴格 2.3cm 邊界<br>
+                    • 標題「長庚大學　函(稿)」或「長庚大學　函」<br>
+                    • 頁尾標署「校 長　湯 明 哲」＋「校長職章」大方印<br>
+                    • 智慧跨頁防孤島平衡引擎
+                </td>
+            </tr>
+            <tr>
+                <td><strong>2. 平行文/下行文 (函)</strong></td>
+                <td>發函友校、附屬機構、院所或受文單位</td>
+                <td>
+                    1. 內部陳核（稿簽）<br>
+                    2. 正式發文（依正副本分頁）<br>
+                    3. 手動輸入受文者
+                </td>
+                <td>
+                    • 上下左右嚴格 2.3cm 邊界<br>
+                    • 頁尾標署「職名簽字章」（免用校長大方印）<br>
+                    • 發函教育部防呆提醒（自動警告應使用上行文）<br>
+                    • 支援正、副本對象自動分頁批次列印
+                </td>
+            </tr>
+            <tr>
+                <td><strong>3. 業洽函 (業務接洽便函)</strong></td>
+                <td>校內各處室、系所、中心橫向業務聯絡與答覆</td>
+                <td>
+                    1. 內部陳核（標題顯示「業務接洽便函(稿)」）<br>
+                    2. 正式發文（標題顯示「業務接洽便函」）
+                </td>
+                <td>
+                    • A4 單頁高密度排版（上下左右 1.3cm 邊界）<br>
+                    • 專屬「三、用途」切換（發文段 / 覆文段 / 發文＋回文）<br>
+                    • 左上等寬 A/B/C 與機密別、右上銷案管理對齊欄位<br>
+                    • 主旨說明 84mm 自適應等比例文字縮放
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>三、操作亮點功能</h2>
+    <ol>
+        <li><strong>載入範例</strong>：點擊頂部「載入範例」按鈕，系統會依目前選擇的「類別」自動填入最標準的公文範例資料。</li>
+        <li><strong>草稿匯出與匯入</strong>：可將編輯中的公文儲存為 <code>.json</code> 草稿，隨時在不同電腦匯入還原，且跨類別自動辨識切換。</li>
+        <li><strong>即時 / 手動預覽切換</strong>：輸入大量文字時可切換為「手動更新預覽」，提升編輯流暢度；預設為「即時更新預覽」。</li>
+        <li><strong>公文紅色外框格線</strong>：勾選開關可切換是否在螢幕預覽中顯示紅框格線，列印時紅色套印框線將依公文類別獨立精確套用。</li>
+        <li><strong>A4 單頁/多頁 列印最佳化</strong>：列印時業洽函自動鎖定為單頁無換頁；一般公函自動支援多頁連續列印與防孤島簽署頁平衡。</li>
+    </ol>
+
+    <div class="note">
+        <div class="note-title">長庚大學文書組規範小提醒</div>
+        所有文字內容均預設採用標準「標楷體」，字級與行高已依學校公文範本完全校準。如發函對象包含「教育部」，請務必選擇「上行文 (函)」，以符公文行政程序。
+    </div>
+</body>
+</html>
