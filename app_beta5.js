@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // State
     let isLivePreview = true;
     let previewDebounceTimer = null;
+    let hasWarnedMoe = false;
 
     // ==========================================
     // String & Text Formatting Utilities
@@ -423,7 +424,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function checkMoeWarning() {
+        const category = docCategorySelect ? docCategorySelect.value : '';
+        const tempOriginalVal = document.getElementById('up-original') ? document.getElementById('up-original').value : '';
+        const parseRecipients = (text) => {
+            if (!text) return [];
+            return text.split(/[、,，\n]+/).map(s => s.trim()).filter(s => s.length > 0);
+        };
+        const originals = parseRecipients(tempOriginalVal);
+        const hasMoe = originals.some(org => org === '教育部' || org.includes('教育部'));
+
+        if (category === 'parallel_downward' && hasMoe) {
+            if (!hasWarnedMoe) {
+                hasWarnedMoe = true;
+                alert('發函教育部應使用上行文');
+            }
+        } else {
+            hasWarnedMoe = false;
+        }
+    }
+
+    function updateReplyDateControls() {
+        // 1. 發文區
+        const sendStatusEl = document.getElementById('pa-send-reply-status');
+        const sendReplyStatus = sendStatusEl ? sendStatusEl.value : '待覆';
+        const sendYear = document.getElementById('pa-send-reply-year');
+        const sendMonth = document.getElementById('pa-send-reply-month');
+        const sendDay = document.getElementById('pa-send-reply-day');
+        const sendGroup = document.getElementById('pa-send-reply-date-group');
+        const sendLabel = document.getElementById('pa-send-reply-date-label');
+
+        if (sendReplyStatus === '免覆') {
+            if (sendYear) { sendYear.disabled = true; sendYear.value = ''; }
+            if (sendMonth) { sendMonth.disabled = true; sendMonth.value = ''; }
+            if (sendDay) { sendDay.disabled = true; sendDay.value = ''; }
+            if (sendGroup) sendGroup.classList.add('disabled-control');
+            if (sendLabel) sendLabel.innerHTML = '待覆日期 <small style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;">(免覆無須填寫)</small>';
+        } else {
+            if (sendYear) sendYear.disabled = false;
+            if (sendMonth) sendMonth.disabled = false;
+            if (sendDay) sendDay.disabled = false;
+            if (sendGroup) sendGroup.classList.remove('disabled-control');
+            if (sendLabel) sendLabel.innerHTML = '待覆日期 <span style="color: var(--red-official);">*</span>';
+        }
+
+        // 2. 回文區
+        const replyStatusEl = document.getElementById('pa-reply-close-status');
+        const replyCloseStatus = replyStatusEl ? replyStatusEl.value : '銷案';
+        const replyYear = document.getElementById('pa-reply-year');
+        const replyMonth = document.getElementById('pa-reply-month');
+        const replyDay = document.getElementById('pa-reply-day');
+        const replyGroup = document.getElementById('pa-reply-date-group');
+        const replyLabel = document.getElementById('pa-reply-date-label');
+
+        if (replyCloseStatus === '銷案') {
+            if (replyYear) { replyYear.disabled = true; replyYear.value = ''; }
+            if (replyMonth) { replyMonth.disabled = true; replyMonth.value = ''; }
+            if (replyDay) { replyDay.disabled = true; replyDay.value = ''; }
+            if (replyGroup) replyGroup.classList.add('disabled-control');
+            if (replyLabel) replyLabel.innerHTML = '待覆日期 <small style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;">(銷案無須填寫)</small>';
+        } else {
+            if (replyYear) replyYear.disabled = false;
+            if (replyMonth) replyMonth.disabled = false;
+            if (replyDay) replyDay.disabled = false;
+            if (replyGroup) replyGroup.classList.remove('disabled-control');
+            if (replyLabel) replyLabel.innerHTML = '待覆日期 <span style="color: var(--red-official);">*</span>';
+        }
+    }
+
     function handleCategoryChange(shouldSyncNow = true) {
+        if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
         const category = docCategorySelect.value;
         updateModeOptions(category);
 
@@ -437,6 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('category-formal-doc');
             document.body.classList.add('category-contact-letter');
             previewToolbarTitle.innerHTML = '<i data-lucide="eye"></i> A4 高擬真公文排版預覽 - 業務接洽便函';
+            updateReplyDateControls();
         } else {
             // Show Formal Doc panel, hide Contact Letter panel
             panelFormalDoc.classList.remove('hidden');
@@ -449,6 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
             previewToolbarTitle.innerHTML = `<i data-lucide="eye"></i> A4 高擬真公文排版預覽 - ${catName}`;
 
             handleModeChange(false);
+            checkMoeWarning();
         }
 
         initLucide();
@@ -564,20 +636,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(measureDiv);
         }
         measureDiv.style.display = 'block';
-
-        // Alert check for parallel_downward document sent to Ministry of Education
-        const category = docCategorySelect.value;
-        if (category === 'parallel_downward') {
-            const tempOriginalVal = document.getElementById('up-original').value || '';
-            const parseRecipients = (text) => {
-                if (!text) return [];
-                return text.split(/[、,，\n]+/).map(s => s.trim()).filter(s => s.length > 0);
-            };
-            const originals = parseRecipients(tempOriginalVal);
-            if (originals.some(org => org === '教育部' || org.includes('教育部'))) {
-                alert('發函教育部應使用上行文');
-            }
-        }
 
         const mode = docModeSelect ? docModeSelect.value : 'A';
         const manualVal = upReceiverManual ? upReceiverManual.value : '';
@@ -1101,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sendReplyMonth = document.getElementById('pa-send-reply-month') ? document.getElementById('pa-send-reply-month').value.trim() : '';
         const sendReplyDay = document.getElementById('pa-send-reply-day') ? document.getElementById('pa-send-reply-day').value.trim() : '';
         let sendReplyDate = '　年　月　日';
-        if (sendReplyYear || sendReplyMonth || sendReplyDay) {
+        if (sendReplyStatus === '待覆' && (sendReplyYear || sendReplyMonth || sendReplyDay)) {
             sendReplyDate = `${sendReplyYear || '　'}年${sendReplyMonth || '　'}月${sendReplyDay || '　'}日`;
         }
 
@@ -1152,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const replyMonth = document.getElementById('pa-reply-month') ? document.getElementById('pa-reply-month').value.trim() : '';
         const replyDay = document.getElementById('pa-reply-day') ? document.getElementById('pa-reply-day').value.trim() : '';
         let replyDate = '　年　月　日';
-        if (replyYear || replyMonth || replyDay) {
+        if (replyCloseStatus === '待覆' && (replyYear || replyMonth || replyDay)) {
             replyDate = `${replyYear || '　'}年${replyMonth || '　'}月${replyDay || '　'}日`;
         }
 
@@ -1406,6 +1464,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (d.paReplyMonth !== undefined) document.getElementById('pa-reply-month').value = d.paReplyMonth;
             if (d.paReplyDay !== undefined) document.getElementById('pa-reply-day').value = d.paReplyDay;
 
+            updateReplyDateControls();
             syncPreview();
         } catch (e) {
             console.error("Draft load failed", e);
@@ -1506,6 +1565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pa-reply-day').value = '';
         }
 
+        updateReplyDateControls();
         if (shouldSync) syncPreview();
     }
 
@@ -1581,6 +1641,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pa-reply-day').value = '';
         }
 
+        updateReplyDateControls();
         syncPreview();
     }
 
@@ -1714,10 +1775,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     function bindEvents() {
         // Category change
-        docCategorySelect.addEventListener('change', () => handleCategoryChange(true));
+        docCategorySelect.addEventListener('change', (e) => {
+            e.stopPropagation();
+            handleCategoryChange(true);
+        });
 
         // Mode change
-        docModeSelect.addEventListener('change', () => handleModeChange(true));
+        docModeSelect.addEventListener('change', (e) => {
+            e.stopPropagation();
+            handleModeChange(true);
+        });
+
+        // Recipients change check for MOE warning
+        const upOriginal = document.getElementById('up-original');
+        if (upOriginal) {
+            upOriginal.addEventListener('change', checkMoeWarning);
+        }
+
+        // Contact Letter status changes
+        const paSendReplyStatus = document.getElementById('pa-send-reply-status');
+        if (paSendReplyStatus) {
+            paSendReplyStatus.addEventListener('change', () => {
+                updateReplyDateControls();
+                handleFormInput();
+            });
+        }
+        const paReplyCloseStatus = document.getElementById('pa-reply-close-status');
+        if (paReplyCloseStatus) {
+            paReplyCloseStatus.addEventListener('change', () => {
+                updateReplyDateControls();
+                handleFormInput();
+            });
+        }
 
         // Usage mode change
         if (paUsageMode) {
@@ -1768,6 +1857,35 @@ document.addEventListener('DOMContentLoaded', () => {
         btnImportTrigger.addEventListener('click', () => fileImport.click());
         fileImport.addEventListener('change', importDraftFile);
         btnPrint.addEventListener('click', () => {
+            const category = docCategorySelect.value;
+            if (category === 'contact_letter') {
+                const sendStatus = document.getElementById('pa-send-reply-status').value;
+                if (sendStatus === '待覆') {
+                    const y = (document.getElementById('pa-send-reply-year').value || '').trim();
+                    const m = (document.getElementById('pa-send-reply-month').value || '').trim();
+                    const d = (document.getElementById('pa-send-reply-day').value || '').trim();
+                    if (!y || !m || !d) {
+                        alert('發文區覆文狀態為「待覆」，強制必須填寫完整的待覆日期（年、月、日）！');
+                        if (!y) document.getElementById('pa-send-reply-year').focus();
+                        else if (!m) document.getElementById('pa-send-reply-month').focus();
+                        else document.getElementById('pa-send-reply-day').focus();
+                        return;
+                    }
+                }
+                const replyStatus = document.getElementById('pa-reply-close-status').value;
+                if (replyStatus === '待覆') {
+                    const y = (document.getElementById('pa-reply-year').value || '').trim();
+                    const m = (document.getElementById('pa-reply-month').value || '').trim();
+                    const d = (document.getElementById('pa-reply-day').value || '').trim();
+                    if (!y || !m || !d) {
+                        alert('回文區銷案狀態為「待覆」，強制必須填寫完整的待覆日期（年、月、日）！');
+                        if (!y) document.getElementById('pa-reply-year').focus();
+                        else if (!m) document.getElementById('pa-reply-month').focus();
+                        else document.getElementById('pa-reply-day').focus();
+                        return;
+                    }
+                }
+            }
             syncPreview();
             window.print();
         });
@@ -1815,7 +1933,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleCategoryChange(false);
         }
 
-
+        updateReplyDateControls();
         syncPreview();
     }
 

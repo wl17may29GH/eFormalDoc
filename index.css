@@ -332,6 +332,19 @@ body {
     border-color: var(--primary-color);
 }
 
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    background-color: var(--bg-hover) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+    border-color: var(--border-color) !important;
+}
+
+.disabled-control {
+    opacity: 0.65;
+}
+
 .form-group textarea {
     resize: vertical;
 }
