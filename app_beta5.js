@@ -318,8 +318,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Auto-detect orphan characters on the last line of paragraphs and adjust letter spacing
+    // Rule: Every paragraph (subject or explanation) multi-line ending must have at least 2 Chinese characters + punctuation (e.g. 「辦理。」「如下：」)
     function adjustElementOrphans(el) {
         if (!el) return;
+        el.style.letterSpacing = ''; // Reset to clean state
         const text = el.textContent || '';
         if (text.length < 5) return;
 
@@ -349,25 +351,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const origEndsWithPunct = /[。，、；：？！…」』）\)]\s*$/.test(text);
+
         function getLastLineInfo() {
-            if (spans.length === 0) return { lineCount: 0, charCount: 0 };
+            if (spans.length === 0) return { lineCount: 0, charCount: 0, cjkCount: 0, hasPunct: false, lastLineText: '', isOrphan: false };
             const lastSpan = spans[spans.length - 1];
             const lastTop = lastSpan.getBoundingClientRect().top;
             const firstTop = spans[0].getBoundingClientRect().top;
 
             // If first token and last token have roughly same top (within 5px), it's only 1 line!
             if (Math.abs(lastTop - firstTop) <= 5) {
-                return { lineCount: 1, charCount: textToSplit.length };
+                return { lineCount: 1, charCount: textToSplit.length, cjkCount: 0, hasPunct: false, lastLineText: textToSplit, isOrphan: false };
             }
 
-            // Multi-line: walk backwards from the end to count characters on the last line and total lines
-            let lastLineChars = 0;
+            // Multi-line: walk backwards from the end to collect tokens and count lines
+            const lastLineTokens = [];
             let lineCount = 1;
             let currentLineTop = lastTop;
             for (let i = spans.length - 1; i >= 0; i--) {
                 const top = spans[i].getBoundingClientRect().top;
                 if (Math.abs(top - lastTop) <= 5) {
-                    lastLineChars += spans[i].textContent.length;
+                    lastLineTokens.unshift(spans[i].textContent);
                 }
                 if (Math.abs(top - currentLineTop) > 5) {
                     lineCount++;
@@ -375,37 +379,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            const lastLineText = lastLineTokens.join('');
+            const cleanText = lastLineText.replace(/\s+/g, '');
+            const cjkMatches = cleanText.match(/[\u4e00-\u9fa5\u3400-\u4dbf]/g);
+            const cjkCount = cjkMatches ? cjkMatches.length : 0;
+            const hasPunct = /[。，、；：？！…」』）\)]/.test(cleanText);
+
+            let isOrphan = false;
+            if (lineCount > 1) {
+                // Check if last line meets requirement:
+                // "每個段落(不論主旨或說明)的最後一行至少要有2個中文字加標點符號，例如「辦理。」「如下：」"
+                if (cjkCount >= 4 || cleanText.length >= 8) {
+                    isOrphan = false; // Long line, safe
+                } else if (origEndsWithPunct) {
+                    if (cjkCount >= 2 && hasPunct) {
+                        isOrphan = false; // Meets requirement: 2+ CJK chars + punct
+                    } else if (cjkCount >= 3) {
+                        isOrphan = false;
+                    } else {
+                        isOrphan = true; // Orphan! (e.g. 「理。」, 「。」, 「理」, 「辦理」 without punct)
+                    }
+                } else {
+                    if (cjkCount >= 2 && cleanText.length >= 3) {
+                        isOrphan = false;
+                    } else {
+                        isOrphan = true;
+                    }
+                }
+            }
+
             return {
                 lineCount: lineCount,
-                charCount: lastLineChars
+                charCount: cleanText.length,
+                cjkCount: cjkCount,
+                hasPunct: hasPunct,
+                lastLineText: lastLineText,
+                isOrphan: isOrphan
             };
         }
 
         const initialInfo = getLastLineInfo();
         const initialLines = initialInfo.lineCount;
-        // Trigger only when multi-line (initialLines > 1) and the last line has 1 or 2 characters (single word or punctuation orphan)
-        if (initialLines > 1 && initialInfo.charCount > 0 && initialInfo.charCount <= 2) {
+
+        // Trigger only when multi-line and the last line is an orphan (< 2 CJK characters + punctuation)
+        if (initialLines > 1 && initialInfo.isOrphan) {
             let resolved = false;
 
-            // Strategy 1: Tighten letter-spacing slightly (-0.15px to -0.6px) to pull orphan back to previous line
-            const tightenSteps = [-0.15, -0.3, -0.45, -0.6];
+            // Strategy 1: Tighten letter-spacing slightly (-0.1px to -1.2px) to pull orphan back into the previous line
+            const tightenSteps = [-0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9, -1.0, -1.1, -1.2];
             for (const sp of tightenSteps) {
                 el.style.letterSpacing = `${sp}px`;
                 const info = getLastLineInfo();
-                if (info.lineCount < initialLines || info.charCount >= 4) {
+                if (info.lineCount < initialLines) {
                     resolved = true;
                     break;
                 }
             }
 
-            // Strategy 2: If tightening couldn't pull it up, gently expand (+0.15px to +0.45px) to pull preceding characters down so it's not a lonely orphan
+            // Strategy 2: If tightening couldn't pull it up, gently expand (+0.1px to +1.4px)
+            // to push preceding characters down so the last line has at least 2 Chinese characters + punctuation
             if (!resolved) {
-                const targetMinChars = (initialInfo.charCount === 1) ? 2 : 3;
-                const expandSteps = [0.15, 0.3, 0.45];
+                const expandSteps = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4];
                 for (const sp of expandSteps) {
                     el.style.letterSpacing = `${sp}px`;
                     const info = getLastLineInfo();
-                    if (info.lineCount === initialLines && info.charCount >= targetMinChars) {
+                    if (info.lineCount === initialLines && !info.isOrphan) {
                         resolved = true;
                         break;
                     }
