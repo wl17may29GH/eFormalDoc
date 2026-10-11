@@ -3,167 +3,901 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>長庚大學 公文製作系統 Beta 5 使用指南</title>
+    <title>長庚大學 公文製作系統 Beta 5 功能說明暨使用手冊</title>
     <style>
+        :root {
+            --primary: #c58000;
+            --primary-dark: #8c5b00;
+            --primary-light: #fff8e6;
+            --cgu-red: #800000;
+            --cgu-red-light: #fff0f0;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --code-bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 860px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+            line-height: 1.7;
+            color: var(--text-main);
+            background-color: var(--bg-page);
+            margin: 0;
+            padding: 0;
+        }
+
+        .guide-container {
+            max-width: 960px;
             margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #fff;
+            padding: 40px 24px 80px 24px;
         }
-        h1 {
-            color: #E39800;
-            border-bottom: 2px solid #E39800;
-            padding-bottom: 10px;
-            text-align: center;
+
+        /* 頂端 Hero Header */
+        .hero-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 36px 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
         }
-        h2 {
-            color: #C58000;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            margin-top: 30px;
+
+        .hero-header::after {
+            content: "eFormalDoc";
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+            letter-spacing: 2px;
         }
-        h3 {
-            color: #2C3E50;
-            margin-top: 20px;
-        }
-        code {
-            background-color: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: Consolas, Monaco, monospace;
-            font-size: 0.9em;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 15px;
-            border-radius: 6px;
-            overflow-x: auto;
-            border-left: 4px solid #E39800;
-        }
-        ul, ol {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        .note {
-            background-color: #fff8e1;
-            border-left: 4px solid #ffb300;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .note-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #b26a00;
-        }
-        .badge {
-            background-color: #E39800;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
+
+        .hero-badge {
+            display: inline-block;
+            background: #e39800;
+            color: #fff;
             font-size: 0.85rem;
             font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
+
+        .hero-title {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-subtitle {
+            margin: 0 0 20px 0;
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-print-hero {
+            background-color: #e39800;
+            color: #ffffff;
+        }
+        .btn-print-hero:hover {
+            background-color: #c58000;
+            transform: translateY(-1px);
+        }
+
+        .btn-app-hero {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-app-hero:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* 快速目錄 TOC */
+        .toc-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 36px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+
+        .toc-title {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 8px;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+        }
+
+        .toc-item a {
+            display: flex;
+            align-items: center;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            background: #f8fafc;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s ease;
+        }
+
+        .toc-item a:hover {
+            background: var(--primary-light);
+            border-color: #fcd34d;
+            color: var(--primary-dark);
+            transform: translateX(3px);
+        }
+
+        /* 內容區塊 */
+        .content-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        h2 {
+            color: #1e293b;
+            font-size: 1.45rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: #334155;
+            font-size: 1.18rem;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        h4 {
+            color: #475569;
+            font-size: 1.02rem;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 14px;
+        }
+
+        /* 提示卡片 */
+        .callout {
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 18px 0;
+            font-size: 0.93rem;
+            line-height: 1.6;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .callout-warning {
+            background-color: #fffbeb;
+            border-left: 5px solid #f59e0b;
+            color: #92400e;
+        }
+        .callout-warning .callout-title { color: #b45309; }
+
+        .callout-info {
+            background-color: #eff6ff;
+            border-left: 5px solid #3b82f6;
+            color: #1e40af;
+        }
+        .callout-info .callout-title { color: #1d4ed8; }
+
+        .callout-danger {
+            background-color: #fef2f2;
+            border-left: 5px solid #ef4444;
+            color: #991b1b;
+        }
+        .callout-danger .callout-title { color: #b91c1c; }
+
+        .callout-success {
+            background-color: #f0fdf4;
+            border-left: 5px solid #22c55e;
+            color: #166534;
+        }
+        .callout-success .callout-title { color: #15803d; }
+
+        /* 特色功能卡片網格 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 18px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .feature-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #f1f5f9;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .feature-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+        }
+
+        .feature-desc {
+            font-size: 0.88rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* 表格樣式 */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 18px 0;
+            font-size: 0.92rem;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
+
         th, td {
-            padding: 10px;
+            border: 1px solid var(--border-color);
+            padding: 12px 14px;
             text-align: left;
+            vertical-align: top;
         }
+
         th {
-            background-color: #f8f9fa;
+            background-color: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fafbfc;
+        }
+
+        /* 標籤代碼 */
+        code {
+            background-color: var(--code-bg);
+            color: #b91c1c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.88em;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        ul, ol {
+            padding-left: 22px;
+            margin-top: 6px;
+            margin-bottom: 14px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 0.78rem;
+            font-family: monospace;
+            color: #334155;
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        /* 列印模式設定 */
+        @media print {
+            body {
+                background-color: #ffffff;
+                color: #000000;
+                font-size: 10.5pt;
+            }
+            .guide-container {
+                max-width: 100%;
+                padding: 0;
+            }
+            .hero-actions, .toc-card, .btn-action {
+                display: none !important;
+            }
+            .hero-header {
+                background: none;
+                color: #000000;
+                border: 2px solid #333;
+                padding: 16px;
+                box-shadow: none;
+                margin-bottom: 20px;
+            }
+            .hero-title {
+                color: #800000;
+            }
+            .hero-subtitle {
+                color: #333;
+            }
+            .content-section {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                margin-bottom: 28px;
+                page-break-inside: auto;
+            }
+            h2 {
+                page-break-after: avoid;
+                color: #800000;
+                border-bottom: 1.5px solid #800000;
+            }
+            h3 {
+                page-break-after: avoid;
+            }
+            tr {
+                page-break-inside: avoid;
+            }
+            .callout {
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>長庚大學 公文製作系統 <span class="badge">Beta 5</span> 使用指南</h1>
-    <p style="text-align: center; color: #666;">校內公函（上行文 / 平行文 / 下行文）與業務接洽便函 雙軌整合版</p>
 
-    <h2>一、版本概述</h2>
-    <p><strong>Beta 5</strong> 是將「公函系統 (Beta 3)」與「業務接洽便函系統 (Beta 4)」進行深度架構整併的全新版本。使用者可在同一介面中，以頂層「一、類別」自由切換不同的公文種類，系統會即時動態連動相應的「模式選單」、「表單欄位」與「A4 預覽排版引擎」。</p>
+<div class="guide-container">
 
-    <h2>二、三大類別與模式說明</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>公文類別</th>
-                <th>適用情境</th>
-                <th>可選模式</th>
-                <th>排版與印章特性</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>1. 上行文 (函)</strong></td>
-                <td>陳報教育部或上級監督機關</td>
-                <td>
-                    1. 內部陳核（稿簽）<br>
-                    2. 正式發文（依正副本分頁）<br>
-                    3. 手動輸入受文者
-                </td>
-                <td>
-                    • 上下左右嚴格 2.3cm 邊界<br>
-                    • 標題「長庚大學　函(稿)」或「長庚大學　函」<br>
-                    • 頁尾標署「校 長　湯 明 哲」＋「校長職章」大方印<br>
-                    • 智慧跨頁防孤島平衡引擎
-                </td>
-            </tr>
-            <tr>
-                <td><strong>2. 平行文/下行文 (函)</strong></td>
-                <td>發函友校、附屬機構、院所或受文單位</td>
-                <td>
-                    1. 內部陳核（稿簽）<br>
-                    2. 正式發文（依正副本分頁）<br>
-                    3. 手動輸入受文者
-                </td>
-                <td>
-                    • 上下左右嚴格 2.3cm 邊界<br>
-                    • 頁尾標署「職名簽字章」（免用校長大方印）<br>
-                    • 發函教育部防呆提醒（自動警告應使用上行文）<br>
-                    • 支援正、副本對象自動分頁批次列印
-                </td>
-            </tr>
-            <tr>
-                <td><strong>3. 業洽函 (業務接洽便函)</strong></td>
-                <td>校內各處室、系所、中心橫向業務聯絡與答覆</td>
-                <td>
-                    1. 內部陳核（標題顯示「業務接洽便函(稿)」）<br>
-                    2. 正式發文（標題顯示「業務接洽便函」）
-                </td>
-                <td>
-                    • A4 單頁高密度排版（上下左右 1.3cm 邊界）<br>
-                    • 專屬「三、用途」切換（發文段 / 覆文段 / 發文＋回文）<br>
-                    • 左上等寬 A/B/C 與機密別、右上銷案管理對齊欄位<br>
-                    • 主旨說明 84mm 自適應等比例文字縮放
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- 頂端 Hero Header -->
+    <header class="hero-header">
+        <span class="hero-badge">長庚大學 eFormalDoc · 整合版 Beta 5</span>
+        <h1 class="hero-title">長庚大學 公文製作系統 功能說明暨使用手冊</h1>
+        <p class="hero-subtitle">
+            校內公函（上行文 / 平行文 / 下行文）與業務接洽便函 雙軌高精度排版整合系統。<br>
+            全面支援行政院標準六階層縮排、自動單字避孤、期望稱謂挪抬檢測防呆、自適應視窗布局與 100% 擬真 A4 輸出。
+        </p>
+        <div class="hero-actions">
+            <button class="btn-action btn-print-hero" onclick="window.print()">
+                🖨️ 列印本手冊 / 另存 PDF
+            </button>
+            <a href="index_beta5.html" class="btn-action btn-app-hero" target="_self">
+                🚀 返回公文製作系統 (Beta 5)
+            </a>
+        </div>
+    </header>
 
-    <h2>三、操作亮點功能</h2>
-    <ol>
-        <li><strong>載入範例</strong>：點擊頂部「載入範例」按鈕，系統會依目前選擇的「類別」自動填入最標準的公文範例資料。</li>
-        <li><strong>草稿匯出與匯入</strong>：可將編輯中的公文儲存為 <code>.json</code> 草稿，隨時在不同電腦匯入還原，且跨類別自動辨識切換。</li>
-        <li><strong>即時 / 手動預覽切換</strong>：輸入大量文字時可切換為「手動更新預覽」，提升編輯流暢度；預設為「即時更新預覽」。</li>
-        <li><strong>公文紅色外框格線</strong>：勾選開關可切換是否在螢幕預覽中顯示紅框格線，列印時紅色套印框線將依公文類別獨立精確套用。</li>
-        <li><strong>A4 單頁/多頁 列印最佳化</strong>：列印時業洽函自動鎖定為單頁無換頁；一般公函自動支援多頁連續列印與防孤島簽署頁平衡。</li>
-    </ol>
+    <!-- 快速目錄索引 -->
+    <nav class="toc-card">
+        <div class="toc-title">📑 快速導覽目錄 (Table of Contents)</div>
+        <div class="toc-grid">
+            <div class="toc-item"><a href="#sec-overview">一、Beta 5 系統定位與架構概述</a></div>
+            <div class="toc-item"><a href="#sec-categories">二、三大公文類別與模式規格</a></div>
+            <div class="toc-item"><a href="#sec-core-features">三、核心亮點功能深度解析</a></div>
+            <div class="toc-item"><a href="#sec-optimizations">四、Beta 5 五次重大優化彙整</a></div>
+            <div class="toc-item"><a href="#sec-user-manual">五、逐步操作使用手冊</a></div>
+            <div class="toc-item"><a href="#sec-print-guide">六、瀏覽器列印與 PDF 設定 (極重要)</a></div>
+            <div class="toc-item"><a href="#sec-hierarchy">七、公文分點階層與用語標準</a></div>
+            <div class="toc-item"><a href="#sec-faq">八、常見問題與故障排除 (FAQ)</a></div>
+        </div>
+    </nav>
 
-    <div class="note">
-        <div class="note-title">長庚大學文書組規範小提醒</div>
-        所有文字內容均預設採用標準「標楷體」，字級與行高已依學校公文範本完全校準。如發函對象包含「教育部」，請務必選擇「上行文 (函)」，以符公文行政程序。
-    </div>
+    <!-- 一、系統定位與架構概述 -->
+    <section class="content-section" id="sec-overview">
+        <h2>一、Beta 5 系統定位與架構概述</h2>
+        <p>
+            <strong>eFormalDoc Beta 5</strong> 是長庚大學公文製作系統的重大里程碑整合版本。本版本成功將原先分立的<strong>「一般公函系統 (Beta 3)」</strong>（處理教育部上行文與校外機構平行/下行文）與<strong>「業務接洽便函系統 (Beta 4)」</strong>（處理校內各處室、學院、系所橫向業務聯絡），整併為單一入口的高效作業平臺。
+        </p>
+        <p>
+            系統具備高度智慧化的表單聯動能力，使用者僅需在最頂層選取公文「類別」，系統即自動在毫秒內切換適配的<strong>編輯卡片</strong>、<strong>預設範例</strong>、<strong>字號規範</strong>以及<strong>後端 A4 排版引擎</strong>，徹底消除過去需跨檔案操作的繁瑣負擔。
+        </p>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-badge">類別切換</span>
+                <div class="feature-title">單一入口雙軌架構</div>
+                <p class="feature-desc">單一網址自由切換上行文、平行/下行文與業洽函，表單與模式選單毫秒級自動適配切換。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-badge">物理鎖定</span>
+                <div class="feature-title">所見即所得 WYSIWYG</div>
+                <p class="feature-desc">嚴格鎖定 A4 物理標準尺寸（210mm × 297mm），螢幕預覽字句折行與實體紙張列印 100% 精準一致。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-badge">智慧排版</span>
+                <div class="feature-title">自動避孤與兩端對齊</div>
+                <p class="feature-desc">雙向微步微調字距，嚴格保障段落末行至少 2 中文字＋標點，徹底杜絕單字孤行突兀視覺。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-badge">法規合規</span>
+                <div class="feature-title">挪抬提示與公文防呆</div>
+                <p class="feature-desc">內建行政院最新規範檢測，即時溫和提醒期望稱謂無須空格；教育部上行文提示與日期防呆聯動。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 二、三大公文類別與模式規格 -->
+    <section class="content-section" id="sec-categories">
+        <h2>二、三大公文類別與模式規格</h2>
+        <p>Beta 5 依據行政行文方向與公文性質，完整劃分三大類別：</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 18%;">公文類別</th>
+                    <th style="width: 25%;">適用對象與情境</th>
+                    <th style="width: 22%;">支援模式選項</th>
+                    <th style="width: 35%;">版面標準與戳記印章</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. 上行文 (函)</strong></td>
+                    <td>陳報教育部或上級監督機關</td>
+                    <td>
+                        • 1. 內部陳核 (稿簽)<br>
+                        • 2. 正式發文 (依正副本分頁)<br>
+                        • 3. 手動輸入受文者
+                    </td>
+                    <td>
+                        • <strong>A4 多頁標準</strong>：上下左右嚴格 2.3cm 邊界<br>
+                        • <strong>標題文字</strong>：<code>長庚大學　函(稿)</code> 或 <code>長庚大學　函</code><br>
+                        • <strong>首長簽署</strong>：頁尾標署「校 長　湯 明 哲」<br>
+                        • <strong>職章印模</strong>：精準定位 2.3cm × 2.3cm 校長職章大方印<br>
+                        • <strong>跨頁平衡</strong>：Anti-Orphan 引擎自動防止孤島簽署頁
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>2. 平行/下行文 (函)</strong></td>
+                    <td>發函友校、合作企業、附屬醫院、所屬單位</td>
+                    <td>
+                        • 1. 內部陳核 (稿簽)<br>
+                        • 2. 正式發文 (依正副本分頁)<br>
+                        • 3. 手動輸入受文者
+                    </td>
+                    <td>
+                        • <strong>A4 多頁標準</strong>：上下左右嚴格 2.3cm 邊界<br>
+                        • <strong>首長簽署</strong>：標署「職名簽字章」（8cm × 2.2cm 虛擬印框，列印自動隔離免印）<br>
+                        • <strong>教育部防呆</strong>：若受文者誤填教育部，系統自動提示應使用上行文<br>
+                        • <strong>一文多發</strong>：正式發文模式自動為每個正/副本對象個別生成專屬公文分頁
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>3. 業洽函 (業務接洽便函)</strong></td>
+                    <td>校內一、二級行政單位、學院、系所橫向公務接洽與答覆</td>
+                    <td>
+                        • 1. 內部陳核 (便函(稿))<br>
+                        • 2. 正式發文 (便函)<br>
+                        <br>
+                        <strong>三、用途切換：</strong><br>
+                        • 發文 (填寫發文段)<br>
+                        • 回文 (填寫覆文段)<br>
+                        • 發文＋回文 (完整對開)
+                    </td>
+                    <td>
+                        • <strong>A4 單頁超密排版</strong>：上下左右 1.3cm 邊界，高度鎖定不跨頁<br>
+                        • <strong>左上元資料表</strong>：6 等分子網格，等寬 A/B/C (9mm)、等寬機密別 (13.5mm)<br>
+                        • <strong>右上銷案表格</strong>：6 行高對齊下方表格右框線<br>
+                        • <strong>自適應縮放</strong>：主要說明欄 84mm 充裕空間，超長內容動態平滑縮放<br>
+                        • <strong>日期防呆</strong>：待覆與免覆/銷案狀態連動控管年月日
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 三、核心亮點功能深度解析 -->
+    <section class="content-section" id="sec-core-features">
+        <h2>三、核心亮點功能深度解析</h2>
+
+        <h3>1. 智慧自動避孤 (Orphan Control) 演算法</h3>
+        <p>
+            公文排版最忌諱段落最後一行「孤單落單」（例如末行僅有 1 個字或單一標點符號），嚴重影響視覺專業度。Beta 5 導入了全新雙向微調避孤引擎：
+        </p>
+        <ul>
+            <li><strong>嚴格合規門檻</strong>：段落末行<strong>至少必須有 2 個中文字加上標點符號</strong>（如「辦理。」、「如下：」、「請查照。」），始判定為合格。</li>
+            <li><strong>微步進雙向字距調節</strong>：
+                <ol>
+                    <li><strong>第一階段（微調緊縮）</strong>：嘗試以 <code>[-0.1px ~ -1.2px]</code> 階梯微幅緊縮字距，成功將落單字元收回上一行（總行數減少 1 行）。</li>
+                    <li><strong>第二階段（微調拉長）</strong>：若上一行空間飽和無法收回，引擎自動啟動 <code>[+0.1px ~ +1.4px]</code> 微幅拉長字距，將上一行末尾字元安全推落與落單字並排，使末行字數達到 $\ge 2$ 字＋標點。</li>
+                </ol>
+            </li>
+            <li><strong>三大類別全面涵蓋</strong>：上行文主旨說明、平行文主旨說明、業洽函發文與回文之主旨說明全段落自動啟動。</li>
+        </ul>
+
+        <h3>2. 期望、目的及稱謂用語挪抬 (空格) 提示檢測機制</h3>
+        <p>
+            依據行政院最新《文書處理手冊》及教育部公文規格：「<strong>公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫</strong>」。過去公文習慣在「請」、「貴校」、「鈞長」前後空格，現行法規已全面廢止。
+        </p>
+        <div class="callout callout-warning">
+            <div class="callout-title">⚠️ 挪抬空格檢測機制規範</div>
+            • <strong>檢測詞彙</strong>：包含期望目的用語「請」、「希」、「查照」、「鑒核/鑑核」、「備查」、「辦理見復/辦理見復」；稱謂用語「貴」、「鈞」、「大」等。<br>
+            • <strong>雙向支援</strong>：詞彙前後出現半形空格（<code> </code>）或全形空格（<code>　</code>）皆能自動識別。<br>
+            • <strong>友善不中斷體驗</strong>：打字期間於輸入框下方顯示黃底提示卡片；游標移出欄位時彈出提示視窗；<strong>但不強制修改</strong>，使用者可自主保留或修正，絕不阻擋預覽與列印。
+        </div>
+
+        <h3>3. 響應式雙欄布局與 100% 擬真卷軸檢視</h3>
+        <ul>
+            <li><strong>螢幕自適應黃金占比</strong>：依據視窗寬度智慧調整分割比例（大螢幕 42% 編輯器 / 58% 預覽；標準螢幕 45% / 55%；筆電 48% / 52%）。</li>
+            <li><strong>百分比拖曳記憶</strong>：拖曳中央分割桿時以 <code>%</code> 百分比儲存，縮放瀏覽器視窗時自動維持占比；<strong>滑鼠雙擊分割桿</strong>立即回復系統黃金比例。</li>
+            <li><strong>縮放比例絕對鎖定 $\ge 100\%$</strong>：預覽縮放比例下限鎖定在 100%，徹底根除以往因縮小至 50%~70% 導致字體模糊與 Flexbox 負座標吃字問題。</li>
+            <li><strong>全方位卷軸檢視</strong>：外層封裝 <code>.a4-page-wrapper</code> 佈局容器，超出螢幕範圍時可透過<strong>橫向水平卷軸</strong>與<strong>縱向垂直卷軸</strong> 100% 自由滑動瀏覽公文任一邊緣角落。</li>
+        </ul>
+
+        <h3>4. 受文者多對象一文多發與自動個別分頁 (模式 B)</h3>
+        <p>
+            當公文需發給多個機關（例如正本有「教育部」、「國科會」，副本有「研發處」）時：
+        </p>
+        <ul>
+            <li>傳統做法需人工手動修改受文者名稱多次列印。</li>
+            <li>選擇<strong>「模式 B：正式發文」</strong>時，系統自動正則解析正本與副本的所有單位，在預覽區<strong>自動生成 N 份專屬公文頁面</strong>！</li>
+            <li>每份公文頂部「受文者」自動個別替換為該單位名稱，公文底部正副本清單完整保留，列印時自動分頁，實現<strong>一鍵批次列印全部公文</strong>。</li>
+        </ul>
+
+        <h3>5. 智慧防孤島簽署頁機制 (Anti-Orphan Page Engine)</h3>
+        <p>
+            在長篇多頁公函排版中，若因篇幅剛好跨頁，導致最後一頁只有首長簽名章戳而無任何本文，違反公文書審查規範。Beta 3/5 引擎會自動預先運算，當偵測到最後一頁為孤島頁時，自動自前一頁牽引 1~2 行說明段落過渡至末頁，確保跨頁版面美觀莊重。
+        </p>
+
+        <h3>6. 手動強制分頁標籤 <code>[分頁]</code></h3>
+        <p>
+            在公函「說明」內容中任何位置輸入 <code>[分頁]</code>、<code>【分頁】</code> 或 <code>[pagebreak]</code>，排版引擎即會在該處強制換至新頁面。該標籤在預覽與正式列印時自動隱藏，提供撰稿者對多頁公文劃分的完全自主權。
+        </p>
+    </section>
+
+    <!-- 四、Beta 5 五次重大優化彙整 -->
+    <section class="content-section" id="sec-optimizations">
+        <h2>四、Beta 5 五次重大優化歷程彙整</h2>
+        <p>為追求極致的使用者體驗與版面美感，Beta 5 歷經了五次深度疊代優化：</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">優化階段</th>
+                    <th style="width: 25%;">優化主題</th>
+                    <th style="width: 60%;">具體成果與改善細節</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>第一次優化</strong></td>
+                    <td>介面精簡與全域字型</td>
+                    <td>
+                        1. 編輯器字型切換選單移至頂部全域導覽列，支援 14px ~ 24px 即時調字。<br>
+                        2. 移除編輯區冗餘的預覽更新選單，純化 Card 1 公文選擇版面。<br>
+                        3. 移除業洽函編輯區發文字號「庚大業洽字第」與發文日期「民國」多餘前綴字。
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>第二次優化</strong></td>
+                    <td>聯動防呆與單次警告</td>
+                    <td>
+                        1. 修正發函教育部平行文提示，導入狀態旗標，限制嚴格僅提示 1 次。<br>
+                        2. 業洽函回文區「銷案＋待覆日期」調整為同列對齊排版，與發文區左右對稱。<br>
+                        3. 導入待覆日期防呆聯動：選「免覆/銷案」強制禁用並清空日期；選「待覆」強制必填，列印前未填自動中斷並標示焦點。
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>第三次優化</strong></td>
+                    <td>操作介面自適應</td>
+                    <td>
+                        1. 視窗畫面占比跟隨瀏覽器自動調整（大螢幕 42%/58%、標準 45%/55%），拖曳分割桿以百分比儲存，支援雙擊重設。<br>
+                        2. 預覽窗格單頁寬縮放比例下限絕對鎖定 100%，導入 <code>.a4-page-wrapper</code> 徹底解決 Flexbox 負座標吃字，支援橫向/縱向完整卷軸。
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>第四次優化</strong></td>
+                    <td>避孤引擎規格升級</td>
+                    <td>
+                        1. 嚴格落實避孤標準：段落最後一行至少要有 2 個中文字加標點符號（如「辦理。」、「如下：」）。<br>
+                        2. 雙向微步微調調節演算法：優先緊縮（-0.1px ~ -1.2px）收回孤字，飽和時拉長（+0.1px ~ +1.4px）推落前字並排。<br>
+                        3. 全面掛載於上行文、平行文及業洽函之所有主旨與說明段落。
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>第五次優化</strong></td>
+                    <td>期望目的稱謂挪抬檢測</td>
+                    <td>
+                        1. 規範檢測詞彙：「請」、「希」、「查照」、「鑒核/鑑核」、「備查」、「辦理見復/辦理見復」、「貴」、「鈞」、「大」。<br>
+                        2. 涵蓋公函與業洽函 6 大主要內容欄位（主旨與說明）。<br>
+                        3. 前後出現全形或半形空格時，輸入框下方即時亮起提示卡片，編輯完成（blur/change）跳出原生彈窗，單次記錄不重複打擾。<br>
+                        4. 秉持「不強制修改」原則，絕不刪改使用者內容，不阻擋預覽列印。
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 五、逐步操作使用手冊 -->
+    <section class="content-section" id="sec-user-manual">
+        <h2>五、逐步操作使用手冊 (Step-by-Step Manual)</h2>
+
+        <h3><span class="step-number">1</span> 第一步：選擇公文類別與模式</h3>
+        <p>在左側編輯器最上方的「<strong>公文選擇</strong>」區塊進行設定：</p>
+        <ol>
+            <li><strong>一、類別</strong>：
+                <ul>
+                    <li>發送教育部或上級監督機關 ➔ 選擇 <code>1. 上行文 (函)</code></li>
+                    <li>發送校外企業、友校、附設醫院、機關團體 ➔ 選擇 <code>2. 平行文/下行文 (函)</code></li>
+                    <li>校內處室、學院、系所橫向公務接洽 ➔ 選擇 <code>3. 業洽函 (業務接洽便函)</code></li>
+                </ul>
+            </li>
+            <li><strong>二、模式</strong>：
+                <ul>
+                    <li>若為撰稿呈送校內各級主管簽核 ➔ 選擇 <code>1. 內部陳核</code>（標題帶有「(稿)」，受文者自動連動為「如正、副本收受者」）。</li>
+                    <li>若為奉核後正式發出之公文 ➔ 選擇 <code>2. 正式發文</code>（系統依正副本對象分頁列印）。</li>
+                </ul>
+            </li>
+            <li><strong>三、用途（僅業洽函顯示）</strong>：依需求切換僅填寫「發文段」、僅填寫「回文段」或雙向「發文＋回文」。</li>
+        </ol>
+
+        <h3><span class="step-number">2</span> 第二步：善用「載入範例」與快速片語</h3>
+        <ul>
+            <li>點擊頂部導覽列的 <kbd>載入範例</kbd> 按鈕，系統會依目前選擇的公文類別，自動填入標準公文示範內容，包含完整的發文字號、受文者與標準六階層說明段落。</li>
+            <li>在主旨與說明欄位上方，點擊<strong>「常見公函用語」</strong>標籤（如 <kbd>檢陳</kbd>、<kbd>請鑒核。</kbd>、<kbd>檢送</kbd>、<kbd>請查照。</kbd>），系統即自動在游標處插入標準用語。</li>
+        </ul>
+
+        <h3><span class="step-number">3</span> 第三步：內文撰擬與排版規範</h3>
+        <ul>
+            <li><strong>自動縮排</strong>：在「說明」欄位填寫分點時，直接輸入標準編號（如 <code>一、</code>、<code>(一)</code>、<code>1.</code>、<code>(1)</code>），排版引擎會自動進行層級縮排與對齊，<strong>切勿手動按全形/半形空白鍵縮排</strong>。</li>
+            <li><strong>受文者輸入</strong>：在「正本」或「副本」欄位中，多個受文對象請使用<strong>頓號（<code>、</code>）</strong>、<strong>逗號（<code>，</code>）</strong>或<strong>直接換行</strong>分隔。</li>
+            <li><strong>跨頁控制</strong>：若希望某段說明強制換頁至下一頁，可於該行下方獨立一行輸入 <code>[分頁]</code>。</li>
+            <li><strong>自適應縮放（業洽函）</strong>：便函主要說明欄高度已鎖定為 84mm，若文字較多，引擎會自動等比例平滑縮小字型，確保整份便函始終鎖定在 A4 單頁之內。</li>
+        </ul>
+
+        <h3><span class="step-number">4</span> 第四步：儲存草稿與匯入</h3>
+        <ul>
+            <li><strong>自動儲存</strong>：只要在表單中輸入任何字元，系統即會在瀏覽器本機快取（LocalStorage）即時自動儲存草稿，即使意外關閉視窗，重新開啟仍會自動還原。</li>
+            <li><strong>匯出草稿</strong>：點擊頂部 <kbd>匯出草稿</kbd> 按鈕，可將當前公文完整資料下載為 <code>.json</code> 草稿檔案。</li>
+            <li><strong>匯入草稿</strong>：點擊頂部 <kbd>匯入草稿</kbd> 按鈕，上傳既有的 <code>.json</code> 檔案，系統會跨公文類別自動辨識並完整還原所有欄位資料。</li>
+        </ul>
+    </section>
+
+    <!-- 六、瀏覽器列印與 PDF 設定 -->
+    <section class="content-section" id="sec-print-guide">
+        <h2>六、瀏覽器列印與 PDF 設定 (極重要)</h2>
+        <p>
+            當您編輯完成並點擊系統頂部的 <kbd>列印 / PDF</kbd> 按鈕時，系統會開啟瀏覽器的原生列印對話框。為確保產出的公文完全符合學校公文規格，請<strong>務必進行以下 6 項參數設定</strong>：
+        </p>
+
+        <div class="callout callout-danger">
+            <div class="callout-title">🚨 列印對話框必備參數清單 (請逐一核對)</div>
+            <ol>
+                <li><strong>目的地 (印表機)</strong>：選擇實體印表機，或選擇 <strong>「另存為 PDF」</strong>。</li>
+                <li><strong>紙張大小 (Paper Size)</strong>：務必選擇 <strong>A4</strong>。</li>
+                <li><strong>邊距 (Margins)</strong>：務必設定為 <strong>「無」 (None)</strong>。<br>
+                    <small style="color: #64748b;">(說明：系統內部已嚴密內建公函 2.3cm / 便函 1.3cm 邊界，若設定預設邊距將導致雙重邊界跑版！)</small></li>
+                <li><strong>縮放比例 (Scale)</strong>：設定為 <strong>「100%」</strong> 或 <strong>「預設值」</strong>（切勿勾選縮放以符合頁面）。</li>
+                <li><strong>背景圖形 (Background graphics)</strong>：必須 <strong>「勾選 (ON)」</strong>。<br>
+                    <small style="color: #64748b;">(說明：公文紅色格線外框、長庚大學紅色官署頭均需依賴背景圖形列印！)</small></li>
+                <li><strong>頁首與頁尾 (Headers and footers)</strong>：必須 <strong>「取消勾選 (OFF)」</strong>。<br>
+                    <small style="color: #64748b;">(說明：取消勾選可避免瀏覽器在紙張邊緣印出網址、日期等無關資訊；公文正式頁碼由系統自動在正中央精準產生！)</small></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 七、公文分點階層與用語標準 -->
+    <section class="content-section" id="sec-hierarchy">
+        <h2>七、公文分點階層與用語標準規範</h2>
+
+        <h3>1. 行政院公文書標準六階層規範</h3>
+        <p>公文本文（主旨、說明）分項條列時，請依照下列標準順序向下展開：</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">階層序號</th>
+                    <th style="width: 25%;">分點標號樣式</th>
+                    <th style="width: 60%;">字元與標點規範說明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>第一層</strong></td>
+                    <td><code>一、</code> <code>二、</code> <code>三、</code></td>
+                    <td>國字數字，後接<strong>全形頓號（、）</strong>。</td>
+                </tr>
+                <tr>
+                    <td><strong>第二層</strong></td>
+                    <td><code>(一)</code> <code>(二)</code> <code>(三)</code></td>
+                    <td>國字數字，外加<strong>半形小括號</strong>，後方不加標點。</td>
+                </tr>
+                <tr>
+                    <td><strong>第三層</strong></td>
+                    <td><code>1.</code> <code>2.</code> <code>3.</code></td>
+                    <td>半形阿拉伯數字，後接<strong>半形點號（.）</strong>。</td>
+                </tr>
+                <tr>
+                    <td><strong>第四層</strong></td>
+                    <td><code>(1)</code> <code>(2)</code> <code>(3)</code></td>
+                    <td>半形阿拉伯數字，外加<strong>半形小括號</strong>，後方不加標點。</td>
+                </tr>
+                <tr>
+                    <td><strong>第五層</strong></td>
+                    <td><code>甲、</code> <code>乙、</code> <code>丙、</code></td>
+                    <td>天干序號，後接<strong>全形頓號（、）</strong>。</td>
+                </tr>
+                <tr>
+                    <td><strong>第六層</strong></td>
+                    <td><code>(甲)</code> <code>(乙)</code> <code>(丙)</code></td>
+                    <td>天干序號，外加<strong>半形小括號</strong>，後方不加標點。</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>2. 期望、目的及稱謂用語規範表</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>公文種類</th>
+                    <th>常見期望與目的用語</th>
+                    <th>正確範例 (無空格)</th>
+                    <th>錯誤範例 (含挪抬空格)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>上行文</strong></td>
+                    <td>請、鑒核、備查、請核示</td>
+                    <td><code>請鑒核。</code> / <code>報請教育部備查。</code></td>
+                    <td><del>請 鑒核。</del> / <del>報請 大部備查。</del></td>
+                </tr>
+                <tr>
+                    <td><strong>平行文</strong></td>
+                    <td>請、查照、辦理見復、惠予協助</td>
+                    <td><code>請查照。</code> / <code>請貴院審閱後回復。</code></td>
+                    <td><del>請 查照。</del> / <del>請 貴院審閱後回復。</del></td>
+                </tr>
+                <tr>
+                    <td><strong>下行文</strong></td>
+                    <td>希、照辦、查照辦理</td>
+                    <td><code>希查照。</code> / <code>希照辦。</code></td>
+                    <td><del>希 查照。</del> / <del>希 照辦。</del></td>
+                </tr>
+                <tr>
+                    <td><strong>便函 (業洽函)</strong></td>
+                    <td>洽請、惠辦、查照、辦理見復</td>
+                    <td><code>洽請協助辦理。</code> / <code>依貴單位便函辦理。</code></td>
+                    <td><del>洽請 協助辦理。</del> / <del>依 貴單位便函辦理。</del></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 八、常見問題與故障排除 -->
+    <section class="content-section" id="sec-faq">
+        <h2>八、常見問題與故障排除 (FAQ)</h2>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Q1: 為什麼點選列印後，紙張上印不出紅色格線與學校紅頭？</div>
+            <strong>解答</strong>：這是因為瀏覽器列印設定中的<strong>「背景圖形 (Background graphics)」</strong>未被勾選。請在列印對話框的「更多設定」中，勾選「背景圖形」，紅色線條與校名即可完整印出。
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Q2: 為什麼系統一直提示「公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫」？</div>
+            <strong>解答</strong>：系統偵測到您在「請」、「貴」、「查照」等字詞的前後輸入了空格（例如 <code>請 查照。</code> 或 <code> 貴院</code>）。點擊確定後，系統<strong>不會強迫刪除您的空格</strong>，但建議依公文標準直接移除空格（改為 <code>請查照。</code>、<code>貴院</code>）。一旦刪除空格，警告標籤即自動消失。
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Q3: 為什麼業洽函點選列印時，跳出「強制必須填寫完整的待覆日期」警告？</div>
+            <strong>解答</strong>：當發文區覆文狀態選為「待覆」，或回文區銷案狀態選為「待覆」時，依學校稽催流程必須明確指定「待覆日期（年、月、日）」。請將日期三個框填寫完整；若無需回覆，請將狀態改為「免覆」或「銷案」，日期欄位即會自動鎖定並清空。
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Q4: 正本收受者很多單位，如何個別印給各個單位？</div>
+            <strong>解答</strong>：請將「二、模式」切換至 <code>2. 正式發文 (依正副本對象分頁列印)</code>。系統會自動解析正本多個單位，並在預覽區依序為每個單位產生一頁專屬公文，點擊列印即可一次性批次印出。
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Q5: 說明內容很長，第二頁只有首長印章怎麼辦？</div>
+            <strong>解答</strong>：系統內建 Anti-Orphan 引擎會自動防範；若仍發生邊界尷尬情況，您可在「說明」合適之段落輸入 <code>[分頁]</code> 標籤手動強制提前換頁，讓兩頁文字達到均衡分佈。
+        </div>
+    </section>
+
+</div>
+
 </body>
 </html>
