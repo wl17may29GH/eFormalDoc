@@ -321,51 +321,102 @@ document.addEventListener('DOMContentLoaded', () => {
     function adjustElementOrphans(el) {
         if (!el) return;
         const text = el.textContent || '';
-        if (text.length < 15) return;
-        
+        if (text.length < 5) return;
+
         const originalHTML = el.innerHTML;
-        const tokens = tokenizeText(text);
+        const markerSpan = el.querySelector('[class^="expl-marker-"]');
+        let textToSplit = '';
+        let markerHTML = '';
+        if (markerSpan) {
+            markerHTML = markerSpan.outerHTML;
+            textToSplit = text.substring(markerSpan.textContent.length);
+        } else {
+            textToSplit = text;
+        }
+
+        const tokens = tokenizeText(textToSplit);
         if (tokens.length <= 1) return;
-        
-        el.innerHTML = tokens.map(t => {
+
+        el.innerHTML = markerHTML + tokens.map(t => {
             const isAtomic = t.length > 1 && !/^\s+$/.test(t);
             const escaped = escapeHTML(t);
             return isAtomic ? `<span class="no-break">${escaped}</span>` : `<span>${escaped}</span>`;
         }).join('');
-        
-        const spans = el.querySelectorAll('span');
+
+        const spans = el.querySelectorAll(':scope > span:not([class^="expl-marker-"])');
         if (spans.length === 0) {
             el.innerHTML = originalHTML;
             return;
         }
-        
-        function getLastLineCharCount() {
-            let lastTop = -1;
-            let lastLineTokens = [];
-            spans.forEach(span => {
-                const top = span.getBoundingClientRect().top;
-                if (Math.abs(top - lastTop) > 5) {
-                    lastTop = top;
-                    lastLineTokens = [span.textContent];
-                } else {
-                    lastLineTokens.push(span.textContent);
+
+        function getLastLineInfo() {
+            if (spans.length === 0) return { lineCount: 0, charCount: 0 };
+            const lastSpan = spans[spans.length - 1];
+            const lastTop = lastSpan.getBoundingClientRect().top;
+            const firstTop = spans[0].getBoundingClientRect().top;
+
+            // If first token and last token have roughly same top (within 5px), it's only 1 line!
+            if (Math.abs(lastTop - firstTop) <= 5) {
+                return { lineCount: 1, charCount: textToSplit.length };
+            }
+
+            // Multi-line: walk backwards from the end to count characters on the last line and total lines
+            let lastLineChars = 0;
+            let lineCount = 1;
+            let currentLineTop = lastTop;
+            for (let i = spans.length - 1; i >= 0; i--) {
+                const top = spans[i].getBoundingClientRect().top;
+                if (Math.abs(top - lastTop) <= 5) {
+                    lastLineChars += spans[i].textContent.length;
                 }
-            });
-            return lastLineTokens.join('').length;
+                if (Math.abs(top - currentLineTop) > 5) {
+                    lineCount++;
+                    currentLineTop = top;
+                }
+            }
+
+            return {
+                lineCount: lineCount,
+                charCount: lastLineChars
+            };
         }
-        
-        let lastCount = getLastLineCharCount();
-        if (lastCount > 0 && lastCount <= 3) {
-            let spacing = -0.2;
-            while (spacing >= -1.0) {
-                el.style.letterSpacing = `${spacing}px`;
-                if (getLastLineCharCount() === 0 || getLastLineCharCount() >= 4) {
+
+        const initialInfo = getLastLineInfo();
+        const initialLines = initialInfo.lineCount;
+        // Trigger only when multi-line (initialLines > 1) and the last line has 1 or 2 characters (single word or punctuation orphan)
+        if (initialLines > 1 && initialInfo.charCount > 0 && initialInfo.charCount <= 2) {
+            let resolved = false;
+
+            // Strategy 1: Tighten letter-spacing slightly (-0.15px to -0.6px) to pull orphan back to previous line
+            const tightenSteps = [-0.15, -0.3, -0.45, -0.6];
+            for (const sp of tightenSteps) {
+                el.style.letterSpacing = `${sp}px`;
+                const info = getLastLineInfo();
+                if (info.lineCount < initialLines || info.charCount >= 4) {
+                    resolved = true;
                     break;
                 }
-                spacing -= 0.2;
+            }
+
+            // Strategy 2: If tightening couldn't pull it up, gently expand (+0.15px to +0.45px) to pull preceding characters down so it's not a lonely orphan
+            if (!resolved) {
+                const targetMinChars = (initialInfo.charCount === 1) ? 2 : 3;
+                const expandSteps = [0.15, 0.3, 0.45];
+                for (const sp of expandSteps) {
+                    el.style.letterSpacing = `${sp}px`;
+                    const info = getLastLineInfo();
+                    if (info.lineCount === initialLines && info.charCount >= targetMinChars) {
+                        resolved = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!resolved) {
+                el.style.letterSpacing = '';
             }
         }
-        
+
         el.innerHTML = originalHTML;
     }
 
@@ -1259,6 +1310,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const replyMainBox = pageDiv.querySelector('#p-pa-reply-main-box');
         if (sendMainBox) autoFitContentBox(sendMainBox);
         if (replyMainBox) autoFitContentBox(replyMainBox);
+
+        // Apply Single-character Orphan Control to Send & Reply Subjects and Explanations
+        if (pSendSubject) adjustElementOrphans(pSendSubject);
+        if (pSendExplanation) {
+            const paragraphs = pSendExplanation.querySelectorAll('.expl-paragraph');
+            paragraphs.forEach(p => adjustElementOrphans(p));
+        }
+        if (pReplySubject) adjustElementOrphans(pReplySubject);
+        if (pReplyExplanation) {
+            const paragraphs = pReplyExplanation.querySelectorAll('.expl-paragraph');
+            paragraphs.forEach(p => adjustElementOrphans(p));
+        }
 
         syncUsageUI();
         updateGridDisplay();
