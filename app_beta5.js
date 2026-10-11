@@ -635,23 +635,87 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // Dynamic Preview Scaling & Grid
+    // Responsive Screen Split & Dynamic Preview Scaling
     // ==========================================
-    function adjustPreviewScale() {
-        if (!zoomSlider) return;
-        const scaleVal = parseInt(zoomSlider.value, 10) / 100;
-        if (zoomValue) zoomValue.textContent = `${zoomSlider.value}%`;
+    let userHasManuallyZoomed = false;
+    let userCustomEditorRatio = null;
 
-        const sheets = container.querySelectorAll('.a4-sheet');
-        sheets.forEach(sheet => {
-            sheet.style.transform = `scale(${scaleVal})`;
-            sheet.style.transformOrigin = 'top center';
-            if (scaleVal > 1) {
-                sheet.style.marginBottom = `${(297 * 3.7795 * (scaleVal - 1)) + 20}px`;
+    function applyResponsiveSplit() {
+        const editorPanel = document.querySelector('.editor-panel');
+        if (!editorPanel) return;
+
+        if (userCustomEditorRatio !== null) {
+            editorPanel.style.width = `${userCustomEditorRatio}%`;
+        } else {
+            const winW = window.innerWidth;
+            let autoRatio;
+            if (winW >= 1600) {
+                autoRatio = 42; // Wide screens: 42% editor, 58% preview
+            } else if (winW >= 1280) {
+                autoRatio = 45; // Medium screens: 45% editor, 55% preview
+            } else if (winW >= 1024) {
+                autoRatio = 48; // Narrower screens: 48% editor, 52% preview
             } else {
-                sheet.style.marginBottom = '';
+                autoRatio = 50; // Small screens: 50% editor, 50% preview
             }
-        });
+            editorPanel.style.width = `${autoRatio}%`;
+        }
+    }
+
+    function adjustPreviewScale() {
+        if (!container) return;
+
+        const availableWidth = container.clientWidth - 40; // padding 20px on each side
+        const sheetWidth = 794; // approx 210mm in 96dpi
+        const sheetHeight = 1123; // approx 297mm in 96dpi
+
+        // Fit single page width, but STRICTLY AT LEAST 100% (1.0)
+        const fitScale = Math.max(1.0, availableWidth / sheetWidth);
+
+        let scaleVal;
+        if (userHasManuallyZoomed && zoomSlider) {
+            // Strictly at least 100% (1.0)
+            scaleVal = Math.max(1.0, parseInt(zoomSlider.value, 10) / 100);
+        } else {
+            scaleVal = fitScale;
+            if (zoomSlider) {
+                const fitPercent = Math.round(fitScale * 100);
+                zoomSlider.value = Math.min(200, Math.max(100, fitPercent));
+            }
+        }
+
+        if (zoomValue && zoomSlider) {
+            zoomValue.textContent = `${Math.round(scaleVal * 100)}%`;
+        }
+
+        const wrappers = container.querySelectorAll('.a4-page-wrapper');
+        const scaledWidth = Math.round(sheetWidth * scaleVal);
+        const scaledHeight = Math.round(sheetHeight * scaleVal);
+
+        if (wrappers.length > 0) {
+            wrappers.forEach(w => {
+                w.style.width = `${scaledWidth}px`;
+                w.style.height = `${scaledHeight}px`;
+                w.style.margin = '0 auto 24px auto';
+                const sheet = w.querySelector('.a4-sheet');
+                if (sheet) {
+                    sheet.style.transform = `scale(${scaleVal})`;
+                    sheet.style.transformOrigin = 'top left';
+                    sheet.style.marginBottom = '';
+                }
+            });
+        } else {
+            const sheets = container.querySelectorAll('.a4-sheet');
+            sheets.forEach(sheet => {
+                sheet.style.transform = `scale(${scaleVal})`;
+                sheet.style.transformOrigin = 'top center';
+                if (scaleVal > 1) {
+                    sheet.style.marginBottom = `${(297 * 3.7795 * (scaleVal - 1)) + 20}px`;
+                } else {
+                    sheet.style.marginBottom = '';
+                }
+            });
+        }
     }
 
     function updateGridDisplay() {
@@ -1037,6 +1101,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             pages.forEach((page, index) => {
+                const pageWrapper = document.createElement('div');
+                pageWrapper.className = 'a4-page-wrapper';
+
                 const pageDiv = document.createElement('div');
                 pageDiv.className = 'a4-sheet show-grid template-upward';
                 const isAbsoluteFirst = (recipientIndex === 0 && index === 0);
@@ -1117,7 +1184,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 pageNumDiv.textContent = `第 ${index + 1} 頁，共 ${pages.length} 頁`;
                 pageDiv.appendChild(pageNumDiv);
 
-                container.appendChild(pageDiv);
+                pageWrapper.appendChild(pageDiv);
+                container.appendChild(pageWrapper);
             });
         });
 
@@ -1137,13 +1205,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.innerHTML = '';
 
+        const pageWrapper = document.createElement('div');
+        pageWrapper.className = 'a4-page-wrapper';
+
         const pageDiv = document.createElement('div');
         pageDiv.id = 'a4-sheet';
         pageDiv.className = 'a4-sheet show-grid template-contact-letter';
         pageDiv.style.padding = '13mm';
         pageDiv.style.boxSizing = 'border-box';
         pageDiv.innerHTML = tmplContactLetter.innerHTML;
-        container.appendChild(pageDiv);
+
+        pageWrapper.appendChild(pageDiv);
+        container.appendChild(pageWrapper);
 
         // 1. Table 1 Metadata
         const cat = document.getElementById('pa-category').value;
@@ -1785,28 +1858,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const editorPanel = document.querySelector('.editor-panel');
         if (!dragBar || !editorPanel) return;
 
+        dragBar.setAttribute('title', '拖曳調整左右欄寬占比 (雙擊重設為系統預設占比)');
+
         let isDragging = false;
         dragBar.addEventListener('mousedown', (e) => {
             isDragging = true;
+            dragBar.classList.add('dragging');
             document.body.style.cursor = 'col-resize';
             document.body.style.userSelect = 'none';
         });
 
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-            const newWidth = e.clientX;
-            if (newWidth > 320 && newWidth < window.innerWidth - 350) {
-                editorPanel.style.width = `${newWidth}px`;
+            const winW = window.innerWidth;
+            const clientX = e.clientX;
+            // Enforce min 320px for editor and min 320px for preview
+            if (clientX >= 320 && clientX <= winW - 320) {
+                const ratio = (clientX / winW) * 100;
+                const clamped = Math.min(75, Math.max(25, ratio));
+                userCustomEditorRatio = clamped;
+                editorPanel.style.width = `${clamped.toFixed(2)}%`;
+                adjustPreviewScale();
             }
         });
 
         document.addEventListener('mouseup', () => {
             if (isDragging) {
                 isDragging = false;
+                dragBar.classList.remove('dragging');
                 document.body.style.cursor = '';
                 document.body.style.userSelect = '';
                 adjustPreviewScale();
             }
+        });
+
+        // Double click to reset to automatic responsive proportion
+        dragBar.addEventListener('dblclick', () => {
+            userCustomEditorRatio = null;
+            applyResponsiveSplit();
+            adjustPreviewScale();
         });
     }
 
@@ -1906,9 +1996,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Zoom slider
-        zoomSlider.addEventListener('input', () => {
-            adjustPreviewScale();
-        });
+        if (zoomSlider) {
+            zoomSlider.addEventListener('input', () => {
+                userHasManuallyZoomed = true;
+                adjustPreviewScale();
+            });
+            zoomSlider.addEventListener('dblclick', () => {
+                userHasManuallyZoomed = false;
+                adjustPreviewScale();
+            });
+        }
+        if (zoomValue) {
+            zoomValue.addEventListener('click', () => {
+                userHasManuallyZoomed = false;
+                adjustPreviewScale();
+            });
+        }
 
         // Form live input debounce
         docForm.addEventListener('input', handleFormInput);
@@ -1956,6 +2059,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Window resize re-balance
         window.addEventListener('resize', () => {
+            applyResponsiveSplit();
             adjustPreviewScale();
         });
     }
@@ -1964,6 +2068,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialization Sequence
     // ==========================================
     function init() {
+        applyResponsiveSplit();
         bindEvents();
         setupQuickPhrases();
         setupResizer();

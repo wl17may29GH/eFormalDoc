@@ -421,7 +421,7 @@
         </aside>
 
         <!-- Drag Resizer Bar -->
-        <div class="drag-bar" id="drag-bar" title="拖曳調整左右欄寬比例"></div>
+        <div class="drag-bar" id="drag-bar" title="拖曳調整左右欄寬占比 (雙擊重設為系統預設占比)"></div>
 
         <!-- Right Preview Panel -->
         <main class="preview-panel" id="preview-panel">
@@ -432,8 +432,8 @@
                 <div class="preview-options" style="display: flex; align-items: center; gap: 15px;">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dark);">
                         <span>🔍 比例調整:</span>
-                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 90px; cursor: pointer;">
-                        <span id="zoom-value" style="font-weight: bold; min-width: 42px;">100%</span>
+                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 90px; cursor: pointer;" title="拖動調整縮放比例；雙擊重設為符合單頁寬 (至少100%)">
+                        <span id="zoom-value" style="font-weight: bold; min-width: 42px; cursor: pointer;" title="點擊重設為符合單頁寬 (至少100%)">100%</span>
                     </div>
                     <label class="toggle-switch" title="切換輸入時即時更新預覽或手動點選更新預覽">
                         <input type="checkbox" id="toggle-live-preview" checked>
