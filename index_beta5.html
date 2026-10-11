@@ -37,6 +37,24 @@
             </div>
         </div>
         <div class="header-actions">
+            <div class="header-control-item" style="display: flex; align-items: center; gap: 6px; margin-right: 6px;">
+                <label for="editor-font-size-select" style="font-size: 0.85rem; font-weight: 500; color: var(--text-dark); white-space: nowrap; cursor: pointer;">
+                    <i data-lucide="type" style="width: 15px; height: 15px; vertical-align: middle;"></i> 編輯器字型大小:
+                </label>
+                <select id="editor-font-size-select" style="padding: 6px 8px; border-radius: var(--radius); border: 1px solid var(--border-color); font-size: 0.85rem; font-weight: 500; background: #fff; color: var(--text-dark); cursor: pointer;">
+                    <option value="14">14 px</option>
+                    <option value="15">15 px</option>
+                    <option value="16" selected>16 px (預設)</option>
+                    <option value="17">17 px</option>
+                    <option value="18">18 px</option>
+                    <option value="19">19 px</option>
+                    <option value="20">20 px</option>
+                    <option value="21">21 px</option>
+                    <option value="22">22 px</option>
+                    <option value="23">23 px</option>
+                    <option value="24">24 px</option>
+                </select>
+            </div>
             <button id="btn-demo" class="btn btn-secondary" title="載入模擬範例資料" style="background-color: var(--primary-light); color: var(--primary-color); border-color: var(--primary-color); font-weight: 500;">
                 <i data-lucide="book-open"></i> 載入範例
             </button>
@@ -93,29 +111,6 @@
                                 <option value="send">1. 發文 (填寫發文段)</option>
                                 <option value="reply">2. 回文 (填寫覆文段)</option>
                                 <option value="both" selected>3. 發文＋回文 (兩段皆填寫)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editor-font-size-select">編輯器字型大小</label>
-                            <select id="editor-font-size-select">
-                                <option value="14">14 px</option>
-                                <option value="15">15 px</option>
-                                <option value="16" selected>16 px (預設)</option>
-                                <option value="17">17 px</option>
-                                <option value="18">18 px</option>
-                                <option value="19">19 px</option>
-                                <option value="20">20 px</option>
-                                <option value="21">21 px</option>
-                                <option value="22">22 px</option>
-                                <option value="23">23 px</option>
-                                <option value="24">24 px</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="preview-mode-select">預覽更新方式</label>
-                            <select id="preview-mode-select" style="font-weight: 500;">
-                                <option value="live" selected>即時更新預覽</option>
-                                <option value="manual">手動更新預覽</option>
                             </select>
                         </div>
                     </div>
@@ -282,15 +277,15 @@
                             <div class="form-group col-span-2">
                                 <label for="pa-id-serial">發文字號流水號</label>
                                 <div class="date-input-group">
-                                    庚大業洽字第 <input type="text" id="pa-id-serial" value="1150001" style="width: 120px; font-weight: bold;"> 號
+                                    <input type="text" id="pa-id-serial" value="1150001" style="width: 140px; font-weight: bold;"> 號
                                 </div>
                             </div>
                             <div class="form-group col-span-2">
                                 <label>發文日期 (民國年 / 月 / 日)</label>
                                 <div class="date-input-group">
-                                    民國 <input type="number" id="pa-date-year" value="115" style="width: 60px;"> 年
-                                    <input type="number" id="pa-date-month" value="10" style="width: 48px;"> 月
-                                    <input type="number" id="pa-date-day" value="10" style="width: 48px;"> 日
+                                    <input type="number" id="pa-date-year" value="115" style="width: 60px; text-align: center;"> 年
+                                    <input type="number" id="pa-date-month" value="10" style="width: 48px; text-align: center;"> 月
+                                    <input type="number" id="pa-date-day" value="10" style="width: 48px; text-align: center;"> 日
                                 </div>
                             </div>
                         </div>

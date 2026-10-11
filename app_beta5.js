@@ -1734,12 +1734,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Preview live vs manual
-        previewModeSelect.addEventListener('change', (e) => {
-            setLivePreviewMode(e.target.value === 'live', true);
-        });
+        if (previewModeSelect) {
+            previewModeSelect.addEventListener('change', (e) => {
+                setLivePreviewMode(e.target.value === 'live', true);
+            });
+        }
         toggleLivePreview.addEventListener('change', (e) => {
             setLivePreviewMode(e.target.checked, true);
         });
+
         btnRefreshPreview.addEventListener('click', () => {
             syncPreview();
         });
