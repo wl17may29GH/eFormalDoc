@@ -637,6 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         measureDiv.style.display = 'block';
 
+        const category = docCategorySelect.value;
         const mode = docModeSelect ? docModeSelect.value : 'A';
         const manualVal = upReceiverManual ? upReceiverManual.value : '';
         const originalVal = document.getElementById('up-original').value || '';
