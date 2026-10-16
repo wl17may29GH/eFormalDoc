@@ -582,9 +582,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 挪抬 (空格) 提示檢測機制 (第五次優化)
+    // 挪抬 (空格) 與標號空格提示檢測機制 (第五次優化 + 公測反映第1次優化)
     // ==========================================
     const NUOTAI_ALERT_MSG = '公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。';
+    const SPACING_ALERT_MSG = '請檢查有無多餘空格。';
     const NUOTAI_TERMS = [
         '請', '希', '查照', '鑒核', '鑑核', '備查',
         '辦理見復', '辦理見復',
@@ -600,6 +601,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return rxNuoTaiBefore.test(text) || rxNuoTaiAfter.test(text);
     }
 
+    // 自動標號與說明本文間空格檢測 (三種公文說明欄位，如「一、 」「(一) 」「1、 」「(1) 」「甲、 」)
+    const rxMarkerSpacing = /^[ \t\u3000\u00a0]*(?:[一二三四五六七八九十百]+[、]|[(（][一二三四五六七八九十百]+[)）]|\d+[、.]|[(（]\d+[)）]|[甲乙丙丁戊己庚辛壬癸]+[、]|[(（][甲乙丙丁戊己庚辛壬癸]+[)）])[ \t\u3000\u00a0]+/;
+
+    function hasMarkerSpacing(text) {
+        if (!text) return false;
+        const lines = text.split(/\r?\n/);
+        return lines.some(line => rxMarkerSpacing.test(line));
+    }
+
+    const explanationFieldIds = [
+        'up-explanation',
+        'pa-send-explanation',
+        'pa-reply-explanation'
+    ];
+
     const nuoTaiFieldIds = [
         'up-subject',
         'up-explanation',
@@ -609,27 +625,60 @@ document.addEventListener('DOMContentLoaded', () => {
         'pa-reply-explanation'
     ];
 
+    function getFieldSpacingErrors(fieldId, text) {
+        if (!text) return { hasNuoTai: false, hasMarkerSpace: false, hasError: false, alertMsg: '', hintMsg: '' };
+        const hasNuoTai = hasNuoTaiSpacing(text);
+        const isExplanation = explanationFieldIds.includes(fieldId);
+        const hasMarkerSpace = isExplanation ? hasMarkerSpacing(text) : false;
+
+        let alertMsg = '';
+        let hintMsg = '';
+
+        if (hasNuoTai && hasMarkerSpace) {
+            alertMsg = `${NUOTAI_ALERT_MSG}\n${SPACING_ALERT_MSG}`;
+            hintMsg = `⚠️ 提示：${NUOTAI_ALERT_MSG}；${SPACING_ALERT_MSG}`;
+        } else if (hasNuoTai) {
+            alertMsg = NUOTAI_ALERT_MSG;
+            hintMsg = `⚠️ 提示：${NUOTAI_ALERT_MSG}`;
+        } else if (hasMarkerSpace) {
+            alertMsg = SPACING_ALERT_MSG;
+            hintMsg = `⚠️ 提示：${SPACING_ALERT_MSG}`;
+        }
+
+        return {
+            hasNuoTai,
+            hasMarkerSpace,
+            hasError: hasNuoTai || hasMarkerSpace,
+            alertMsg,
+            hintMsg
+        };
+    }
+
     const warnedNuoTaiValues = {};
+    let lastAlertTime = 0;
 
     function checkFieldNuoTai(fieldId, triggerAlert = false) {
         const el = document.getElementById(fieldId);
         if (!el) return;
         const val = el.value || '';
         const hintEl = document.getElementById('hint-' + fieldId);
-        const hasNuo = hasNuoTaiSpacing(val);
+        const err = getFieldSpacingErrors(fieldId, val);
 
         if (hintEl) {
-            if (hasNuo) {
+            if (err.hasError) {
+                hintEl.textContent = err.hintMsg;
                 hintEl.classList.add('show');
             } else {
                 hintEl.classList.remove('show');
             }
         }
 
-        if (hasNuo) {
-            if (triggerAlert && warnedNuoTaiValues[fieldId] !== val) {
+        if (err.hasError) {
+            const now = Date.now();
+            if (triggerAlert && warnedNuoTaiValues[fieldId] !== val && (now - lastAlertTime > 500)) {
                 warnedNuoTaiValues[fieldId] = val;
-                alert(NUOTAI_ALERT_MSG);
+                lastAlertTime = now;
+                alert(err.alertMsg);
             }
         } else {
             delete warnedNuoTaiValues[fieldId];
@@ -657,10 +706,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         for (const id of activeFields) {
             const el = document.getElementById(id);
-            if (el && hasNuoTaiSpacing(el.value || '')) {
+            if (!el) continue;
+            const err = getFieldSpacingErrors(id, el.value || '');
+            if (err.hasError) {
                 if (warnedNuoTaiValues[id] !== el.value) {
                     warnedNuoTaiValues[id] = el.value;
-                    alert(NUOTAI_ALERT_MSG);
+                    alert(err.alertMsg);
                     break;
                 }
             }
@@ -741,9 +792,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const previewSendBlock = document.getElementById('preview-send-block');
         const previewReplyBlock = document.getElementById('preview-reply-block');
 
+        // Always keep preview blocks crisp with standard solid borders
+        if (previewSendBlock) previewSendBlock.classList.remove('section-muted');
+        if (previewReplyBlock) previewReplyBlock.classList.remove('section-muted');
+
         if (usage === 'send') {
-            if (previewSendBlock) previewSendBlock.classList.remove('section-muted');
-            if (previewReplyBlock) previewReplyBlock.classList.add('section-muted');
             if (cardSend) {
                 cardSend.classList.remove('section-muted');
                 cardSend.style.display = 'block';
@@ -752,8 +805,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 cardReply.classList.add('section-muted');
             }
         } else if (usage === 'reply') {
-            if (previewSendBlock) previewSendBlock.classList.add('section-muted');
-            if (previewReplyBlock) previewReplyBlock.classList.remove('section-muted');
             if (cardSend) {
                 cardSend.classList.add('section-muted');
             }
@@ -762,8 +813,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 cardReply.style.display = 'block';
             }
         } else {
-            if (previewSendBlock) previewSendBlock.classList.remove('section-muted');
-            if (previewReplyBlock) previewReplyBlock.classList.remove('section-muted');
             if (cardSend) {
                 cardSend.classList.remove('section-muted');
                 cardSend.style.display = 'block';
@@ -1383,21 +1432,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeYear = document.getElementById('pa-close-year') ? document.getElementById('pa-close-year').value.trim() : '';
         const closeMonth = document.getElementById('pa-close-month') ? document.getElementById('pa-close-month').value.trim() : '';
         const closeDay = document.getElementById('pa-close-day') ? document.getElementById('pa-close-day').value.trim() : '';
-        let closeDate = '　　年　　月　　日';
+        let closeDate = '';
         if (closeYear || closeMonth || closeDay) {
             closeDate = `${closeYear || '　'}年${closeMonth || '　'}月${closeDay || '　'}日`;
         }
-        const days = document.getElementById('pa-days').value || '3';
-        const years = document.getElementById('pa-years').value || '5年';
-        const docNum = document.getElementById('pa-doc-num').value || '';
+        const days = (document.getElementById('pa-days').value || '').trim();
+        const years = (document.getElementById('pa-years').value || '').trim();
+        const docNum = (document.getElementById('pa-doc-num').value || '').trim();
 
         const pCloseDate = pageDiv.querySelector('#p-pa-close-date');
-        const pDays = pageDiv.querySelector('#p-pa-days');
-        const pYears = pageDiv.querySelector('#p-pa-years');
+        const pDaysBox = pageDiv.querySelector('#p-pa-days-box');
+        const pYearsBox = pageDiv.querySelector('#p-pa-years-box');
         const pDocNum = pageDiv.querySelector('#p-pa-doc-num');
         if (pCloseDate) pCloseDate.textContent = closeDate;
-        if (pDays) pDays.textContent = days;
-        if (pYears) pYears.textContent = years;
+        if (pDaysBox) pDaysBox.innerHTML = days ? `<span id="p-pa-days">${days}</span> 日` : '';
+        if (pYearsBox) pYearsBox.innerHTML = years ? `<span id="p-pa-years">${years}</span>` : '';
         if (pDocNum) pDocNum.textContent = docNum;
 
         // Serial Row
@@ -1411,21 +1460,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pDateRoc) pDateRoc.textContent = `${yearVal} 年 ${monthVal} 月 ${dayVal} 日`;
         if (pIdSerial) pIdSerial.textContent = `　${serialVal}　`;
 
+        // Determine usage mode (發文 / 回文 / 發文+回文)
+        const usage = paUsageMode ? paUsageMode.value : 'both';
+        const isSendActive = (usage !== 'reply');
+        const isReplyActive = (usage !== 'send');
+
         // 2. Send Block
-        const sendReceiver = document.getElementById('pa-send-receiver').value || '（受文者）';
-        const sendSubject = document.getElementById('pa-send-subject').value || '';
-        const sendExplanation = document.getElementById('pa-send-explanation').value || '';
-        const sendDept = document.getElementById('pa-send-dept').value || '';
-        const sendPerson = document.getElementById('pa-send-person').value || '';
-        const sendPhone = document.getElementById('pa-send-phone').value || '';
-        const sendAttachment = document.getElementById('pa-send-attachment').value || '無';
+        const sendReceiver = isSendActive ? (document.getElementById('pa-send-receiver').value || '') : '';
+        const sendSubject = isSendActive ? (document.getElementById('pa-send-subject').value || '') : '';
+        const sendExplanation = isSendActive ? (document.getElementById('pa-send-explanation').value || '') : '';
+        const sendDept = isSendActive ? (document.getElementById('pa-send-dept').value || '') : '';
+        const sendPerson = isSendActive ? (document.getElementById('pa-send-person').value || '') : '';
+        const sendPhone = isSendActive ? (document.getElementById('pa-send-phone').value || '') : '';
+        const sendAttachment = isSendActive ? (document.getElementById('pa-send-attachment').value || '') : '';
         const sendReplyStatus = document.getElementById('pa-send-reply-status').value || '待覆';
 
         const sendReplyYear = document.getElementById('pa-send-reply-year') ? document.getElementById('pa-send-reply-year').value.trim() : '';
         const sendReplyMonth = document.getElementById('pa-send-reply-month') ? document.getElementById('pa-send-reply-month').value.trim() : '';
         const sendReplyDay = document.getElementById('pa-send-reply-day') ? document.getElementById('pa-send-reply-day').value.trim() : '';
-        let sendReplyDate = '　年　月　日';
-        if (sendReplyStatus === '待覆' && (sendReplyYear || sendReplyMonth || sendReplyDay)) {
+        let sendReplyDate = '';
+        if (isSendActive && sendReplyStatus === '待覆' && (sendReplyYear || sendReplyMonth || sendReplyDay)) {
             sendReplyDate = `${sendReplyYear || '　'}年${sendReplyMonth || '　'}月${sendReplyDay || '　'}日`;
         }
 
@@ -1458,25 +1512,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pSendPerson) pSendPerson.textContent = sendPerson;
         if (pSendPhone) pSendPhone.textContent = sendPhone;
         if (pSendAttachment) pSendAttachment.textContent = sendAttachment;
-        if (pStatusFree) pStatusFree.textContent = sendReplyStatus === '免覆' ? '■免覆' : '□免覆';
-        if (pStatusWait) pStatusWait.textContent = sendReplyStatus === '待覆' ? '■待覆' : '□待覆';
+        if (pStatusFree) pStatusFree.textContent = isSendActive ? (sendReplyStatus === '免覆' ? '■免覆' : '□免覆') : '□免覆';
+        if (pStatusWait) pStatusWait.textContent = isSendActive ? (sendReplyStatus === '待覆' ? '■待覆' : '□待覆') : '□待覆';
         if (pSendReplyDate) pSendReplyDate.textContent = sendReplyDate;
 
         // 3. Reply Block
-        const replyReceiver = document.getElementById('pa-reply-receiver').value || '';
-        const replySubject = document.getElementById('pa-reply-subject').value || '';
-        const replyExplanation = document.getElementById('pa-reply-explanation').value || '';
-        const replyDept = document.getElementById('pa-reply-dept').value || '';
-        const replyPerson = document.getElementById('pa-reply-person').value || '';
-        const replyPhone = document.getElementById('pa-reply-phone').value || '';
-        const replyAttachment = document.getElementById('pa-reply-attachment').value || '無';
+        const replyReceiver = isReplyActive ? (document.getElementById('pa-reply-receiver').value || '') : '';
+        const replySubject = isReplyActive ? (document.getElementById('pa-reply-subject').value || '') : '';
+        const replyExplanation = isReplyActive ? (document.getElementById('pa-reply-explanation').value || '') : '';
+        const replyDept = isReplyActive ? (document.getElementById('pa-reply-dept').value || '') : '';
+        const replyPerson = isReplyActive ? (document.getElementById('pa-reply-person').value || '') : '';
+        const replyPhone = isReplyActive ? (document.getElementById('pa-reply-phone').value || '') : '';
+        const replyAttachment = isReplyActive ? (document.getElementById('pa-reply-attachment').value || '') : '';
         const replyCloseStatus = document.getElementById('pa-reply-close-status').value || '銷案';
 
         const replyYear = document.getElementById('pa-reply-year') ? document.getElementById('pa-reply-year').value.trim() : '';
         const replyMonth = document.getElementById('pa-reply-month') ? document.getElementById('pa-reply-month').value.trim() : '';
         const replyDay = document.getElementById('pa-reply-day') ? document.getElementById('pa-reply-day').value.trim() : '';
-        let replyDate = '　年　月　日';
-        if (replyCloseStatus === '待覆' && (replyYear || replyMonth || replyDay)) {
+        let replyDate = '';
+        if (isReplyActive && replyCloseStatus === '待覆' && (replyYear || replyMonth || replyDay)) {
             replyDate = `${replyYear || '　'}年${replyMonth || '　'}月${replyDay || '　'}日`;
         }
 
@@ -1493,7 +1547,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pRecvTime = pageDiv.querySelector('#p-pa-recv-time');
         const pReplyId = pageDiv.querySelector('#p-pa-reply-id');
 
-        if (pReplyReceiver) pReplyReceiver.textContent = replyReceiver || '（受文者）';
+        if (pReplyReceiver) pReplyReceiver.textContent = replyReceiver;
         if (pReplySubject) pReplySubject.innerHTML = protectNoBreak(replySubject);
         const replyHasPoints = checkHasPoints(replyExplanation);
         const replyExplWrapper = pageDiv.querySelector('#p-pa-reply-expl-wrapper');
@@ -1511,9 +1565,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pReplyPerson) pReplyPerson.textContent = replyPerson;
         if (pReplyPhone) pReplyPhone.textContent = replyPhone;
         if (pReplyAttachment) pReplyAttachment.textContent = replyAttachment;
-        if (pReplyStatusClose) pReplyStatusClose.textContent = replyCloseStatus === '銷案' ? '■銷案' : '□銷案';
-        if (pReplyStatusWait) pReplyStatusWait.textContent = replyCloseStatus === '待覆' ? '■待覆' : '□待覆';
-        if (pReplyDateVal) pReplyDateVal.textContent = replyDate || '　年　月　日';
+        if (pReplyStatusClose) pReplyStatusClose.textContent = isReplyActive ? (replyCloseStatus === '銷案' ? '■銷案' : '□銷案') : '□銷案';
+        if (pReplyStatusWait) pReplyStatusWait.textContent = isReplyActive ? (replyCloseStatus === '待覆' ? '■待覆' : '□待覆') : '□待覆';
+        if (pReplyDateVal) pReplyDateVal.textContent = replyDate;
 
         // Bottom lines fixed spacing
         if (pRecvTime) pRecvTime.textContent = '　　　年　　月　　日　　時　　分';
@@ -1804,14 +1858,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (category === 'contact_letter') {
             docModeSelect.value = 'A';
             paUsageMode.value = 'both';
-            document.getElementById('pa-category').value = 'A';
-            document.getElementById('pa-secrecy').value = '非機密';
-            document.getElementById('pa-days').value = '3';
-            document.getElementById('pa-years').value = '5年';
-            document.getElementById('pa-doc-num').value = '115-08-001';
-            document.getElementById('pa-close-year').value = '115';
-            document.getElementById('pa-close-month').value = '8';
-            document.getElementById('pa-close-day').value = '30';
+            document.getElementById('pa-category').value = '';
+            document.getElementById('pa-secrecy').value = '';
+            document.getElementById('pa-days').value = '';
+            document.getElementById('pa-years').value = '';
+            document.getElementById('pa-doc-num').value = '';
+            document.getElementById('pa-close-year').value = '';
+            document.getElementById('pa-close-month').value = '';
+            document.getElementById('pa-close-day').value = '';
             document.getElementById('pa-id-serial').value = '1150001';
             document.getElementById('pa-date-year').value = '115';
             document.getElementById('pa-date-month').value = '10';
@@ -1883,10 +1937,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             docModeSelect.value = 'A';
             paUsageMode.value = 'send';
-            document.getElementById('pa-category').value = 'A';
-            document.getElementById('pa-secrecy').value = '非機密';
-            document.getElementById('pa-days').value = '3';
-            document.getElementById('pa-years').value = '5年';
+            document.getElementById('pa-category').value = '';
+            document.getElementById('pa-secrecy').value = '';
+            document.getElementById('pa-days').value = '';
+            document.getElementById('pa-years').value = '';
             document.getElementById('pa-doc-num').value = '';
             document.getElementById('pa-close-year').value = '';
             document.getElementById('pa-close-month').value = '';
@@ -2110,6 +2164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (paUsageMode) {
             paUsageMode.addEventListener('change', () => {
                 syncUsageUI();
+                syncPreview();
                 saveDraft();
             });
         }
@@ -2170,30 +2225,35 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPrint.addEventListener('click', () => {
             const category = docCategorySelect.value;
             if (category === 'contact_letter') {
-                const sendStatus = document.getElementById('pa-send-reply-status').value;
-                if (sendStatus === '待覆') {
-                    const y = (document.getElementById('pa-send-reply-year').value || '').trim();
-                    const m = (document.getElementById('pa-send-reply-month').value || '').trim();
-                    const d = (document.getElementById('pa-send-reply-day').value || '').trim();
-                    if (!y || !m || !d) {
-                        alert('發文區覆文狀態為「待覆」，強制必須填寫完整的待覆日期（年、月、日）！');
-                        if (!y) document.getElementById('pa-send-reply-year').focus();
-                        else if (!m) document.getElementById('pa-send-reply-month').focus();
-                        else document.getElementById('pa-send-reply-day').focus();
-                        return;
+                const usage = paUsageMode ? paUsageMode.value : 'both';
+                if (usage !== 'reply') {
+                    const sendStatus = document.getElementById('pa-send-reply-status').value;
+                    if (sendStatus === '待覆') {
+                        const y = (document.getElementById('pa-send-reply-year').value || '').trim();
+                        const m = (document.getElementById('pa-send-reply-month').value || '').trim();
+                        const d = (document.getElementById('pa-send-reply-day').value || '').trim();
+                        if (!y || !m || !d) {
+                            alert('發文區覆文狀態為「待覆」，強制必須填寫完整的待覆日期（年、月、日）！');
+                            if (!y) document.getElementById('pa-send-reply-year').focus();
+                            else if (!m) document.getElementById('pa-send-reply-month').focus();
+                            else document.getElementById('pa-send-reply-day').focus();
+                            return;
+                        }
                     }
                 }
-                const replyStatus = document.getElementById('pa-reply-close-status').value;
-                if (replyStatus === '待覆') {
-                    const y = (document.getElementById('pa-reply-year').value || '').trim();
-                    const m = (document.getElementById('pa-reply-month').value || '').trim();
-                    const d = (document.getElementById('pa-reply-day').value || '').trim();
-                    if (!y || !m || !d) {
-                        alert('回文區銷案狀態為「待覆」，強制必須填寫完整的待覆日期（年、月、日）！');
-                        if (!y) document.getElementById('pa-reply-year').focus();
-                        else if (!m) document.getElementById('pa-reply-month').focus();
-                        else document.getElementById('pa-reply-day').focus();
-                        return;
+                if (usage !== 'send') {
+                    const replyStatus = document.getElementById('pa-reply-close-status').value;
+                    if (replyStatus === '待覆') {
+                        const y = (document.getElementById('pa-reply-year').value || '').trim();
+                        const m = (document.getElementById('pa-reply-month').value || '').trim();
+                        const d = (document.getElementById('pa-reply-day').value || '').trim();
+                        if (!y || !m || !d) {
+                            alert('回文區銷案狀態為「待覆」，強制必須填寫完整的待覆日期（年、月、日）！');
+                            if (!y) document.getElementById('pa-reply-year').focus();
+                            else if (!m) document.getElementById('pa-reply-month').focus();
+                            else document.getElementById('pa-reply-day').focus();
+                            return;
+                        }
                     }
                 }
             }

@@ -19,6 +19,11 @@
         .section-muted:hover {
             opacity: 1;
         }
+        @media print {
+            .section-muted {
+                opacity: 1 !important;
+            }
+        }
     </style>
 </head>
 <body class="category-formal-doc">
@@ -247,7 +252,8 @@
                             <div class="form-group">
                                 <label for="pa-category">類別 (單選)</label>
                                 <select id="pa-category">
-                                    <option value="A" selected>A 類</option>
+                                    <option value="" selected>（無）</option>
+                                    <option value="A">A 類</option>
                                     <option value="B">B 類</option>
                                     <option value="C">C 類</option>
                                 </select>
@@ -255,17 +261,18 @@
                             <div class="form-group">
                                 <label for="pa-secrecy">機密別</label>
                                 <select id="pa-secrecy">
-                                    <option value="非機密" selected>非機密</option>
+                                    <option value="" selected>（無）</option>
+                                    <option value="非機密">非機密</option>
                                     <option value="機密">機密</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="pa-days">處理日數</label>
-                                <input type="number" id="pa-days" value="3">
+                                <input type="number" id="pa-days" value="" placeholder="請輸入天數">
                             </div>
                             <div class="form-group">
                                 <label for="pa-years">預定保存期限</label>
-                                <input type="text" id="pa-years" value="5年">
+                                <input type="text" id="pa-years" value="" placeholder="例如：5年">
                             </div>
                             <div class="form-group">
                                 <label for="pa-doc-num">檔號</label>
@@ -561,7 +568,7 @@
                         </tr>
                         <!-- Row 2: Checkmark cells under A, B, C (9mm) -->
                         <tr>
-                            <td class="chk-cell" colspan="2" id="p-pa-cat-A">✓</td>
+                            <td class="chk-cell" colspan="2" id="p-pa-cat-A"></td>
                             <td class="chk-cell" colspan="2" id="p-pa-cat-B"></td>
                             <td class="chk-cell" colspan="2" id="p-pa-cat-C"></td>
                         </tr>
@@ -574,7 +581,7 @@
                         <!-- Row 4: Checkmark cells under 機密, 非機密 (9mm) -->
                         <tr>
                             <td class="chk-cell" colspan="3" id="p-pa-sec-yes"></td>
-                            <td class="chk-cell" colspan="3" id="p-pa-sec-no">✓</td>
+                            <td class="chk-cell" colspan="3" id="p-pa-sec-no"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -594,14 +601,14 @@
                         <!-- Section 1: 銷案日期 (2行高, 12mm) -->
                         <tr>
                             <td class="lbl-cell">銷案<br>日期</td>
-                            <td class="val-cell-center handwriting-space" colspan="3" id="p-pa-close-date">　　年　　月　　日</td>
+                            <td class="val-cell-center handwriting-space" colspan="3" id="p-pa-close-date"></td>
                         </tr>
                         <!-- Section 2: 處理日數 / 預定保存期限 (2行高, 12mm) -->
                         <tr>
                             <td class="lbl-cell lbl-cell-multiline">處理<br>日數</td>
-                            <td class="val-cell-center" id="p-pa-days-box"><span id="p-pa-days">3</span> 日</td>
+                            <td class="val-cell-center" id="p-pa-days-box"><span id="p-pa-days"></span></td>
                             <td class="lbl-cell lbl-cell-multiline">預定保<br>存期限</td>
-                            <td class="val-cell-center" id="p-pa-years-box"><span id="p-pa-years">5年</span></td>
+                            <td class="val-cell-center" id="p-pa-years-box"><span id="p-pa-years"></span></td>
                         </tr>
                         <!-- Section 3: 檔號 (2行高, 12mm) -->
                         <tr>
