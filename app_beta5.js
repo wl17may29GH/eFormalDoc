@@ -1484,8 +1484,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const pSendReceiver = pageDiv.querySelector('#p-pa-send-receiver');
-        const pSendSubject = pageDiv.querySelector('#p-pa-send-subject');
-        const pSendExplanation = pageDiv.querySelector('#p-pa-send-explanation');
         const pSendDept = pageDiv.querySelector('#p-pa-send-dept');
         const pSendPerson = pageDiv.querySelector('#p-pa-send-person');
         const pSendPhone = pageDiv.querySelector('#p-pa-send-phone');
@@ -1495,26 +1493,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const pSendReplyDate = pageDiv.querySelector('#p-pa-send-reply-date');
 
         if (pSendReceiver) pSendReceiver.textContent = sendReceiver;
-        if (pSendSubject) pSendSubject.innerHTML = protectNoBreak(sendSubject);
-        const sendHasPoints = checkHasPoints(sendExplanation);
-        const sendExplWrapper = pageDiv.querySelector('#p-pa-send-expl-wrapper');
-        if (sendExplWrapper) {
-            if (sendHasPoints) {
-                sendExplWrapper.classList.remove('layout-side-by-side');
-                sendExplWrapper.classList.add('layout-stacked');
-            } else {
-                sendExplWrapper.classList.remove('layout-stacked');
-                sendExplWrapper.classList.add('layout-side-by-side');
-            }
-        }
-        if (pSendExplanation) pSendExplanation.innerHTML = formatExplanationHTML(sendExplanation, sendHasPoints);
         if (pSendDept) pSendDept.textContent = sendDept;
         if (pSendPerson) pSendPerson.textContent = sendPerson;
         if (pSendPhone) pSendPhone.textContent = sendPhone;
         if (pSendAttachment) pSendAttachment.textContent = sendAttachment;
-        if (pStatusFree) pStatusFree.textContent = isSendActive ? (sendReplyStatus === '免覆' ? '■免覆' : '□免覆') : '□免覆';
-        if (pStatusWait) pStatusWait.textContent = isSendActive ? (sendReplyStatus === '待覆' ? '■待覆' : '□待覆') : '□待覆';
+        if (pStatusFree) pStatusFree.textContent = isSendActive ? (sendReplyStatus === '免覆' ? '■免覆' : '□免覆') : '';
+        if (pStatusWait) pStatusWait.textContent = isSendActive ? (sendReplyStatus === '待覆' ? '■待覆' : '□待覆') : '';
         if (pSendReplyDate) pSendReplyDate.textContent = sendReplyDate;
+
+        // Dynamic render for Send Main Box (主文欄位：主旨 + 說明)
+        const sendMainBox = pageDiv.querySelector('#p-pa-send-main-box');
+        if (sendMainBox) {
+            if (isSendActive && (sendSubject || sendExplanation)) {
+                let html = '';
+                if (sendSubject) {
+                    html += `<div class="content-section section-subject"><span class="sec-title">主旨：</span><div id="p-pa-send-subject" class="sec-body">${protectNoBreak(sendSubject)}</div></div>`;
+                }
+                if (sendExplanation) {
+                    const sendHasPoints = checkHasPoints(sendExplanation);
+                    const layoutClass = sendHasPoints ? 'layout-stacked' : 'layout-side-by-side';
+                    html += `<div id="p-pa-send-expl-wrapper" class="content-section section-explanation ${layoutClass}"><span class="sec-title">說明：</span><div id="p-pa-send-explanation" class="sec-body">${formatExplanationHTML(sendExplanation, sendHasPoints)}</div></div>`;
+                }
+                sendMainBox.innerHTML = html;
+            } else {
+                sendMainBox.innerHTML = '';
+            }
+        }
 
         // 3. Reply Block
         const replyReceiver = isReplyActive ? (document.getElementById('pa-reply-receiver').value || '') : '';
@@ -1535,8 +1539,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const pReplyReceiver = pageDiv.querySelector('#p-pa-reply-receiver');
-        const pReplySubject = pageDiv.querySelector('#p-pa-reply-subject');
-        const pReplyExplanation = pageDiv.querySelector('#p-pa-reply-explanation');
         const pReplyDept = pageDiv.querySelector('#p-pa-reply-dept');
         const pReplyPerson = pageDiv.querySelector('#p-pa-reply-person');
         const pReplyPhone = pageDiv.querySelector('#p-pa-reply-phone');
@@ -1548,43 +1550,66 @@ document.addEventListener('DOMContentLoaded', () => {
         const pReplyId = pageDiv.querySelector('#p-pa-reply-id');
 
         if (pReplyReceiver) pReplyReceiver.textContent = replyReceiver;
-        if (pReplySubject) pReplySubject.innerHTML = protectNoBreak(replySubject);
-        const replyHasPoints = checkHasPoints(replyExplanation);
-        const replyExplWrapper = pageDiv.querySelector('#p-pa-reply-expl-wrapper');
-        if (replyExplWrapper) {
-            if (replyHasPoints) {
-                replyExplWrapper.classList.remove('layout-side-by-side');
-                replyExplWrapper.classList.add('layout-stacked');
-            } else {
-                replyExplWrapper.classList.remove('layout-stacked');
-                replyExplWrapper.classList.add('layout-side-by-side');
-            }
-        }
-        if (pReplyExplanation) pReplyExplanation.innerHTML = formatExplanationHTML(replyExplanation, replyHasPoints);
         if (pReplyDept) pReplyDept.textContent = replyDept;
         if (pReplyPerson) pReplyPerson.textContent = replyPerson;
         if (pReplyPhone) pReplyPhone.textContent = replyPhone;
         if (pReplyAttachment) pReplyAttachment.textContent = replyAttachment;
-        if (pReplyStatusClose) pReplyStatusClose.textContent = isReplyActive ? (replyCloseStatus === '銷案' ? '■銷案' : '□銷案') : '□銷案';
-        if (pReplyStatusWait) pReplyStatusWait.textContent = isReplyActive ? (replyCloseStatus === '待覆' ? '■待覆' : '□待覆') : '□待覆';
+        if (pReplyStatusClose) pReplyStatusClose.textContent = isReplyActive ? (replyCloseStatus === '銷案' ? '■銷案' : '□銷案') : '';
+        if (pReplyStatusWait) pReplyStatusWait.textContent = isReplyActive ? (replyCloseStatus === '待覆' ? '■待覆' : '□待覆') : '';
         if (pReplyDateVal) pReplyDateVal.textContent = replyDate;
+
+        // Dynamic render for Reply Main Box (主文欄位：主旨 + 說明)
+        const replyMainBox = pageDiv.querySelector('#p-pa-reply-main-box');
+        if (replyMainBox) {
+            if (isReplyActive && (replySubject || replyExplanation)) {
+                let html = '';
+                if (replySubject) {
+                    html += `<div class="content-section section-subject"><span class="sec-title">主旨：</span><div id="p-pa-reply-subject" class="sec-body">${protectNoBreak(replySubject)}</div></div>`;
+                }
+                if (replyExplanation) {
+                    const replyHasPoints = checkHasPoints(replyExplanation);
+                    const layoutClass = replyHasPoints ? 'layout-stacked' : 'layout-side-by-side';
+                    html += `<div id="p-pa-reply-expl-wrapper" class="content-section section-explanation ${layoutClass}"><span class="sec-title">說明：</span><div id="p-pa-reply-explanation" class="sec-body">${formatExplanationHTML(replyExplanation, replyHasPoints)}</div></div>`;
+                }
+                replyMainBox.innerHTML = html;
+            } else {
+                replyMainBox.innerHTML = '';
+            }
+        }
 
         // Bottom lines fixed spacing
         if (pRecvTime) pRecvTime.textContent = '　　　年　　月　　日　　時　　分';
         if (pReplyId) pReplyId.textContent = '　　　年　　月　　日庚大業洽字第　　　　　號';
 
         // Dynamic font fitting for main content boxes
-        const sendMainBox = pageDiv.querySelector('#p-pa-send-main-box');
-        const replyMainBox = pageDiv.querySelector('#p-pa-reply-main-box');
-        if (sendMainBox) autoFitContentBox(sendMainBox);
-        if (replyMainBox) autoFitContentBox(replyMainBox);
+        if (sendMainBox) {
+            if (sendMainBox.innerHTML.trim() !== '') {
+                autoFitContentBox(sendMainBox);
+            } else {
+                sendMainBox.style.fontSize = '';
+                sendMainBox.style.lineHeight = '';
+            }
+        }
+        if (replyMainBox) {
+            if (replyMainBox.innerHTML.trim() !== '') {
+                autoFitContentBox(replyMainBox);
+            } else {
+                replyMainBox.style.fontSize = '';
+                replyMainBox.style.lineHeight = '';
+            }
+        }
 
         // Apply Single-character Orphan Control to Send & Reply Subjects and Explanations
+        const pSendSubject = pageDiv.querySelector('#p-pa-send-subject');
+        const pSendExplanation = pageDiv.querySelector('#p-pa-send-explanation');
         if (pSendSubject) adjustElementOrphans(pSendSubject);
         if (pSendExplanation) {
             const paragraphs = pSendExplanation.querySelectorAll('.expl-paragraph');
             paragraphs.forEach(p => adjustElementOrphans(p));
         }
+
+        const pReplySubject = pageDiv.querySelector('#p-pa-reply-subject');
+        const pReplyExplanation = pageDiv.querySelector('#p-pa-reply-explanation');
         if (pReplySubject) adjustElementOrphans(pReplySubject);
         if (pReplyExplanation) {
             const paragraphs = pReplyExplanation.querySelectorAll('.expl-paragraph');
