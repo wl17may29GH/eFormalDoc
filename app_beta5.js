@@ -750,6 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('category-contact-letter');
             previewToolbarTitle.innerHTML = '<i data-lucide="eye"></i> A4 高擬真公文排版預覽 - 業務接洽便函';
             updateReplyDateControls();
+            syncUsageUI();
         } else {
             // Show Formal Doc panel, hide Contact Letter panel
             panelFormalDoc.classList.remove('hidden');
@@ -798,27 +799,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (usage === 'send') {
             if (cardSend) {
-                cardSend.classList.remove('section-muted');
+                cardSend.classList.remove('section-muted', 'hidden');
                 cardSend.style.display = 'block';
             }
             if (cardReply) {
-                cardReply.classList.add('section-muted');
+                cardReply.classList.remove('section-muted');
+                cardReply.classList.add('hidden');
+                cardReply.style.display = 'none';
             }
         } else if (usage === 'reply') {
             if (cardSend) {
-                cardSend.classList.add('section-muted');
+                cardSend.classList.remove('section-muted');
+                cardSend.classList.add('hidden');
+                cardSend.style.display = 'none';
             }
             if (cardReply) {
-                cardReply.classList.remove('section-muted');
+                cardReply.classList.remove('section-muted', 'hidden');
                 cardReply.style.display = 'block';
             }
         } else {
             if (cardSend) {
-                cardSend.classList.remove('section-muted');
+                cardSend.classList.remove('section-muted', 'hidden');
                 cardSend.style.display = 'block';
             }
             if (cardReply) {
-                cardReply.classList.remove('section-muted');
+                cardReply.classList.remove('section-muted', 'hidden');
                 cardReply.style.display = 'block';
             }
         }
