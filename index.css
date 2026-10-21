@@ -1904,3 +1904,153 @@ body {
     }
 }
 
+/* ==========================================================================
+   Beta 6: Left Workspace Optimization (Plan D Base: Accordion + High-Density Layout)
+   ========================================================================== */
+
+/* Quick Action Toolbar above Cards */
+.editor-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+    margin-bottom: -4px;
+}
+
+.editor-section-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.editor-quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-xs {
+    padding: 3px 8px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: #FFFFFF;
+    color: var(--text-dark);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.btn-xs:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Collapsible Card Component */
+.collapsible-card {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.collapsible-card.collapsed {
+    box-shadow: none;
+    border-color: #CBD5E1;
+    background: #FAFBFC;
+}
+
+.collapsible-card .card-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    background: #FFFFFF;
+    transition: background-color 0.15s ease;
+}
+
+.collapsible-card.collapsed .card-header-bar {
+    background: #FAFBFC;
+}
+
+.collapsible-card .card-header-bar:hover {
+    background: #F1F5F9;
+}
+
+.collapsible-card.expanded .card-header-bar {
+    border-bottom: 1px dashed var(--border-color);
+    background: #FFFFFF;
+}
+
+.collapsible-card .card-title-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    min-width: 0;
+}
+
+.collapsible-card .card-badge-summary {
+    font-size: 0.75rem;
+    color: #64748B;
+    background: #F1F5F9;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    font-weight: normal;
+    border: 1px solid #E2E8F0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 320px;
+    display: inline-block;
+}
+
+.collapsible-card.expanded .card-badge-summary {
+    display: none;
+}
+
+.collapsible-card .toggle-arrow {
+    font-size: 0.75rem;
+    color: #94A3B8;
+    transition: transform 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.collapsible-card.expanded .toggle-arrow {
+    transform: rotate(180deg);
+    color: var(--primary-color);
+}
+
+.collapsible-card .card-body-content {
+    display: block;
+    padding: 14px;
+}
+
+.collapsible-card.collapsed .card-body-content {
+    display: none !important;
+}
+
+/* 3-Column Compact Grid */
+.form-grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+@media (max-width: 540px) {
+    .form-grid-3col {
+        grid-template-columns: 1fr;
+    }
+}
+
+
