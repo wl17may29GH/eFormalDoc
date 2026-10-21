@@ -38,7 +38,7 @@
             </svg>
             <div class="logo-text">
                 <h1>長庚大學 <span>公文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 6</span></h1>
-                <p>校內發函與業務接洽便函整合版 (智慧排版與全功能公文套件)</p>
+                <p>校內函文製作整合版</p>
             </div>
         </div>
         <div class="header-actions">
@@ -111,7 +111,7 @@
                         <div class="form-group col-span-2">
                             <label for="doc-mode-select">二、模式</label>
                             <select id="doc-mode-select" style="font-weight: bold; border-color: var(--primary-color);">
-                                <option value="A" selected>1. 內部陳核 (連動「如正副本」+ 標題「(稿)」)</option>
+                                <option value="A" selected>1. 內部陳核 (稿)</option>
                                 <option value="B">2. 正式發文 (依正副本對象分頁列印)</option>
                                 <option value="C">3. 手動輸入</option>
                             </select>
@@ -123,11 +123,11 @@
                         </div>
                         <!-- 用途選擇 (僅業洽函顯示) -->
                         <div id="pa-usage-mode-group" class="form-group col-span-2 hidden">
-                            <label for="pa-usage-mode">三、用途 (填寫區塊選擇)</label>
+                            <label for="pa-usage-mode">三、用途</label>
                             <select id="pa-usage-mode" style="font-weight: bold; border-color: var(--primary-color);">
-                                <option value="send">1. 發文 (填寫發文段，自動隱藏回文欄位)</option>
-                                <option value="reply">2. 回文 (填寫覆文段，自動隱藏發文欄位)</option>
-                                <option value="both" selected>3. 發文＋回文 (兩段皆填寫)</option>
+                                <option value="send">1. 發文 (僅填發文段)</option>
+                                <option value="reply">2. 回文 (僅填覆文段)</option>
+                                <option value="both" selected>3. 發文＋回文 (完整對開)</option>
                             </select>
                         </div>
                     </div>
@@ -136,13 +136,12 @@
                 <!-- ================= 面板 1: 一般公函欄位 (上行文 / 平行文 / 下行文) ================= -->
                 <div id="panel-formal-doc" class="template-panel">
                     
-                    <!-- 2. 其次：本文內容 (預設展開，首屏直達，正副本雙欄併排) -->
+                    <!-- 2. 其次：本文內容 (預設展開，正副本雙欄併排) -->
                     <div class="config-card collapsible-card expanded" id="card-body" style="border-left: 3px solid #10B981;">
                         <div class="card-header-bar" onclick="toggleCard('card-body')">
                             <div class="card-title-left">
                                 <i data-lucide="align-left"></i>
                                 <span>本文內容編撰</span>
-                                <span class="card-badge-summary" style="color: #059669; background: #ECFDF5; border-color: #A7F3D0;">核心編輯區 (首屏直達)</span>
                             </div>
                             <span class="toggle-arrow">▼</span>
                         </div>
@@ -208,7 +207,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="up-id-num">發文字號 (字號/流水號)</label>
+                                    <label for="up-id-num">發文字號 (流水號)</label>
                                     <input type="text" id="up-id-num" value="">
                                 </div>
                                 <div class="form-group">
@@ -287,7 +286,7 @@
 
                 </div>
 
-                <!-- ================= 面板 2: 業務接洽便函欄位 (全優化成果版) ================= -->
+                <!-- ================= 面板 2: 業務接洽便函欄位 ================= -->
                 <div id="panel-contact-letter" class="template-panel hidden">
                     
                     <!-- 2. 其次：發文資訊 (緊接著公文選擇，核心主文填寫) -->
@@ -310,7 +309,7 @@
                                 <div id="hint-pa-send-subject" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                             </div>
                             <div class="form-group col-span-2">
-                                <label for="pa-send-explanation">說明 (自動適應區塊高度)</label>
+                                <label for="pa-send-explanation">說明</label>
                                 <div class="phrase-group">
                                     <span class="phrase-tag" data-phrase="一、依據" data-target="pa-send-explanation">+ 一、依據</span>
                                     <span class="phrase-tag" data-phrase="二、隨文檢附" data-target="pa-send-explanation">+ 二、隨文檢附</span>
@@ -440,7 +439,7 @@
                             <!-- 方案 D: 3 欄式緊湊管理資訊佈局 -->
                             <div class="form-grid-3col">
                                 <div class="form-group">
-                                    <label for="pa-category">類別 (單選)</label>
+                                    <label for="pa-category">類別</label>
                                     <select id="pa-category">
                                         <option value="" selected>（無）</option>
                                         <option value="A">A 類</option>
@@ -509,7 +508,7 @@
         </aside>
 
         <!-- Drag Resizer Bar -->
-        <div class="drag-bar" id="drag-bar" title="拖曳調整左右欄寬占比 (雙擊重設為系統預設占比)"></div>
+        <div class="drag-bar" id="drag-bar" title="拖曳調整左右欄寬占比 (連按兩下重設為系統預設占比)"></div>
 
         <!-- Right Preview Panel -->
         <main class="preview-panel" id="preview-panel">
@@ -520,7 +519,7 @@
                 <div class="preview-options" style="display: flex; align-items: center; gap: 15px;">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dark);">
                         <span>🔍 比例調整:</span>
-                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 90px; cursor: pointer;" title="拖動調整縮放比例；雙擊重設為符合單頁寬 (至少100%)">
+                        <input type="range" id="zoom-slider" min="100" max="200" value="100" style="width: 90px; cursor: pointer;" title="拖曳調整縮放比例；連按兩下重設為符合單頁寬 (至少100%)">
                         <span id="zoom-value" style="font-weight: bold; min-width: 42px; cursor: pointer;" title="點擊重設為符合單頁寬 (至少100%)">100%</span>
                     </div>
                     <label class="toggle-switch" title="切換輸入時即時更新預覽或手動點選更新預覽">
@@ -617,7 +616,7 @@
 
     <template id="tmpl-contact-letter-page">
         <div class="pa-beta4-wrapper">
-            <!-- Table 1: Top Metadata Info Container (第三次優化：左上4行高 = 右上6行高，總高36mm) -->
+            <!-- Table 1: Top Metadata Info Container (左上4行高 = 右上6行高，總高36mm) -->
             <div class="pa-top-meta-container-b4">
                 <!-- Left: 4 rows table (類別 2 行高 + 機密別 2 行高，總共 4 行高) -->
                 <table class="pa-meta-table-left-b4">

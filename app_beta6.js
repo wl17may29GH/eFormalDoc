@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 挪抬 (空格) 與標號空格提示檢測機制 (第五次優化 + 公測反映第1次優化)
+    // 挪抬 (空格) 與標號空格提示檢測機制 (第五次改善 + 公測反映第1次改善)
     // ==========================================
     const NUOTAI_ALERT_MSG = '公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。';
     const SPACING_ALERT_MSG = '請檢查有無多餘空格。';
@@ -2175,7 +2175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const editorPanel = document.querySelector('.editor-panel');
         if (!dragBar || !editorPanel) return;
 
-        dragBar.setAttribute('title', '拖曳調整左右欄寬占比 (雙擊重設為系統預設占比)');
+        dragBar.setAttribute('title', '拖曳調整左右欄寬占比 (連按兩下重設為系統預設占比)');
 
         let isDragging = false;
         dragBar.addEventListener('mousedown', (e) => {
