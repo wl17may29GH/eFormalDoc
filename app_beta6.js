@@ -481,14 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (upIdInput && !upIdInput.value) {
             upIdInput.value = defaultId;
         }
-
-        // Contact letter dates
-        const paDateYear = document.getElementById('pa-date-year');
-        const paDateMonth = document.getElementById('pa-date-month');
-        const paDateDay = document.getElementById('pa-date-day');
-        if (paDateYear && !paDateYear.value) paDateYear.value = rocYear;
-        if (paDateMonth && !paDateMonth.value) paDateMonth.value = month;
-        if (paDateDay && !paDateDay.value) paDateDay.value = day;
     }
 
     // ==========================================
@@ -1456,21 +1448,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pYearsBox) pYearsBox.innerHTML = years ? `<span id="p-pa-years">${years}</span>` : '';
         if (pDocNum) pDocNum.textContent = docNum;
 
-        // Serial Row
-        const yearVal = document.getElementById('pa-date-year').value || '115';
-        const monthVal = document.getElementById('pa-date-month').value || '10';
-        const dayVal = document.getElementById('pa-date-day').value || '10';
-        const serialVal = document.getElementById('pa-id-serial').value || '1150001';
-
-        const pDateRoc = pageDiv.querySelector('#p-pa-date-roc');
-        const pIdSerial = pageDiv.querySelector('#p-pa-id-serial');
-        if (pDateRoc) pDateRoc.textContent = `${yearVal} 年 ${monthVal} 月 ${dayVal} 日`;
-        if (pIdSerial) pIdSerial.textContent = `　${serialVal}　`;
-
         // Determine usage mode (發文 / 回文 / 發文+回文)
         const usage = paUsageMode ? paUsageMode.value : 'both';
         const isSendActive = (usage !== 'reply');
         const isReplyActive = (usage !== 'send');
+
+        // Serial Row (發文字號，依公測反映移入發文區塊且先發文日期後發文字號，未填時不帶預設值保持空白)
+        const sendYearVal = isSendActive ? (document.getElementById('pa-date-year')?.value.trim() || '') : '';
+        const sendMonthVal = isSendActive ? (document.getElementById('pa-date-month')?.value.trim() || '') : '';
+        const sendDayVal = isSendActive ? (document.getElementById('pa-date-day')?.value.trim() || '') : '';
+        const sendSerialVal = isSendActive ? (document.getElementById('pa-id-serial')?.value.trim() || '') : '';
+
+        const pDateRoc = pageDiv.querySelector('#p-pa-date-roc');
+        const pIdSerial = pageDiv.querySelector('#p-pa-id-serial');
+        if (pDateRoc) {
+            if (!isSendActive || (!sendYearVal && !sendMonthVal && !sendDayVal)) {
+                pDateRoc.textContent = '　　　年　　月　　日';
+            } else {
+                pDateRoc.textContent = `${sendYearVal || '　'} 年 ${sendMonthVal || '　'} 月 ${sendDayVal || '　'} 日`;
+            }
+        }
+        if (pIdSerial) {
+            if (!isSendActive || !sendSerialVal) {
+                pIdSerial.textContent = '　　　　　';
+            } else {
+                pIdSerial.textContent = `　${sendSerialVal}　`;
+            }
+        }
 
         // 2. Send Block
         const sendReceiver = isSendActive ? (document.getElementById('pa-send-receiver').value || '') : '';
@@ -1584,9 +1588,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Bottom lines fixed spacing
-        if (pRecvTime) pRecvTime.textContent = '　　　年　　月　　日　　時　　分';
-        if (pReplyId) pReplyId.textContent = '　　　年　　月　　日庚大業洽字第　　　　　號';
+        // Bottom Details (收文時間與覆文字號，依公測反映增列於回文區塊，未填時不帶預設值保持空白)
+        const recvYear = isReplyActive ? (document.getElementById('pa-recv-year')?.value.trim() || '') : '';
+        const recvMonth = isReplyActive ? (document.getElementById('pa-recv-month')?.value.trim() || '') : '';
+        const recvDay = isReplyActive ? (document.getElementById('pa-recv-day')?.value.trim() || '') : '';
+        const recvHour = isReplyActive ? (document.getElementById('pa-recv-hour')?.value.trim() || '') : '';
+        const recvMinute = isReplyActive ? (document.getElementById('pa-recv-minute')?.value.trim() || '') : '';
+
+        if (pRecvTime) {
+            if (!isReplyActive || (!recvYear && !recvMonth && !recvDay && !recvHour && !recvMinute)) {
+                pRecvTime.textContent = '　　　年　　月　　日　　時　　分';
+            } else {
+                pRecvTime.textContent = `${recvYear || '　'} 年 ${recvMonth || '　'} 月 ${recvDay || '　'} 日　${recvHour || '　'} 時 ${recvMinute || '　'} 分`;
+            }
+        }
+
+        const replyDocYear = isReplyActive ? (document.getElementById('pa-reply-doc-year')?.value.trim() || '') : '';
+        const replyDocMonth = isReplyActive ? (document.getElementById('pa-reply-doc-month')?.value.trim() || '') : '';
+        const replyDocDay = isReplyActive ? (document.getElementById('pa-reply-doc-day')?.value.trim() || '') : '';
+        const replyIdSerial = isReplyActive ? (document.getElementById('pa-reply-id-serial')?.value.trim() || '') : '';
+
+        if (pReplyId) {
+            if (!isReplyActive || (!replyDocYear && !replyDocMonth && !replyDocDay && !replyIdSerial)) {
+                pReplyId.textContent = '　　　年　　月　　日庚大業洽字第　　　　　號';
+            } else {
+                const datePart = (!replyDocYear && !replyDocMonth && !replyDocDay)
+                    ? '　　　年　　月　　日'
+                    : `${replyDocYear || '　'} 年 ${replyDocMonth || '　'} 月 ${replyDocDay || '　'} 日`;
+                const serialPart = replyIdSerial ? `　${replyIdSerial}　` : '　　　　　';
+                pReplyId.textContent = `${datePart}庚大業洽字第${serialPart}號`;
+            }
+        }
 
         // Dynamic font fitting for main content boxes
         if (sendMainBox) {
@@ -1813,6 +1845,15 @@ document.addEventListener('DOMContentLoaded', () => {
             paSendReplyYear: document.getElementById('pa-send-reply-year').value,
             paSendReplyMonth: document.getElementById('pa-send-reply-month').value,
             paSendReplyDay: document.getElementById('pa-send-reply-day').value,
+            paRecvYear: document.getElementById('pa-recv-year') ? document.getElementById('pa-recv-year').value : '',
+            paRecvMonth: document.getElementById('pa-recv-month') ? document.getElementById('pa-recv-month').value : '',
+            paRecvDay: document.getElementById('pa-recv-day') ? document.getElementById('pa-recv-day').value : '',
+            paRecvHour: document.getElementById('pa-recv-hour') ? document.getElementById('pa-recv-hour').value : '',
+            paRecvMinute: document.getElementById('pa-recv-minute') ? document.getElementById('pa-recv-minute').value : '',
+            paReplyDocYear: document.getElementById('pa-reply-doc-year') ? document.getElementById('pa-reply-doc-year').value : '',
+            paReplyDocMonth: document.getElementById('pa-reply-doc-month') ? document.getElementById('pa-reply-doc-month').value : '',
+            paReplyDocDay: document.getElementById('pa-reply-doc-day') ? document.getElementById('pa-reply-doc-day').value : '',
+            paReplyIdSerial: document.getElementById('pa-reply-id-serial') ? document.getElementById('pa-reply-id-serial').value : '',
             paReplyReceiver: document.getElementById('pa-reply-receiver').value,
             paReplySubject: document.getElementById('pa-reply-subject').value,
             paReplyExplanation: document.getElementById('pa-reply-explanation').value,
@@ -1903,6 +1944,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (d.paSendReplyYear !== undefined) document.getElementById('pa-send-reply-year').value = d.paSendReplyYear;
             if (d.paSendReplyMonth !== undefined) document.getElementById('pa-send-reply-month').value = d.paSendReplyMonth;
             if (d.paSendReplyDay !== undefined) document.getElementById('pa-send-reply-day').value = d.paSendReplyDay;
+            if (d.paRecvYear !== undefined && document.getElementById('pa-recv-year')) document.getElementById('pa-recv-year').value = d.paRecvYear;
+            if (d.paRecvMonth !== undefined && document.getElementById('pa-recv-month')) document.getElementById('pa-recv-month').value = d.paRecvMonth;
+            if (d.paRecvDay !== undefined && document.getElementById('pa-recv-day')) document.getElementById('pa-recv-day').value = d.paRecvDay;
+            if (d.paRecvHour !== undefined && document.getElementById('pa-recv-hour')) document.getElementById('pa-recv-hour').value = d.paRecvHour;
+            if (d.paRecvMinute !== undefined && document.getElementById('pa-recv-minute')) document.getElementById('pa-recv-minute').value = d.paRecvMinute;
+            if (d.paReplyDocYear !== undefined && document.getElementById('pa-reply-doc-year')) document.getElementById('pa-reply-doc-year').value = d.paReplyDocYear;
+            if (d.paReplyDocMonth !== undefined && document.getElementById('pa-reply-doc-month')) document.getElementById('pa-reply-doc-month').value = d.paReplyDocMonth;
+            if (d.paReplyDocDay !== undefined && document.getElementById('pa-reply-doc-day')) document.getElementById('pa-reply-doc-day').value = d.paReplyDocDay;
+            if (d.paReplyIdSerial !== undefined && document.getElementById('pa-reply-id-serial')) document.getElementById('pa-reply-id-serial').value = d.paReplyIdSerial;
             if (d.paReplyReceiver !== undefined) document.getElementById('pa-reply-receiver').value = d.paReplyReceiver;
             if (d.paReplySubject !== undefined) document.getElementById('pa-reply-subject').value = d.paReplySubject;
             if (d.paReplyExplanation !== undefined) document.getElementById('pa-reply-explanation').value = d.paReplyExplanation;
@@ -2004,6 +2054,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pa-send-reply-day').value = '25';
 
             // Reply block
+            if (document.getElementById('pa-recv-year')) document.getElementById('pa-recv-year').value = '115';
+            if (document.getElementById('pa-recv-month')) document.getElementById('pa-recv-month').value = '8';
+            if (document.getElementById('pa-recv-day')) document.getElementById('pa-recv-day').value = '18';
+            if (document.getElementById('pa-recv-hour')) document.getElementById('pa-recv-hour').value = '09';
+            if (document.getElementById('pa-recv-minute')) document.getElementById('pa-recv-minute').value = '30';
+            if (document.getElementById('pa-reply-doc-year')) document.getElementById('pa-reply-doc-year').value = '115';
+            if (document.getElementById('pa-reply-doc-month')) document.getElementById('pa-reply-doc-month').value = '8';
+            if (document.getElementById('pa-reply-doc-day')) document.getElementById('pa-reply-doc-day').value = '20';
+            if (document.getElementById('pa-reply-id-serial')) document.getElementById('pa-reply-id-serial').value = '1150002';
             document.getElementById('pa-reply-receiver').value = '資訊處軟體發展組';
             document.getElementById('pa-reply-subject').value = '已完成115學年度新進教師公文系統權限設定開通，請查照。';
             document.getElementById('pa-reply-explanation').value = '一、依貴單位8月17日庚大業洽字第1150001號便函辦理。\n二、系統帳號密碼已以電子郵件寄送予各新進教師，即可登入使用。';
@@ -2064,10 +2123,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pa-close-year').value = '';
             document.getElementById('pa-close-month').value = '';
             document.getElementById('pa-close-day').value = '';
-            document.getElementById('pa-id-serial').value = `${rocYear}0001`;
-            document.getElementById('pa-date-year').value = rocYear;
-            document.getElementById('pa-date-month').value = month;
-            document.getElementById('pa-date-day').value = day;
+            document.getElementById('pa-id-serial').value = '';
+            document.getElementById('pa-date-year').value = '';
+            document.getElementById('pa-date-month').value = '';
+            document.getElementById('pa-date-day').value = '';
 
             document.getElementById('pa-send-receiver').value = '';
             document.getElementById('pa-send-subject').value = '';
@@ -2080,6 +2139,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pa-send-reply-year').value = '';
             document.getElementById('pa-send-reply-month').value = '';
             document.getElementById('pa-send-reply-day').value = '';
+
+            if (document.getElementById('pa-recv-year')) document.getElementById('pa-recv-year').value = '';
+            if (document.getElementById('pa-recv-month')) document.getElementById('pa-recv-month').value = '';
+            if (document.getElementById('pa-recv-day')) document.getElementById('pa-recv-day').value = '';
+            if (document.getElementById('pa-recv-hour')) document.getElementById('pa-recv-hour').value = '';
+            if (document.getElementById('pa-recv-minute')) document.getElementById('pa-recv-minute').value = '';
+            if (document.getElementById('pa-reply-doc-year')) document.getElementById('pa-reply-doc-year').value = '';
+            if (document.getElementById('pa-reply-doc-month')) document.getElementById('pa-reply-doc-month').value = '';
+            if (document.getElementById('pa-reply-doc-day')) document.getElementById('pa-reply-doc-day').value = '';
+            if (document.getElementById('pa-reply-id-serial')) document.getElementById('pa-reply-id-serial').value = '';
 
             document.getElementById('pa-reply-receiver').value = '';
             document.getElementById('pa-reply-subject').value = '';
@@ -2094,6 +2163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('pa-reply-day').value = '';
         }
 
+        syncUsageUI();
         updateReplyDateControls();
         syncPreview();
     }

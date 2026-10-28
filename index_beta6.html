@@ -293,6 +293,20 @@
                     <div class="config-card" id="card-send">
                         <h3 class="card-subtitle"><i data-lucide="arrow-up-right"></i> 1. 發文資訊</h3>
                         <div class="form-grid">
+                            <div class="form-group">
+                                <label>發文日期</label>
+                                <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
+                                    <input type="number" id="pa-date-year" value="" style="width: 50px; text-align: center;" placeholder="年"> 年
+                                    <input type="number" id="pa-date-month" value="" style="width: 40px; text-align: center;" placeholder="月"> 月
+                                    <input type="number" id="pa-date-day" value="" style="width: 40px; text-align: center;" placeholder="日"> 日
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-id-serial">發文字號</label>
+                                <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
+                                    <input type="text" id="pa-id-serial" value="" placeholder="請輸入字號"> 號
+                                </div>
+                            </div>
                             <div class="form-group col-span-2">
                                 <label for="pa-send-receiver">受文者</label>
                                 <input type="text" id="pa-send-receiver" value="總務處文書組" placeholder="請輸入受文部門或人員">
@@ -363,6 +377,30 @@
                         <h3 class="card-subtitle"><i data-lucide="arrow-down-left"></i> 2. 回文資訊</h3>
                         <div class="form-grid">
                             <div class="form-group col-span-2">
+                                <label>收文時間</label>
+                                <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
+                                    <input type="number" id="pa-recv-year" value="" style="width: 50px; text-align: center;" placeholder="年"> 年
+                                    <input type="number" id="pa-recv-month" value="" style="width: 40px; text-align: center;" placeholder="月"> 月
+                                    <input type="number" id="pa-recv-day" value="" style="width: 40px; text-align: center;" placeholder="日"> 日
+                                    <input type="number" id="pa-recv-hour" value="" style="width: 40px; text-align: center;" placeholder="時"> 時
+                                    <input type="number" id="pa-recv-minute" value="" style="width: 40px; text-align: center;" placeholder="分"> 分
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>覆文日期</label>
+                                <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
+                                    <input type="number" id="pa-reply-doc-year" value="" style="width: 50px; text-align: center;" placeholder="年"> 年
+                                    <input type="number" id="pa-reply-doc-month" value="" style="width: 40px; text-align: center;" placeholder="月"> 月
+                                    <input type="number" id="pa-reply-doc-day" value="" style="width: 40px; text-align: center;" placeholder="日"> 日
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pa-reply-id-serial">覆文字號</label>
+                                <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
+                                    <input type="text" id="pa-reply-id-serial" value="" placeholder="請輸入字號"> 號
+                                </div>
+                            </div>
+                            <div class="form-group col-span-2">
                                 <label for="pa-reply-receiver">受文者 (覆文)</label>
                                 <input type="text" id="pa-reply-receiver" value="資訊處軟體發展組" placeholder="請輸入回覆對象">
                             </div>
@@ -431,7 +469,7 @@
                             <div class="card-title-left">
                                 <i data-lucide="folder"></i>
                                 <span>便函管理資訊</span>
-                                <span class="card-badge-summary" id="badge-meta">非機密 ｜ 檔號: (無) ｜ 1150001號</span>
+                                <span class="card-badge-summary" id="badge-meta">無類別 ｜ 無機密別 ｜ 無檔號 ｜ 無日數</span>
                             </div>
                             <span class="toggle-arrow">▼</span>
                         </div>
@@ -475,22 +513,6 @@
                                         <input type="number" id="pa-close-year" value="" style="width: 44px; text-align: center;" placeholder="年">年
                                         <input type="number" id="pa-close-month" value="" style="width: 36px; text-align: center;" placeholder="月">月
                                         <input type="number" id="pa-close-day" value="" style="width: 36px; text-align: center;" placeholder="日">日
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-grid" style="margin-top: 8px;">
-                                <div class="form-group">
-                                    <label for="pa-id-serial">發文字號流水號</label>
-                                    <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
-                                        <input type="text" id="pa-id-serial" value="1150001" style="font-weight: bold;"> 號
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>發文日期 (民國年 / 月 / 日)</label>
-                                    <div class="date-input-group" style="display: flex; align-items: center; gap: 4px;">
-                                        <input type="number" id="pa-date-year" value="115" style="width: 50px; text-align: center;"> 年
-                                        <input type="number" id="pa-date-month" value="10" style="width: 40px; text-align: center;"> 月
-                                        <input type="number" id="pa-date-day" value="10" style="width: 40px; text-align: center;"> 日
                                     </div>
                                 </div>
                             </div>
@@ -692,7 +714,7 @@
 
             <!-- Serial Row (Single Line) -->
             <div class="pa-serial-row-b4">
-                發文字號：<span id="p-pa-date-roc">115 年 10 月 10 日</span>庚大業洽字第<span id="p-pa-id-serial">　1150001　</span>號
+                發文字號：<span id="p-pa-date-roc">　　　年　　月　　日</span>庚大業洽字第<span id="p-pa-id-serial">　　　　　</span>號
             </div>
 
             <!-- 1. 發文段 (Upper Block - Fixed Height 103mm - Decoupled Left & Right) -->
