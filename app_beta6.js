@@ -490,8 +490,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentMode = docModeSelect.value;
         if (category === 'contact_letter') {
             docModeSelect.innerHTML = `
-                <option value="A">1. 內部陳核（標題顯示「業務接洽便函(稿)」）</option>
-                <option value="B">2. 正式發文（標題顯示「業務接洽便函」）</option>
+                <option value="A">1. 內部陳核（內部提稿，標題顯示「業務接洽便函(稿)」）</option>
+                <option value="B">2. 正式發文（正式發對外函，標題顯示「業務接洽便函」）</option>
             `;
             // Keep A or B
             docModeSelect.value = (currentMode === 'B') ? 'B' : 'A';
@@ -1417,9 +1417,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catC) catC.textContent = (cat === 'C') ? '✓' : '';
 
         const mode = docModeSelect ? docModeSelect.value : 'A';
+        const isFormalDoc = (mode === 'B');
         const mainTitle = pageDiv.querySelector('#p-pa-main-title');
         if (mainTitle) {
-            mainTitle.textContent = (mode === 'A') ? '業務接洽便函(稿)' : '業務接洽便函';
+            mainTitle.textContent = isFormalDoc ? '業務接洽便函' : '業務接洽便函(稿)';
+        }
+
+        // 業洽函選正式發對外函時，不論發文或回文，皆隱藏兩個區塊的主管簽核欄位 (簽核欄只用在內部提稿階段)
+        if (isFormalDoc) {
+            pageDiv.classList.add('pa-no-sig');
+        } else {
+            pageDiv.classList.remove('pa-no-sig');
+        }
+
+        const sendSigBox = pageDiv.querySelector('#p-pa-send-sig-box') || pageDiv.querySelector('#preview-send-block .pa-sig-grid-box');
+        const replySigBox = pageDiv.querySelector('#p-pa-reply-sig-box') || pageDiv.querySelector('#preview-reply-block .pa-sig-grid-box');
+        if (sendSigBox) {
+            sendSigBox.style.display = isFormalDoc ? 'none' : '';
+        }
+        if (replySigBox) {
+            replySigBox.style.display = isFormalDoc ? 'none' : '';
         }
 
         const secrecy = document.getElementById('pa-secrecy').value;

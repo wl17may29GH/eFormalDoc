@@ -24,6 +24,18 @@
                 opacity: 1 !important;
             }
         }
+        /* 業洽函正式發對外函模式：隱藏主管簽核欄位，主要說明欄垂直延伸滿版 */
+        .pa-no-sig .pa-sig-grid-box,
+        .no-sig .pa-sig-grid-box {
+            display: none !important;
+        }
+        .pa-no-sig .pa-main-content-box,
+        .no-sig .pa-main-content-box {
+            height: 100% !important;
+            min-height: 100% !important;
+            max-height: 100% !important;
+            border-bottom: none !important;
+        }
     </style>
 </head>
 <body class="category-formal-doc">
@@ -752,7 +764,7 @@
                     <!-- Top: 主要說明欄 (主旨 + 說明) - 紫框比照公函 (動態生成) -->
                     <div class="pa-main-content-box" id="p-pa-send-main-box"></div>
                     <!-- Bottom: 簽核欄 (Fixed 22mm) -->
-                    <div class="pa-sig-grid-box">
+                    <div class="pa-sig-grid-box" id="p-pa-send-sig-box">
                         <div class="pa-sig-header-row">
                             <div class="pa-sig-header-cell">校長</div>
                             <div class="pa-sig-header-cell">會稿</div>
@@ -809,7 +821,7 @@
                     <!-- Top: 主要說明欄 (主旨 + 說明) - 紫框比照公函 (動態生成) -->
                     <div class="pa-main-content-box" id="p-pa-reply-main-box"></div>
                     <!-- Bottom: 簽核欄 (Fixed 22mm) -->
-                    <div class="pa-sig-grid-box">
+                    <div class="pa-sig-grid-box" id="p-pa-reply-sig-box">
                         <div class="pa-sig-header-row">
                             <div class="pa-sig-header-cell">校長</div>
                             <div class="pa-sig-header-cell">會稿</div>

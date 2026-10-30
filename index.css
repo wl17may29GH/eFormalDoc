@@ -1743,6 +1743,20 @@ body {
     flex-direction: column;
 }
 
+/* 正式發文 (正式發對外函) 模式：隱藏主管簽核欄位，簽核欄僅供內部提稿階段使用，主要說明欄垂直延伸滿版 */
+.pa-no-sig .pa-sig-grid-box,
+.no-sig .pa-sig-grid-box {
+    display: none !important;
+}
+
+.pa-no-sig .pa-main-content-box,
+.no-sig .pa-main-content-box {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    border-bottom: none !important;
+}
+
 /* 各級人員標題列 (紅框): 高度固定 6mm */
 .pa-sig-header-row {
     height: 6mm;
