@@ -2099,7 +2099,7 @@ body {
 
 
 
-/* --- Embedded User Guide Modal Styles --- */
+/* --- Embedded User Guide Modal Styles (Offline Release) --- */
 .guide-modal-overlay {
     position: fixed;
     top: 0;
@@ -6184,7 +6184,10 @@ document.addEventListener('keydown', (e) => {
                     <td><strong style="color: #166534;">★ Beta 7 合併發布版</strong></td>
                     <td><strong>雙軌發布制與單檔離線版支援</strong></td>
                     <td>
-                        1. <strong>版本雙軌機制確立</strong>：偶數版（Beta 6）供本機模組化開發維護；奇數版（Beta 7）供合併發布與離線單檔分發，待指示時才執行合併打包。<br>
+                        1. <strong>版本雙軌與命名規範確立</strong>：<br>
+                           • <strong>本機開發版</strong>：偶數號（範例：<code>index_beta6.html</code>），多檔案架構便於維護，待使用者指示時才執行合併打包。<br>
+                           • <strong>正式發布線上版</strong>：奇數號（範例：<code>index_beta7.html</code>），整合單檔免除瀏覽器跨檔案快取衝突，並提供下載離線版連結。<br>
+                           • <strong>正式發布離線下載版</strong>：奇數號+off（範例：<code>index_beta7off.html</code>），純單一 HTML 檔案，內嵌離線圖庫與使用指南彈窗，零網路依賴。<br>
                         2. <strong>系統中英文定名</strong>：正式定名為「長庚大學線上函文製作系統（CGU Online Official Document Editor）」。<br>
                         3. <strong>線上版新增下載離線版</strong>：頂端工具列新增「下載離線版」按鈕，使用者一鍵下載純單一 HTML 檔（免解壓、零網路依賴）。<br>
                         4. <strong>使用指南內嵌彈窗</strong>：離線單檔將完整使用手冊內嵌為獨立全螢幕浮層（Modal），斷網狀態下隨時點擊秒開查閱。

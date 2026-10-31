@@ -7,12 +7,17 @@ const cssPath = path.join(baseDir, 'index.css');
 const jsPath = path.join(baseDir, 'app_beta6.js');
 const lucidePath = path.join(baseDir, 'lucide.min.js');
 const guidePath = path.join(baseDir, 'user_guide_beta6.html');
-const outputPath = path.join(baseDir, 'cgu_formal_doc_offline.html');
-const beta7Path = path.join(baseDir, 'index_beta7.html');
 
-console.log('Building standalone single-file offline version (Beta 7)...');
+// 輸出規範：
+// 1. 正式發布線上版：奇數號 (index_beta7.html)
+// 2. 正式發布離線下載版：奇數號+off (index_beta7off.html)
+const beta7OnlinePath = path.join(baseDir, 'index_beta7.html');
+const beta7OfflinePath = path.join(baseDir, 'index_beta7off.html');
+const legacyOfflinePath = path.join(baseDir, 'cgu_formal_doc_offline.html');
 
-let html = fs.readFileSync(htmlPath, 'utf-8');
+console.log('=== 開始編譯雙軌發布版本 ===');
+
+const baseHtml = fs.readFileSync(htmlPath, 'utf-8');
 const css = fs.readFileSync(cssPath, 'utf-8');
 const js = fs.readFileSync(jsPath, 'utf-8');
 let lucideJs = '';
@@ -21,31 +26,27 @@ if (fs.existsSync(lucidePath)) {
 }
 const guideHtml = fs.readFileSync(guidePath, 'utf-8');
 
-// 1. Extract Guide Styles and Body
+// 1. 處理使用指南樣式與內嵌 HTML (離線版專用)
 const guideStyleMatch = guideHtml.match(/<style>([\s\S]*?)<\/style>/);
 let guideCss = guideStyleMatch ? guideStyleMatch[1] : '';
-// Remove print styles from guide CSS since modal is hidden in print anyway
 guideCss = guideCss.replace(/@media print\s*\{[\s\S]*?\}\s*\}/g, '');
-// Scope body styling to .guide-modal-body to avoid overriding main app body
 guideCss = guideCss.replace(/\bbody\s*\{/g, '.guide-modal-body {');
 guideCss = guideCss.replace(/\*\s*\{/g, '.guide-modal-window * {');
 
-// Extract Guide Content (everything inside <div class="guide-container">...</div>)
 const guideStart = guideHtml.indexOf('<div class="guide-container">');
 const guideEnd = guideHtml.lastIndexOf('</div>');
 let guideContent = '';
 if (guideStart !== -1 && guideEnd !== -1) {
     guideContent = guideHtml.substring(guideStart, guideEnd + 6);
 }
-// In guide content, replace "開啟 Beta 6 系統操作" link with button that closes modal
 guideContent = guideContent.replace(
     /<a href="index_beta6\.html" class="btn-action btn-print-hero">[\s\S]*?<\/a>/,
     '<button type="button" onclick="closeGuideModal()" class="btn-action btn-print-hero">返回系統操作</button>'
 );
 
-// 2. Modal Overlay CSS & HTML
+// 離線指南 Modal 樣式
 const modalCss = `
-/* --- Embedded User Guide Modal Styles --- */
+/* --- Embedded User Guide Modal Styles (Offline Release) --- */
 .guide-modal-overlay {
     position: fixed;
     top: 0;
@@ -159,45 +160,58 @@ document.addEventListener('keydown', (e) => {
 });
 `;
 
-// 3. Assemble standalone Beta 7 HTML
-// A. Replace external CSS with inlined index.css + modal CSS
-html = html.replace('<link rel="stylesheet" href="index.css">', `<style>\n/* --- Embedded index.css --- */\n${css}\n${modalCss}\n</style>`);
-
-// B. Replace Lucide CDN with inlined script
+// ============================================================
+// 二、編譯【正式發布線上版】：index_beta7.html
+// 包含內嵌 CSS + JS (避免快取衝突)，提供下載 index_beta7off.html 按鈕
+// ============================================================
+let onlineHtml = baseHtml;
+onlineHtml = onlineHtml.replace('<link rel="stylesheet" href="index.css">', `<style>\n/* --- Embedded index.css --- */\n${css}\n</style>`);
 if (lucideJs) {
-    html = html.replace('<script src="https://unpkg.com/lucide@latest"></script>', `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
+    onlineHtml = onlineHtml.replace('<script src="https://unpkg.com/lucide@latest"></script>', `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
 }
+onlineHtml = onlineHtml.replace(/Beta 6/g, 'Beta 7');
+// 線上版確保下載按鈕指向 index_beta7off.html
+onlineHtml = onlineHtml.replace(
+    /href="[^"]*"\s+download="[^"]*"/,
+    'href="index_beta7off.html" download="長庚大學線上函文製作系統_離線版(Beta7).html"'
+);
+let beta7OnlineJs = js.replace(/version: 'Beta 6'/, "version: 'Beta 7'");
+onlineHtml = onlineHtml.replace('<script src="app_beta6.js"></script>', `<script>\n/* --- Embedded app_beta6.js --- */\n${beta7OnlineJs}\n</script>`);
 
-// C. Replace "使用指南" link with modal button in Beta 7
-html = html.replace(
+fs.writeFileSync(beta7OnlinePath, onlineHtml, 'utf-8');
+console.log(`[1] 正式發布線上版完成: ${beta7OnlinePath} (${(fs.statSync(beta7OnlinePath).size / 1024).toFixed(1)} KB)`);
+
+// ============================================================
+// 三、編譯【正式發布離線下載版】：index_beta7off.html
+// 包含內嵌 CSS + JS + 內嵌離線使用指南 Modal，獨立單檔免連網
+// ============================================================
+let offlineHtml = baseHtml;
+offlineHtml = offlineHtml.replace('<link rel="stylesheet" href="index.css">', `<style>\n/* --- Embedded index.css --- */\n${css}\n${modalCss}\n</style>`);
+if (lucideJs) {
+    offlineHtml = offlineHtml.replace('<script src="https://unpkg.com/lucide@latest"></script>', `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
+}
+// 使用指南替換為彈窗觸發鈕
+offlineHtml = offlineHtml.replace(
     /<a href="user_guide_beta6\.html"[\s\S]*?<\/a>/,
     `<button type="button" class="btn btn-secondary" onclick="openGuideModal()" title="開啟內嵌使用指南 (免連網)" style="display: inline-flex; align-items: center; gap: 4px;">
         <i data-lucide="help-circle"></i> 使用指南
     </button>`
 );
-
-// D. Replace "下載離線版" button in Beta 7 with "已為離線單檔版" indicator badge
-html = html.replace(
+// 下載按鈕替換為離線狀態指示徽章
+offlineHtml = offlineHtml.replace(
     /<a id="btn-download-offline"[\s\S]*?<\/a>/,
     `<span class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; border-color: #bbf7d0; cursor: default;" title="本檔案為獨立單檔，無需連網即可離線使用">
         <i data-lucide="layers"></i> 離線單檔版 (Beta 7)
     </span>`
 );
+offlineHtml = offlineHtml.replace(/Beta 6/g, 'Beta 7');
+offlineHtml = offlineHtml.replace(/<title>長庚大學 線上函文製作系統 \(Beta 7\)<\/title>/, '<title>長庚大學 線上函文製作系統 (Beta 7 離線單檔版)</title>');
+offlineHtml = offlineHtml.replace('</body>', `${modalHtml}\n</body>`);
 
-// E. Update version numbers to Beta 7
-html = html.replace(/Beta 6/g, 'Beta 7');
-html = html.replace(/<title>長庚大學 線上函文製作系統 \(Beta 7\)<\/title>/, '<title>長庚大學 線上函文製作系統 (Beta 7 離線單檔版)</title>');
+let beta7OfflineJs = js.replace(/version: 'Beta 6'/, "version: 'Beta 7'");
+offlineHtml = offlineHtml.replace('<script src="app_beta6.js"></script>', `<script>\n/* --- Embedded app_beta6.js --- */\n${beta7OfflineJs}\n${modalJs}\n</script>`);
 
-// F. Insert Modal HTML before </body>
-html = html.replace('</body>', `${modalHtml}\n</body>`);
-
-// G. Replace external app_beta6.js with inlined app_beta6.js + modalJs
-let beta7Js = js.replace(/version: 'Beta 6'/, "version: 'Beta 7'");
-html = html.replace('<script src="app_beta6.js"></script>', `<script>\n/* --- Embedded app_beta6.js --- */\n${beta7Js}\n${modalJs}\n</script>`);
-
-// Write to cgu_formal_doc_offline.html and index_beta7.html
-fs.writeFileSync(outputPath, html, 'utf-8');
-fs.writeFileSync(beta7Path, html, 'utf-8');
-
-console.log(`Beta 7 standalone generated at: ${outputPath} (${(fs.statSync(outputPath).size / 1024).toFixed(1)} KB)`);
-console.log(`Beta 7 standalone mirror at: ${beta7Path} (${(fs.statSync(beta7Path).size / 1024).toFixed(1)} KB)`);
+fs.writeFileSync(beta7OfflinePath, offlineHtml, 'utf-8');
+fs.writeFileSync(legacyOfflinePath, offlineHtml, 'utf-8'); // 相容舊檔名
+console.log(`[2] 正式發布離線下載版完成: ${beta7OfflinePath} (${(fs.statSync(beta7OfflinePath).size / 1024).toFixed(1)} KB)`);
+console.log('=== 編譯發布完畢 ===');
