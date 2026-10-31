@@ -2060,7 +2060,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Send block
             document.getElementById('pa-send-receiver').value = '總務處文書組';
             document.getElementById('pa-send-subject').value = '洽請協助進行115學年度新進教師公文系統權限設定開通事宜。';
-            document.getElementById('pa-send-explanation').value = '一、本校預計於8月新增教師3名，需提早開通公文製作系統。\n二、檢附新進教師名單與處室對照表各乙份。';
+            document.getElementById('pa-send-explanation').value = '一、本校預計於8月新增教師3名，需提早開通線上函文製作系統。\n二、檢附新進教師名單與處室對照表各乙份。';
             document.getElementById('pa-send-dept').value = '資訊處軟體發展組';
             document.getElementById('pa-send-person').value = '王小明';
             document.getElementById('pa-send-phone').value = '3601';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>長庚大學 公文製作系統 (Beta 6)</title>
+    <title>長庚大學 線上函文製作系統 (Beta 6)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,8 +49,8 @@
                 <path d="M50,40 L65,55 L55,55 L55,75 L45,75 L45,55 L35,55 Z" fill="#FFFFFF" />
             </svg>
             <div class="logo-text">
-                <h1>長庚大學 <span>公文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 6</span></h1>
-                <p>校內函文製作整合版</p>
+                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 6</span></h1>
+                <p>CGU Online Official Document Editor</p>
             </div>
         </div>
         <div class="header-actions">
@@ -87,6 +87,9 @@
             <input type="file" id="file-import" accept=".json" style="display: none;">
             <a href="user_guide_beta6.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
                 <i data-lucide="help-circle"></i> 使用指南
+            </a>
+            <a id="btn-download-offline" href="cgu_formal_doc_offline.html" download="長庚大學線上函文製作系統_離線版(Beta7).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; border-color: #bbf7d0;">
+                <i data-lucide="download"></i> 下載離線版
             </a>
             <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF">
                 <i data-lucide="printer"></i> 列印 / PDF
@@ -341,7 +344,7 @@
                                     <span class="phrase-tag" data-phrase="二、隨文檢附" data-target="pa-send-explanation">+ 二、隨文檢附</span>
                                     <span class="phrase-tag" data-phrase="三、如有疑義，請洽經辦人員。" data-target="pa-send-explanation">+ 三、如有疑義</span>
                                 </div>
-                                <textarea id="pa-send-explanation" rows="4">一、本校預計於8月新增教師3名，需提早開通公文製作系統。&#10;二、檢附新進教師名單與處室對照表各乙份。</textarea>
+                                <textarea id="pa-send-explanation" rows="4">一、本校預計於8月新增教師3名，需提早開通線上函文製作系統。&#10;二、檢附新進教師名單與處室對照表各乙份。</textarea>
                                 <div id="hint-pa-send-explanation" class="nuotai-hint">⚠️ 提示：公文之期望、目的及稱謂用語，均無須挪抬(空格)書寫。</div>
                             </div>
                         </div>
@@ -536,8 +539,8 @@
             </form>
             
             <footer class="sidebar-copyright">
-                <p>長庚大學 公文製作系統 Beta 6</p>
-                <p>© 2026 Chang Gung University</p>
+                <p>長庚大學 線上函文製作系統 Beta 6</p>
+                <p>CGU Online Official Document Editor · © 2026</p>
             </footer>
         </aside>
 
