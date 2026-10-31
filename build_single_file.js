@@ -24,8 +24,11 @@ const guideHtml = fs.readFileSync(guidePath, 'utf-8');
 // 1. Extract Guide Styles and Body
 const guideStyleMatch = guideHtml.match(/<style>([\s\S]*?)<\/style>/);
 let guideCss = guideStyleMatch ? guideStyleMatch[1] : '';
+// Remove print styles from guide CSS since modal is hidden in print anyway
+guideCss = guideCss.replace(/@media print\s*\{[\s\S]*?\}\s*\}/g, '');
 // Scope body styling to .guide-modal-body to avoid overriding main app body
 guideCss = guideCss.replace(/\bbody\s*\{/g, '.guide-modal-body {');
+guideCss = guideCss.replace(/\*\s*\{/g, '.guide-modal-window * {');
 
 // Extract Guide Content (everything inside <div class="guide-container">...</div>)
 const guideStart = guideHtml.indexOf('<div class="guide-container">');

@@ -179,7 +179,7 @@
         }
 
         /* 內容區塊 */
-        .content-section {
+        .guide-section {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -188,7 +188,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
 
-        h2 {
+        .guide-container h2 {
             color: #1e293b;
             font-size: 1.45rem;
             border-bottom: 2px solid var(--primary);
@@ -200,7 +200,7 @@
             gap: 10px;
         }
 
-        h3 {
+        .guide-container h3 {
             color: #334155;
             font-size: 1.18rem;
             margin-top: 28px;
@@ -209,14 +209,14 @@
             border-left: 4px solid var(--primary);
         }
 
-        h4 {
+        .guide-container h4 {
             color: #475569;
             font-size: 1.02rem;
             margin-top: 18px;
             margin-bottom: 8px;
         }
 
-        p {
+        .guide-container p {
             margin-top: 0;
             margin-bottom: 14px;
         }
@@ -320,7 +320,7 @@
         }
 
         /* 表格樣式 */
-        table {
+        .guide-container table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
@@ -328,25 +328,25 @@
             background: #fff;
         }
 
-        th, td {
+        .guide-container th, .guide-container td {
             border: 1px solid var(--border-color);
             padding: 12px 14px;
             text-align: left;
             vertical-align: top;
         }
 
-        th {
+        .guide-container th {
             background: #f8fafc;
             font-weight: 600;
             color: #334155;
         }
 
-        tr:nth-child(even) td {
+        .guide-container tr:nth-child(even) td {
             background: #fbfcfe;
         }
 
         /* 標籤代碼 */
-        code {
+        .guide-container code {
             background-color: var(--code-bg);
             color: #b91c1c;
             padding: 2px 6px;
@@ -355,7 +355,7 @@
             font-size: 0.88em;
         }
 
-        kbd {
+        .guide-container kbd {
             background-color: #f1f5f9;
             border: 1px solid #cbd5e1;
             border-radius: 3px;
@@ -418,7 +418,7 @@
             .hero-title { color: #000; }
             .hero-subtitle { color: #444; }
             .hero-actions, .toc-card { display: none; }
-            .content-section {
+            .guide-section {
                 border: none;
                 box-shadow: none;
                 padding: 10px 0;
@@ -462,7 +462,7 @@
     </nav>
 
     <!-- 一、系統定位與架構概述 -->
-    <section class="content-section" id="sec-overview">
+    <section class="guide-section" id="sec-overview">
         <h2>一、Beta 6 系統定位與架構概述</h2>
         <p>
             <strong>eFormalDoc Beta 6 (CGU Online Official Document Editor)</strong> 是長庚大學線上函文製作系統針對<strong>操作者日常作業人因工程與工作效率</strong>所打造的旗艦版本。延續 Beta 5 單一入口雙軌整合架構（全面涵蓋教育部上行文、校外機構平下行文、校內業務接洽便函），Beta 6 進一步解決公測期間使用者反映之「左側編輯工作區過長、滑動距離過多、核心主文被擠至下方」的困擾。
@@ -499,7 +499,7 @@
     </section>
 
     <!-- 二、三大公文類別與模式規格 -->
-    <section class="content-section" id="sec-categories">
+    <section class="guide-section" id="sec-categories">
         <h2>二、三大公文類別與模式規格</h2>
         <p>Beta 6 依據行政行文方向與公文性質，完整劃分三大類別，並均享受緊湊版面之便利：</p>
 
@@ -570,7 +570,7 @@
     </section>
 
     <!-- 三、Beta 6 工作區長度重構核心亮點 -->
-    <section class="content-section" id="sec-beta6-features">
+    <section class="guide-section" id="sec-beta6-features">
         <h2>三、Beta 6 工作區長度重構核心亮點</h2>
 
         <h3>1. 階層順序嚴格重構：公文選擇最上、本文編撰次之</h3>
@@ -614,7 +614,7 @@
     </section>
 
     <!-- 四、歷次重大改善與功能精進歷程彙整 -->
-    <section class="content-section" id="sec-optimizations">
+    <section class="guide-section" id="sec-optimizations">
         <h2>四、歷次重大改善與功能精進歷程彙整</h2>
         <p>為追求極致的使用者體驗、法規合規與版面美感，系統歷經了完整的疊代改善與精進歷程：</p>
 
@@ -727,7 +727,7 @@
     </section>
 
     <!-- 五、逐步操作使用手冊 -->
-    <section class="content-section" id="sec-user-manual">
+    <section class="guide-section" id="sec-user-manual">
         <h2>五、逐步操作使用手冊 (Step-by-Step Manual)</h2>
 
         <h3><span class="step-number">1</span> 第一步：最上層選擇公文類別與模式</h3>
@@ -775,7 +775,7 @@
     </section>
 
     <!-- 六、瀏覽器列印與 PDF 設定 -->
-    <section class="content-section" id="sec-print-guide">
+    <section class="guide-section" id="sec-print-guide">
         <h2>六、瀏覽器列印與 PDF 設定 (極重要)</h2>
         <p>
             當您編輯完成並點擊系統頂端的 <kbd>列印 / PDF</kbd> 按鈕時，系統會開啟瀏覽器的原生列印對話框。為確保產出的公文完全符合學校公文規格，請<strong>務必進行以下 6 項參數設定</strong>：
@@ -798,7 +798,7 @@
     </section>
 
     <!-- 七、公文分點階層與用語標準規範 -->
-    <section class="content-section" id="sec-hierarchy">
+    <section class="guide-section" id="sec-hierarchy">
         <h2>七、公文分點階層與用語標準規範</h2>
 
         <h3>1. 行政院公文書標準六階層規範</h3>
@@ -886,7 +886,7 @@
     </section>
 
     <!-- 八、常見問題與故障排除 -->
-    <section class="content-section" id="sec-faq">
+    <section class="guide-section" id="sec-faq">
         <h2>八、常見問題與故障排除 (FAQ)</h2>
 
         <div class="callout callout-info">
