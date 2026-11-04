@@ -994,6 +994,20 @@ document.addEventListener('DOMContentLoaded', () => {
             setSafeText('#p-up-person', document.getElementById('up-person').value);
             setSafeText('#p-up-phone', document.getElementById('up-phone').value);
             setSafeText('#p-up-fax', document.getElementById('up-fax').value);
+
+            // 電子信箱 (選填)：勾選且有內容才於公文預覽呈現，其餘情況隱藏不佔高度
+            const emailEnable = document.getElementById('up-email-enable')?.checked;
+            const emailVal = (document.getElementById('up-email')?.value || '').trim();
+            const emailRow = measureDiv.querySelector('#p-up-email-row');
+            if (emailRow) {
+                if (emailEnable && emailVal) {
+                    setSafeText('#p-up-email', emailVal);
+                    emailRow.style.display = 'block';
+                } else {
+                    emailRow.style.display = 'none';
+                }
+            }
+
             setSafeText('#p-up-receiver', recipient);
 
             const rocYear = new Date().getFullYear() - 1911;
@@ -1752,7 +1766,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const phone = (document.getElementById('up-phone')?.value || '').trim() || '未填電話';
             const fax = (document.getElementById('up-fax')?.value || '').trim();
             const faxStr = fax ? ` ｜ 傳真: ${fax}` : '';
-            badgeContact.textContent = `承辦人: ${person} ｜ 電話: ${phone}${faxStr}`;
+            const emailEnable = document.getElementById('up-email-enable')?.checked;
+            const email = (document.getElementById('up-email')?.value || '').trim();
+            const emailStr = (emailEnable && email) ? ` ｜ 信箱: ${email}` : '';
+            badgeContact.textContent = `承辦人: ${person} ｜ 電話: ${phone}${faxStr}${emailStr}`;
         }
 
         // 3. 業洽函便函管理資訊摘要
@@ -1825,6 +1842,8 @@ document.addEventListener('DOMContentLoaded', () => {
             upPerson: document.getElementById('up-person').value,
             upPhone: document.getElementById('up-phone').value,
             upFax: document.getElementById('up-fax').value,
+            upEmailEnable: document.getElementById('up-email-enable')?.checked || false,
+            upEmail: document.getElementById('up-email')?.value || '',
             upDateYear: document.getElementById('up-date-year').value,
             upDateMonth: document.getElementById('up-date-month').value,
             upDateDay: document.getElementById('up-date-day').value,
@@ -1923,6 +1942,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (d.upPerson !== undefined) document.getElementById('up-person').value = d.upPerson;
             if (d.upPhone !== undefined) document.getElementById('up-phone').value = d.upPhone;
             if (d.upFax !== undefined) document.getElementById('up-fax').value = d.upFax;
+            if (d.upEmailEnable !== undefined) {
+                const emailEnableEl = document.getElementById('up-email-enable');
+                const emailInput = document.getElementById('up-email');
+                if (emailEnableEl) emailEnableEl.checked = !!d.upEmailEnable;
+                if (emailInput) {
+                    emailInput.disabled = !d.upEmailEnable;
+                    emailInput.placeholder = d.upEmailEnable ? '例如: service@mail.cgu.edu.tw' : '勾選上方核取方塊後開啟填寫';
+                }
+            }
+            if (d.upEmail !== undefined) {
+                const emailInput = document.getElementById('up-email');
+                if (emailInput) emailInput.value = d.upEmail;
+            }
             if (d.upDateYear !== undefined) document.getElementById('up-date-year').value = d.upDateYear;
             if (d.upDateMonth !== undefined) document.getElementById('up-date-month').value = d.upDateMonth;
             if (d.upDateDay !== undefined) document.getElementById('up-date-day').value = d.upDateDay;
@@ -2009,6 +2041,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-person').value = '木子三';
             document.getElementById('up-phone').value = '03-2118800分機1314';
             document.getElementById('up-fax').value = '03-2118700';
+            const emailEnableUp = document.getElementById('up-email-enable');
+            const emailInputUp = document.getElementById('up-email');
+            if (emailEnableUp) emailEnableUp.checked = true;
+            if (emailInputUp) {
+                emailInputUp.disabled = false;
+                emailInputUp.value = 'service@mail.cgu.edu.tw';
+                emailInputUp.placeholder = '例如: service@mail.cgu.edu.tw';
+            }
             document.getElementById('up-date-year').value = rocYear;
             document.getElementById('up-date-month').value = month;
             document.getElementById('up-date-day').value = day;
@@ -2028,6 +2068,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-person').value = '林專員';
             document.getElementById('up-phone').value = '03-2118800分機3401';
             document.getElementById('up-fax').value = '03-2118700';
+            const emailEnablePar = document.getElementById('up-email-enable');
+            const emailInputPar = document.getElementById('up-email');
+            if (emailEnablePar) emailEnablePar.checked = true;
+            if (emailInputPar) {
+                emailInputPar.disabled = false;
+                emailInputPar.value = 'rd_office@mail.cgu.edu.tw';
+                emailInputPar.placeholder = '例如: service@mail.cgu.edu.tw';
+            }
             document.getElementById('up-date-year').value = rocYear;
             document.getElementById('up-date-month').value = month;
             document.getElementById('up-date-day').value = day;
@@ -2115,6 +2163,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('up-person').value = '';
             document.getElementById('up-phone').value = '03-2118800分機';
             document.getElementById('up-fax').value = '03-2118700';
+            const emailEnableReset = document.getElementById('up-email-enable');
+            const emailInputReset = document.getElementById('up-email');
+            if (emailEnableReset) emailEnableReset.checked = false;
+            if (emailInputReset) {
+                emailInputReset.disabled = true;
+                emailInputReset.value = '';
+                emailInputReset.placeholder = '勾選上方核取方塊後開啟填寫';
+            }
             document.getElementById('up-date-year').value = rocYear;
             document.getElementById('up-date-month').value = month;
             document.getElementById('up-date-day').value = day;
@@ -2348,6 +2404,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const upOriginal = document.getElementById('up-original');
         if (upOriginal) {
             upOriginal.addEventListener('change', checkMoeWarning);
+        }
+
+        // Upward / Parallel Contact Email toggle
+        const upEmailEnable = document.getElementById('up-email-enable');
+        const upEmail = document.getElementById('up-email');
+        if (upEmailEnable && upEmail) {
+            upEmailEnable.addEventListener('change', () => {
+                const isEnabled = upEmailEnable.checked;
+                upEmail.disabled = !isEnabled;
+                upEmail.placeholder = isEnabled ? '例如: service@mail.cgu.edu.tw' : '勾選上方核取方塊後開啟填寫';
+                if (isEnabled) {
+                    upEmail.focus();
+                }
+                saveDraft();
+                updateCardBadges();
+                syncPreview();
+            });
         }
 
         // Contact Letter status changes

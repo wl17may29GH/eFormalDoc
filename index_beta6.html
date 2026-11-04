@@ -296,6 +296,18 @@
                                     <input type="text" id="up-fax" value="03-2118700">
                                 </div>
                             </div>
+                            <!-- 選擇性填寫電子信箱：勾選核取方塊後開啟填寫 -->
+                            <div class="form-grid" style="margin-top: 8px;">
+                                <div class="form-group col-span-2">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                        <label for="up-email" style="margin-bottom: 0;">電子信箱 (選填)</label>
+                                        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                                            <input type="checkbox" id="up-email-enable" style="width: auto; margin: 0; cursor: pointer;"> 勾選開啟填寫
+                                        </label>
+                                    </div>
+                                    <input type="email" id="up-email" placeholder="勾選上方核取方塊後開啟填寫" disabled>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -597,6 +609,7 @@
                     <div>承 辦 人：<span id="p-up-person" class="val">○○○</span></div>
                     <div>電　　話：<span id="p-up-phone" class="val">03-2118800分機○○○○</span></div>
                     <div>傳　　真：<span id="p-up-fax" class="val">03-2118700</span></div>
+                    <div id="p-up-email-row" style="display: none;">電子信箱：<span id="p-up-email" class="val"></span></div>
                 </div>
             </div>
 
