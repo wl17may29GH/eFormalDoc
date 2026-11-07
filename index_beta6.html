@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="lucide.min.js"></script>
     <link rel="stylesheet" href="index.css">
     <style>
         .section-muted {
@@ -72,28 +72,14 @@
                     <option value="24">24 px</option>
                 </select>
             </div>
-            <button id="btn-demo" class="btn btn-secondary" title="載入模擬範例資料" style="background-color: var(--primary-light); color: var(--primary-color); border-color: var(--primary-color); font-weight: 500;">
-                <i data-lucide="book-open"></i> 載入範例
-            </button>
-            <button id="btn-new" class="btn btn-secondary" title="新建公文">
-                <i data-lucide="file-plus"></i> 新建
-            </button>
-            <button id="btn-export" class="btn btn-secondary" title="匯出 JSON 草稿">
-                <i data-lucide="download"></i> 匯出草稿
-            </button>
-            <button id="btn-import-trigger" class="btn btn-secondary" title="匯入 JSON 草稿">
-                <i data-lucide="upload"></i> 匯入草稿
-            </button>
+            <button id="btn-demo" class="btn btn-secondary" title="載入模擬範例資料" style="background-color: var(--primary-light); color: var(--primary-color); border-color: var(--primary-color); font-weight: 500;"><i data-lucide="book-open"></i><span>載入範例</span></button>
+            <button id="btn-new" class="btn btn-secondary" title="新建公文"><i data-lucide="file-plus"></i><span>新建</span></button>
+            <button id="btn-export" class="btn btn-secondary" title="匯出 JSON 草稿"><i data-lucide="download"></i><span>匯出草稿</span></button>
+            <button id="btn-import-trigger" class="btn btn-secondary" title="匯入 JSON 草稿"><i data-lucide="upload"></i><span>匯入草稿</span></button>
             <input type="file" id="file-import" accept=".json" style="display: none;">
-            <a href="user_guide_beta6.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                <i data-lucide="help-circle"></i> 使用指南
-            </a>
-            <a id="btn-download-offline" href="index_beta7off.html" download="長庚大學線上函文製作系統_離線版(Beta7).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; border-color: #bbf7d0;">
-                <i data-lucide="download"></i> 下載離線版
-            </a>
-            <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF">
-                <i data-lucide="printer"></i> 列印 / PDF
-            </button>
+            <a href="user_guide_beta6.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明"><i data-lucide="help-circle"></i><span>使用指南</span></a>
+            <a id="btn-download-offline" href="index_beta7off.html" download="長庚大學線上函文製作系統_離線版(Beta7).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;"><i data-lucide="download"></i><span>下載離線版</span></a>
+            <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF"><i data-lucide="printer"></i><span>列印 / PDF</span></button>
         </div>
     </header>
 
@@ -576,9 +562,7 @@
                         <span class="slider"></span>
                         即時更新預覽
                     </label>
-                    <button type="button" id="btn-refresh-preview" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" title="手動更新預覽">
-                        <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> 更新預覽
-                    </button>
+                    <button type="button" id="btn-refresh-preview" class="btn btn-secondary" title="手動更新預覽"><i data-lucide="refresh-cw"></i><span>更新預覽</span></button>
                     <label class="toggle-switch">
                         <input type="checkbox" id="toggle-grid" checked>
                         <span class="slider"></span>

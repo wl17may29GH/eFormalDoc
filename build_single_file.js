@@ -167,7 +167,7 @@ document.addEventListener('keydown', (e) => {
 let onlineHtml = baseHtml;
 onlineHtml = onlineHtml.replace('<link rel="stylesheet" href="index.css">', `<style>\n/* --- Embedded index.css --- */\n${css}\n</style>`);
 if (lucideJs) {
-    onlineHtml = onlineHtml.replace('<script src="https://unpkg.com/lucide@latest"></script>', `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
+    onlineHtml = onlineHtml.replace(/<script src="(?:https:\/\/unpkg\.com\/lucide@latest|lucide\.min\.js)"><\/script>/, `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
 }
 onlineHtml = onlineHtml.replace(/Beta 6/g, 'Beta 7');
 // 線上版確保下載按鈕指向 index_beta7off.html
@@ -188,21 +188,17 @@ console.log(`[1] 正式發布線上版完成: ${beta7OnlinePath} (${(fs.statSync
 let offlineHtml = baseHtml;
 offlineHtml = offlineHtml.replace('<link rel="stylesheet" href="index.css">', `<style>\n/* --- Embedded index.css --- */\n${css}\n${modalCss}\n</style>`);
 if (lucideJs) {
-    offlineHtml = offlineHtml.replace('<script src="https://unpkg.com/lucide@latest"></script>', `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
+    offlineHtml = offlineHtml.replace(/<script src="(?:https:\/\/unpkg\.com\/lucide@latest|lucide\.min\.js)"><\/script>/, `<script>\n/* --- Embedded Lucide Icons --- */\n${lucideJs}\n</script>`);
 }
 // 使用指南替換為彈窗觸發鈕
 offlineHtml = offlineHtml.replace(
     /<a href="user_guide_beta6\.html"[\s\S]*?<\/a>/,
-    `<button type="button" class="btn btn-secondary" onclick="openGuideModal()" title="開啟內嵌使用指南 (免連網)" style="display: inline-flex; align-items: center; gap: 4px;">
-        <i data-lucide="help-circle"></i> 使用指南
-    </button>`
+    `<button type="button" class="btn btn-secondary" onclick="openGuideModal()" title="開啟內嵌使用指南 (免連網)"><i data-lucide="help-circle"></i><span>使用指南</span></button>`
 );
 // 下載按鈕替換為離線狀態指示徽章
 offlineHtml = offlineHtml.replace(
     /<a id="btn-download-offline"[\s\S]*?<\/a>/,
-    `<span class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; border-color: #bbf7d0; cursor: default;" title="本檔案為獨立單檔，無需連網即可離線使用">
-        <i data-lucide="layers"></i> 離線單檔版 (Beta 7)
-    </span>`
+    `<span class="btn btn-secondary" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0; cursor: default;" title="本檔案為獨立單檔，無需連網即可離線使用"><i data-lucide="layers"></i><span>離線單檔版 (Beta 7)</span></span>`
 );
 offlineHtml = offlineHtml.replace(/Beta 6/g, 'Beta 7');
 offlineHtml = offlineHtml.replace(/<title>長庚大學 線上函文製作系統 \(Beta 7\)<\/title>/, '<title>長庚大學 線上函文製作系統 (Beta 7 離線單檔版)</title>');

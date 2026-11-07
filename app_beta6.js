@@ -2285,9 +2285,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI Helpers (Font size, Phrase insertion, Resizer)
     // ==========================================
     function applyEditorFontSize(size) {
-        const textareas = document.querySelectorAll('.editor-panel textarea, .editor-panel input, .editor-panel select');
-        textareas.forEach(el => {
-            el.style.fontSize = `${size}px`;
+        if (!size) size = 16;
+        const sizePx = `${size}px`;
+        document.documentElement.style.setProperty('--editor-font-size', sizePx);
+        const panel = document.querySelector('.editor-panel');
+        if (panel) {
+            panel.style.setProperty('--editor-font-size', sizePx);
+        }
+        const formControls = document.querySelectorAll('.editor-panel textarea, .editor-panel input:not([type="checkbox"]):not([type="radio"]), .editor-panel select');
+        formControls.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
         });
     }
 
@@ -2601,6 +2608,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateReplyDateControls();
         checkAllNuoTaiFields(false);
+        applyEditorFontSize(editorFontSizeSelect ? editorFontSizeSelect.value : 16);
         syncPreview();
     }
 
