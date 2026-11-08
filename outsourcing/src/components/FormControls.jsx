@@ -13,7 +13,6 @@ import {
   FileText,
   BookOpen
 } from 'lucide-react';
-import { SYSTEM_VERSION } from '../constants/formPresets';
 import { calculateAnnualRatio } from '../utils/validation';
 
 export default function FormControls({ data, onChange }) {
@@ -181,22 +180,18 @@ export default function FormControls({ data, onChange }) {
               </div>
             </div>
 
-            {/* 系統版本標籤 */}
+            {/* 標的性質標籤 (文件規範版本已移除) */}
             <div className="col-span-2" style={{ marginTop: '4px' }}>
               <div style={{ 
                 background: 'var(--primary-light)', 
-                color: 'var(--primary-color)', 
+                color: '#B45309', 
                 border: '1px solid #FCD34D', 
                 borderRadius: '6px', 
-                padding: '8px 12px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
+                padding: '7px 12px',
+                fontSize: '0.85rem',
+                fontWeight: 600
               }}>
-                <span>文件規範版本：<strong>{SYSTEM_VERSION}</strong></span>
-                <span style={{ color: '#B45309' }}>
-                  {isAsset ? '標的性質：固定資產設備全責保養' : '標的性質：日常勞務承攬'}
-                </span>
+                標的性質：{isAsset ? '固定資產設備全責保養' : '日常勞務承攬'}
               </div>
             </div>
           </div>
@@ -227,7 +222,9 @@ export default function FormControls({ data, onChange }) {
                   外包工作申請單時效 <span style={{ color: '#EF4444' }}>*</span>
                 </span>
                 <p style={{ color: 'var(--text-muted)', marginTop: '2px' }}>
-                  已提前到期日或需求日至少二個月辦理；若未符合，請備註說明延遲原因。
+                  {data.item1_time_checked 
+                    ? '已提前到期日或需求日至少二個月辦理。' 
+                    : '未提前辦理，請填寫延遲原因說明：'}
                 </p>
               </div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
@@ -695,7 +692,7 @@ export default function FormControls({ data, onChange }) {
                 {data.item14_renew_type === 'diff' && (
                   <div style={{ marginTop: '8px' }}>
                     <label style={{ color: '#DC2626', fontWeight: 600, display: 'block', marginBottom: '2px' }}>
-                      * 需述明價格調整之具體原因及漲幅合理性（必填）：
+                      * 差異原因及合理性說明（必填）：
                     </label>
                     <textarea
                       rows={2}
@@ -732,7 +729,7 @@ export default function FormControls({ data, onChange }) {
             {data.item15_enabled && (
               <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #CBD5E1' }}>
                 <label style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
-                  其他備註說明事項內容（例如：廠商贈送保養天數、新合約起算日等）：
+                  其他備註說明事項內容（勾選後直接顯示填寫內容）：
                 </label>
                 <textarea
                   rows={3}
@@ -796,14 +793,10 @@ export default function FormControls({ data, onChange }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
             <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>2.</span>
-            <span><strong>占比計算：</strong>資產類外包案明年度維護費與原資產取得價值之占比計算公式為「本案報價單一年維護費(未稅) ÷ 固定資產取得價值(未稅)」（以百分比呈現，四捨五入至小數點後第1位）。</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
-            <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>3.</span>
             <span><strong>勞務外包：</strong>「非資產設備類維護案」之外包工作申請，固定資產建檔證明得免附，保固證明可免。</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
-            <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>4.</span>
+            <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>3.</span>
             <span><strong>呈報審查：</strong>備妥相關文件，先 email 至秘書室專人審查 (yuchen@gap.cgu.edu.tw)，信件主旨：「ＯＯＯ續外包案審查_ＯＯ/ＯＯ/ＯＯ到期」，審查完畢再至 MIS 辦理相關申請程序。</span>
           </div>
         </div>

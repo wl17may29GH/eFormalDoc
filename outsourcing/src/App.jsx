@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import HeaderNav from './components/HeaderNav';
 import FormControls from './components/FormControls';
-import A4PreviewSmart from './components/A4PreviewSmart';
-import A4PreviewDualPortrait from './components/A4PreviewDualPortrait';
 import A4PreviewLandscape from './components/A4PreviewLandscape';
 import { INITIAL_FORM_DATA, PRESET_RENEW_ASSET } from './constants/formPresets';
 import { validateChecklist } from './utils/validation';
@@ -28,9 +26,6 @@ export default function App() {
       return PRESET_RENEW_ASSET;
     }
   });
-
-  // 目前預覽版型: 'smart' (直式智能推薦) | 'dual' (直式雙欄) | 'landscape' (橫式標準)
-  const [currentLayout, setCurrentLayout] = useState('smart');
 
   // 預覽縮放倍率 (預設 85%)
   const [zoomScale, setZoomScale] = useState(0.85);
@@ -113,15 +108,15 @@ export default function App() {
     };
   }, []);
 
-  // 動態設置列印 orientation 標籤
-  const setupPrintOrientation = (isLandscape) => {
+  // 動態設置列印 orientation 標籤 (固定 A4 橫式)
+  const setupPrintOrientation = () => {
     let styleEl = document.getElementById('dynamic-print-page-style');
     if (!styleEl) {
       styleEl = document.createElement('style');
       styleEl.id = 'dynamic-print-page-style';
       document.head.appendChild(styleEl);
     }
-    styleEl.innerHTML = `@media print { @page { size: A4 ${isLandscape ? 'landscape' : 'portrait'}; margin: 6mm 8mm; } }`;
+    styleEl.innerHTML = `@media print { @page { size: A4 landscape; margin: 6mm 8mm; } }`;
   };
 
   // 驗證表單並阻擋
@@ -135,26 +130,20 @@ export default function App() {
     return true;
   };
 
-  // 列印 / 另存 PDF
+  // 列印 / 另存 PDF (固定橫式)
   const handlePrint = () => {
     if (!checkValidation()) return;
-    const isLandscape = currentLayout === 'landscape';
-    setupPrintOrientation(isLandscape);
+    setupPrintOrientation();
     setTimeout(() => {
       window.print();
     }, 100);
   };
 
-  // 直接下載 PDF
+  // 直接下載 PDF (固定橫式)
   const handleDownloadPdf = async () => {
     if (!checkValidation()) return;
-    const isLandscape = currentLayout === 'landscape';
-    const targetId = isLandscape 
-      ? 'a4-print-target-landscape' 
-      : (currentLayout === 'dual' ? 'a4-print-target-dual' : 'a4-print-target');
-    
     const filename = `外包工作申請單作業檢核表_${formData.outsourceType === 'initial' ? '首次外包' : '續外包'}.pdf`;
-    await exportToPdf(targetId, filename, isLandscape);
+    await exportToPdf('a4-print-target-landscape', filename, true);
   };
 
   // 匯出 JSON 資料備份 (比照 index_beta7.html 匯出檔功能)
@@ -304,12 +293,7 @@ export default function App() {
           <div className="preview-toolbar no-print">
             <div className="preview-toolbar-title">
               <Eye style={{ width: '18px', height: '18px', color: 'var(--primary-color)' }} />
-              <span>A4 高擬真檢核表排版預覽</span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
-                {currentLayout === 'smart' && '(直式智能單頁)'}
-                {currentLayout === 'dual' && '(直式雙欄對照)'}
-                {currentLayout === 'landscape' && '(橫式標準對照)'}
-              </span>
+              <span>A4 橫式檢核表排版預覽</span>
             </div>
 
             <div className="preview-options">
@@ -335,61 +319,6 @@ export default function App() {
                 </span>
               </div>
 
-              {/* 版型切換選擇按鈕 */}
-              <div style={{ display: 'inline-flex', borderRadius: '6px', border: '1px solid var(--border-color)', padding: '2px', background: '#F1F5F9' }}>
-                <button
-                  type="button"
-                  onClick={() => setCurrentLayout('smart')}
-                  style={{
-                    padding: '4px 10px',
-                    fontSize: '0.8rem',
-                    fontWeight: currentLayout === 'smart' ? 'bold' : 'normal',
-                    backgroundColor: currentLayout === 'smart' ? '#FFFFFF' : 'transparent',
-                    color: currentLayout === 'smart' ? 'var(--primary-color)' : 'var(--text-dark)',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    boxShadow: currentLayout === 'smart' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                  }}
-                >
-                  🌟 直式智能 (推薦)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentLayout('dual')}
-                  style={{
-                    padding: '4px 10px',
-                    fontSize: '0.8rem',
-                    fontWeight: currentLayout === 'dual' ? 'bold' : 'normal',
-                    backgroundColor: currentLayout === 'dual' ? '#FFFFFF' : 'transparent',
-                    color: currentLayout === 'dual' ? 'var(--primary-color)' : 'var(--text-dark)',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    boxShadow: currentLayout === 'dual' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                  }}
-                >
-                  📑 直式雙欄
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentLayout('landscape')}
-                  style={{
-                    padding: '4px 10px',
-                    fontSize: '0.8rem',
-                    fontWeight: currentLayout === 'landscape' ? 'bold' : 'normal',
-                    backgroundColor: currentLayout === 'landscape' ? '#FFFFFF' : 'transparent',
-                    color: currentLayout === 'landscape' ? 'var(--primary-color)' : 'var(--text-dark)',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    boxShadow: currentLayout === 'landscape' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                  }}
-                >
-                  📐 橫式標準
-                </button>
-              </div>
-
               {/* 即時預覽切換開關 (比照 index_beta7.html #toggle-live-preview) */}
               <label className="toggle-switch" title="切換輸入時即時更新預覽">
                 <input 
@@ -407,15 +336,15 @@ export default function App() {
           <div className="a4-sheet-container">
             <div 
               style={{ 
+                margin: '0 auto',
+                width: 'fit-content',
                 transform: `scale(${zoomScale})`, 
                 transformOrigin: 'top center',
                 transition: 'transform 0.15s ease-out'
               }}
               className="print:transform-none"
             >
-              {currentLayout === 'smart' && <A4PreviewSmart data={formData} />}
-              {currentLayout === 'dual' && <A4PreviewDualPortrait data={formData} />}
-              {currentLayout === 'landscape' && <A4PreviewLandscape data={formData} />}
+              <A4PreviewLandscape data={formData} />
             </div>
           </div>
 
