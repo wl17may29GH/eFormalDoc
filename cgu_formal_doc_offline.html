@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>長庚大學 線上函文製作系統 (Beta 7 離線單檔版)</title>
+    <title>長庚大學 線上函文製作系統 (Beta 9 離線單檔版)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2005,7 +2005,7 @@ body {
 }
 
 /* ==========================================================================
-   Beta 7: Left Workspace Optimization (Plan D Base: Accordion + High-Density Layout)
+   Beta 6: Left Workspace Optimization (Plan D Base: Accordion + High-Density Layout)
    ========================================================================== */
 
 /* Quick Action Toolbar above Cards */
@@ -2659,7 +2659,7 @@ body {
                 <path d="M50,40 L65,55 L55,55 L55,75 L45,75 L45,55 L35,55 Z" fill="#FFFFFF" />
             </svg>
             <div class="logo-text">
-                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 7</span></h1>
+                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 9</span></h1>
                 <p>CGU Online Official Document Editor</p>
             </div>
         </div>
@@ -2688,13 +2688,14 @@ body {
             <button id="btn-import-trigger" class="btn btn-secondary" title="匯入 JSON 草稿"><i data-lucide="upload"></i><span>匯入草稿</span></button>
             <input type="file" id="file-import" accept=".json" style="display: none;">
             <button type="button" class="btn btn-secondary" onclick="openGuideModal()" title="開啟內嵌使用指南 (免連網)"><i data-lucide="help-circle"></i><span>使用指南</span></button>
-            <span class="btn btn-secondary" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0; cursor: default;" title="本檔案為獨立單檔，無需連網即可離線使用"><i data-lucide="layers"></i><span>離線單檔版 (Beta 7)</span></span>
+            <a href="outsourcing/dist/index.html?from=index_beta9off" class="btn btn-secondary" title="切換至外包工作申請單作業檢核表系統" style="background-color: #f8fafc;"><i data-lucide="clipboard-check"></i><span>外包工作檢核表</span></a>
+            <span class="btn btn-secondary" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0; cursor: default;" title="本檔案為獨立單檔，無需連網即可離線使用"><i data-lucide="layers"></i><span>離線單檔版 (Beta 9)</span></span>
             <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF"><i data-lucide="printer"></i><span>列印 / PDF</span></button>
         </div>
     </header>
 
     <div class="app-container">
-        <!-- Left Editor Panel (Beta 7: Optimized Layout - Document Selection Top, Body Content Second, Auxiliaries Collapsed) -->
+        <!-- Left Editor Panel (Beta 6: Optimized Layout - Document Selection Top, Body Content Second, Auxiliaries Collapsed) -->
         <aside class="editor-panel">
             <form id="doc-form">
                 
@@ -3147,7 +3148,7 @@ body {
             </form>
             
             <footer class="sidebar-copyright">
-                <p>長庚大學 線上函文製作系統 Beta 7</p>
+                <p>長庚大學 線上函文製作系統 Beta 6</p>
                 <p>CGU Online Official Document Editor · © 2026</p>
             </footer>
         </aside>
@@ -3460,7 +3461,7 @@ body {
 
     <!-- Script imports -->
     <script>
-/* --- Embedded app_beta6.js --- */
+/* --- Embedded app_beta8.js --- */
 document.addEventListener('DOMContentLoaded', () => {
     // Lucide Icons initialization with safety check
     function initLucide() {
@@ -5175,7 +5176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Live preview controller
     function setLivePreviewMode(isLive, shouldSyncNow = false) {
         isLivePreview = !!isLive;
-        localStorage.setItem('cgu_formal_doc_live_preview_b6', isLivePreview ? 'true' : 'false');
+        localStorage.setItem('cgu_formal_doc_live_preview_b8', isLivePreview ? 'true' : 'false');
         if (previewModeSelect) previewModeSelect.value = isLivePreview ? 'live' : 'manual';
         if (toggleLivePreview) toggleLivePreview.checked = isLivePreview;
 
@@ -5294,7 +5295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveDraft() {
         const category = docCategorySelect.value;
         const draft = {
-            version: 'Beta 7',
+            version: 'Beta 9',
             docCategory: category,
             docMode: docModeSelect.value,
             upReceiverManual: upReceiverManual.value,
@@ -5366,7 +5367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paReplyDay: document.getElementById('pa-reply-day').value
         };
         try {
-            localStorage.setItem('cgu_formal_doc_draft_b6', JSON.stringify(draft));
+            localStorage.setItem('cgu_formal_doc_draft_b8', JSON.stringify(draft));
         } catch (e) {
             console.error("Draft save failed", e);
         }
@@ -5374,10 +5375,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadDraft() {
         try {
-            let raw = localStorage.getItem('cgu_formal_doc_draft_b6');
+            let raw = localStorage.getItem('cgu_formal_doc_draft_b8');
             if (!raw) {
-                // If no Beta 6 draft, check Beta 5 fallback
-                raw = localStorage.getItem('cgu_formal_doc_draft_b5');
+                // If no Beta 8 draft, check Beta 6 or Beta 5 fallback
+                raw = localStorage.getItem('cgu_formal_doc_draft_b6') || localStorage.getItem('cgu_formal_doc_draft_b5');
             }
             if (!raw) {
                 // If no saved draft, load demo
@@ -5707,7 +5708,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Export Draft to JSON file
     function exportDraftFile() {
         saveDraft();
-        const raw = localStorage.getItem('cgu_formal_doc_draft_b6') || localStorage.getItem('cgu_formal_doc_draft_b5');
+        const raw = localStorage.getItem('cgu_formal_doc_draft_b8') || localStorage.getItem('cgu_formal_doc_draft_b6') || localStorage.getItem('cgu_formal_doc_draft_b5');
         if (!raw) return;
 
         const category = docCategorySelect.value;
@@ -5732,7 +5733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             try {
                 const data = JSON.parse(event.target.result);
-                localStorage.setItem('cgu_formal_doc_draft_b6', JSON.stringify(data));
+                localStorage.setItem('cgu_formal_doc_draft_b8', JSON.stringify(data));
                 loadDraft();
                 alert('公文草稿載入成功！');
             } catch (err) {
@@ -6038,9 +6039,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setupSecrecyPreset();
         setupNuoTaiWarning();
 
-        let storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b6');
+        let storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b8');
         if (storedLive === null) {
-            storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b5');
+            storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b6') || localStorage.getItem('cgu_formal_doc_live_preview_b5');
         }
         if (storedLive !== null) {
             setLivePreviewMode(storedLive === 'true', false);
@@ -6107,13 +6108,13 @@ document.addEventListener('keydown', (e) => {
 
 </script>
 
-<!-- 內嵌離線使用指南 Modal (Beta 7 離線單檔版專用) -->
+<!-- 內嵌離線使用指南 Modal (Beta 9 離線單檔版專用) -->
 <div id="guide-modal-overlay" class="guide-modal-overlay" onclick="handleGuideOverlayClick(event)">
     <div class="guide-modal-window">
         <div class="guide-modal-header">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <i data-lucide="help-circle" style="width: 20px; height: 20px; color: #f59e0b;"></i>
-                <strong style="font-size: 1.05rem; letter-spacing: 0.5px;">長庚大學 線上函文製作系統 使用指南 (Beta 7 離線版)</strong>
+                <strong style="font-size: 1.05rem; letter-spacing: 0.5px;">長庚大學 線上函文製作系統 使用指南 (Beta 9 離線版)</strong>
             </div>
             <button type="button" class="btn-close-modal" onclick="closeGuideModal()" title="關閉指南 (Esc)">✕ 關閉指南</button>
         </div>
@@ -6122,7 +6123,7 @@ document.addEventListener('keydown', (e) => {
 
     <!-- Top Hero Header -->
     <header class="hero-header">
-        <span class="hero-badge">Beta 6 (2026.10 重大更新)</span>
+        <span class="hero-badge">Beta 8 (2026.10 重大更新)</span>
         <h1 class="hero-title">長庚大學 線上函文製作系統 功能說明暨使用指南</h1>
         <p class="hero-subtitle">
             CGU Online Official Document Editor · 整合版作業指引<br>
@@ -6138,9 +6139,9 @@ document.addEventListener('keydown', (e) => {
     <nav class="toc-card">
         <div class="toc-title">📖 快速導覽目錄</div>
         <div class="toc-grid">
-            <div class="toc-item"><a href="#sec-overview">一、Beta 6 系統定位與架構概述</a></div>
+            <div class="toc-item"><a href="#sec-overview">一、Beta 8 系統定位與架構概述</a></div>
             <div class="toc-item"><a href="#sec-categories">二、三大公文類別與模式規格</a></div>
-            <div class="toc-item"><a href="#sec-beta6-features">三、Beta 6 工作區長度重構核心亮點</a></div>
+            <div class="toc-item"><a href="#sec-beta6-features">三、Beta 8 工作區長度重構核心亮點</a></div>
             <div class="toc-item"><a href="#sec-optimizations">四、歷次重大改善與功能精進歷程彙整</a></div>
             <div class="toc-item"><a href="#sec-user-manual">五、逐步操作使用手冊</a></div>
             <div class="toc-item"><a href="#sec-print-guide">六、瀏覽器列印與 PDF 設定 (極重要)</a></div>
@@ -6151,12 +6152,12 @@ document.addEventListener('keydown', (e) => {
 
     <!-- 一、系統定位與架構概述 -->
     <section class="guide-section" id="sec-overview">
-        <h2>一、Beta 6 系統定位與架構概述</h2>
+        <h2>一、Beta 8 系統定位與架構概述</h2>
         <p>
-            <strong>eFormalDoc Beta 6 (CGU Online Official Document Editor)</strong> 是長庚大學線上函文製作系統針對<strong>操作者日常作業人因工程與工作效率</strong>所打造的旗艦版本。延續 Beta 5 單一入口雙軌整合架構（全面涵蓋教育部上行文、校外機構平下行文、校內業務接洽便函），Beta 6 進一步解決公測期間使用者反映之「左側編輯工作區過長、滑動距離過多、核心主文被擠至下方」的困擾。
+            <strong>eFormalDoc Beta 8 (CGU Online Official Document Editor)</strong> 是長庚大學線上函文製作系統針對<strong>操作者日常作業人因工程與工作效率</strong>所打造的旗艦版本。延續 Beta 5 單一入口雙軌整合架構（全面涵蓋教育部上行文、校外機構平下行文、校內業務接洽便函），Beta 8 進一步解決公測期間使用者反映之「左側編輯工作區過長、滑動距離過多、核心主文被擠至下方」的困擾。
         </p>
         <p>
-            在 Beta 6 中，系統精確確立<strong>兩大不可動搖的核心佈局原則</strong>：
+            在 Beta 8 中，系統精確確立<strong>兩大不可動搖的核心佈局原則</strong>：
             <br>1. <strong>最上層固定為「公文選擇」</strong>：維持公文類別、陳核/發文模式、業洽函用途與手動受文者的全域設定權限。
             <br>2. <strong>次順位直達核心「本文內容編撰（主旨與說明）」</strong>：預設直接展開，進入系統即可在初始畫面開始編輯，免除向下捲動頁面尋找主文的不便。
             <br>3. <strong>次要資訊卡片智慧摺疊</strong>：「發文基本資訊」、「聯絡資訊」及業洽函「便函管理資訊」改採可摺疊卡片，預設收合並附即時動態摘要徽章（badge），兼具極簡清爽與資訊完整性。
@@ -6189,7 +6190,7 @@ document.addEventListener('keydown', (e) => {
     <!-- 二、三大公文類別與模式規格 -->
     <section class="guide-section" id="sec-categories">
         <h2>二、三大公文類別與模式規格</h2>
-        <p>Beta 6 依據行政行文方向與公文性質，完整劃分三大類別，並均享受緊湊版面之便利：</p>
+        <p>Beta 8 依據行政行文方向與公文性質，完整劃分三大類別，並均享受緊湊版面之便利：</p>
 
         <table>
             <thead>
@@ -6257,16 +6258,16 @@ document.addEventListener('keydown', (e) => {
         </table>
     </section>
 
-    <!-- 三、Beta 6 工作區長度重構核心亮點 -->
+    <!-- 三、Beta 8 工作區長度重構核心亮點 -->
     <section class="guide-section" id="sec-beta6-features">
-        <h2>三、Beta 6 工作區長度重構核心亮點</h2>
+        <h2>三、Beta 8 工作區長度重構核心亮點</h2>
 
         <h3>1. 階層順序嚴格重構：公文選擇最上、本文編撰次之</h3>
         <p>
-            過去版本中，發文日期、字號、速別、密等與承辦人資訊排在最前面，導致主旨與說明往往被排擠至畫面下方，每次修改都必須向下捲動頁面尋找主文。Beta 6 重新梳理填寫心理模型：
+            過去版本中，發文日期、字號、速別、密等與承辦人資訊排在最前面，導致主旨與說明往往被排擠至畫面下方，每次修改都必須向下捲動頁面尋找主文。Beta 8 重新梳理填寫心理模型：
         </p>
         <div class="callout callout-success">
-            <div class="callout-title">📐 Beta 6 最佳人因工學階層順序</div>
+            <div class="callout-title">📐 Beta 8 最佳人因工學階層順序</div>
             <strong>第 1 層【最上層】</strong>：<code>公文選擇</code>（類別、模式、業洽函用途、受文者手動輸入），永遠置頂固定。<br>
             <strong>第 2 層【其次直達】</strong>：<code>本文內容編撰</code>（常用詞彙快捷鍵、主旨、說明、正副本雙欄併排），預設展開，進入系統即可在初始畫面開始編輯！<br>
             <strong>第 3 層【輔助次要】</strong>：<code>發文與基本資訊</code>（日期、字號、速別、密等、附件），預設摺疊收合。<br>
@@ -6275,7 +6276,7 @@ document.addEventListener('keydown', (e) => {
 
         <h3>2. 智慧可摺疊卡片 (Collapsible Card) 與即時摘要徽章 (Live Badges)</h3>
         <p>
-            次要資訊雖然低頻修改，但撰稿人仍需要隨時掌握目前設定值。Beta 6 導入<strong>即時動態摘要徽章</strong>：卡片即使處於收合狀態，標題右側依然即時顯示最新數值，完全不需要展開卡片即可確認！
+            次要資訊雖然低頻修改，但撰稿人仍需要隨時掌握目前設定值。Beta 8 導入<strong>即時動態摘要徽章</strong>：卡片即使處於收合狀態，標題右側依然即時顯示最新數值，完全不需要展開卡片即可確認！
         </p>
         <ul>
             <li><strong>發文與基本資訊徽章</strong>：即時同步如 <code>普通件 ｜ 無密等 ｜ 1150001號 ｜ 115.10.10</code>。</li>
@@ -6320,7 +6321,7 @@ document.addEventListener('keydown', (e) => {
                     <td><strong>雙軌發布制與單檔離線版支援</strong></td>
                     <td>
                         1. <strong>版本雙軌與命名規範確立</strong>：<br>
-                           • <strong>本機開發版</strong>：偶數號（範例：<code>index_beta6.html</code>），多檔案架構便於維護，待使用者指示時才執行合併打包。<br>
+                           • <strong>本機開發版</strong>：偶數號（範例：<code>index_beta8.html</code>），多檔案架構便於維護，待使用者指示時才執行合併打包。<br>
                            • <strong>正式發布線上版</strong>：奇數號（範例：<code>index_beta7.html</code>），整合單檔免除瀏覽器跨檔案快取衝突，並提供下載離線版連結。<br>
                            • <strong>正式發布離線下載版</strong>：奇數號+off（範例：<code>index_beta7off.html</code>），純單一 HTML 檔案，內嵌離線圖庫與使用指南彈窗，零網路依賴。<br>
                         2. <strong>系統中英文定名</strong>：正式定名為「長庚大學線上函文製作系統（CGU Online Official Document Editor）」。<br>
@@ -6329,7 +6330,7 @@ document.addEventListener('keydown', (e) => {
                     </td>
                 </tr>
                 <tr style="background: #fffdf5;">
-                    <td><strong style="color: var(--primary-dark);">★ Beta 6 重大更新</strong></td>
+                    <td><strong style="color: var(--primary-dark);">★ Beta 8 重大更新</strong></td>
                     <td><strong>左側工作區配置改善 (人因工程)</strong></td>
                     <td>
                         1. <strong>層級順序嚴格重構</strong>：最上層始終為「公文選擇」，第二順位緊接著「本文內容編撰（主旨及說明）」，開頁立即可見，無須向下捲動頁面。<br>
@@ -6459,7 +6460,7 @@ document.addEventListener('keydown', (e) => {
 
         <h3><span class="step-number">4</span> 第四步：儲存草稿與匯入</h3>
         <ul>
-            <li><strong>自動儲存</strong>：輸入任何字元，系統即會在瀏覽器本機快取（LocalStorage）即時自動儲存 Beta 6 最新草稿，關閉視窗重新開啟自動還原。</li>
+            <li><strong>自動儲存</strong>：輸入任何字元，系統即會在瀏覽器本機快取（LocalStorage）即時自動儲存 Beta 8 最新草稿，關閉視窗重新開啟自動還原。</li>
             <li><strong>匯出草稿</strong>：點擊頂端 <kbd>匯出草稿</kbd> 按鈕，可將當前公文下載為標準 <code>.json</code> 草稿檔案。</li>
             <li><strong>匯入草稿</strong>：點擊頂端 <kbd>匯入草稿</kbd> 按鈕，可隨時還原既有草稿（完全向下相容 Beta 5/4/3 草稿格式）。</li>
         </ul>
@@ -6587,7 +6588,7 @@ document.addEventListener('keydown', (e) => {
 
         <div class="callout callout-info">
             <div class="callout-title">Q2: 找不到發文字號或承辦人修改欄位在哪裡？</div>
-            <strong>解答</strong>：在 Beta 6 中，為了保持介面清爽並縮短頁面捲動長度，「發文與基本資訊」與「聯絡資訊」預設為收合卡片。請在左側工作區中找到對應標題列（例如帶有 <code>[普通件 ｜ 1150001號...]</code> 的卡片），點擊標題列任何處即可展開填寫，或點擊上方的 <kbd>全部展開</kbd>。若為業務接洽便函，「發文字號」與「發文日期」已直接納入「1. 發文資訊」區塊頂端；「覆文字號」與「收文時間」則位於「2. 回文資訊」區塊頂端。
+            <strong>解答</strong>：在 Beta 8 中，為了保持介面清爽並縮短頁面捲動長度，「發文與基本資訊」與「聯絡資訊」預設為收合卡片。請在左側工作區中找到對應標題列（例如帶有 <code>[普通件 ｜ 1150001號...]</code> 的卡片），點擊標題列任何處即可展開填寫，或點擊上方的 <kbd>全部展開</kbd>。若為業務接洽便函，「發文字號」與「發文日期」已直接納入「1. 發文資訊」區塊頂端；「覆文字號」與「收文時間」則位於「2. 回文資訊」區塊頂端。
         </div>
 
         <div class="callout callout-info">
