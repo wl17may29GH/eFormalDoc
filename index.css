@@ -164,7 +164,7 @@ body {
     width: 100%;
 }
 
-/* Left Editor Panel */
+/* Left Editor Panel 全域字級連動系統 (依右上角選單即時設定 --editor-font-size) */
 .editor-panel {
     width: 45%; /* Default responsive percentage split */
     min-width: 340px;
@@ -176,13 +176,68 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    --editor-font-size: 16px; /* Default 16px */
+    --editor-font-size: 16px; /* 基準字級，預設 16px */
+    font-size: var(--editor-font-size);
 }
 
-/* 編輯器輸入欄位字型大小連動 --editor-font-size */
+/* 1. 提供填寫的欄位 (textarea, input, date input) 全部套用基準字級 */
 .editor-panel input:not([type="checkbox"]):not([type="radio"]),
+.editor-panel textarea,
+.editor-panel .date-input-group input {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 2. 選單 (select 下拉選單及其 option 選項) 全部套用基準字級 */
 .editor-panel select,
-.editor-panel textarea {
+.editor-panel select option {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 3. 欄位標籤 (label) 與單選/核取標籤全部套用基準字級 */
+.editor-panel label,
+.editor-panel .form-group label,
+.editor-panel .radio-label,
+.editor-panel .checkbox-label {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 4. 標題類 (卡片大標題、區塊標題、折疊標題、h2、h3、卡片標題列) 連動放大 */
+.editor-panel .card-title,
+.editor-panel .card-subtitle,
+.editor-panel .card-title-left,
+.editor-panel .card-title-left span,
+.editor-panel .editor-section-title,
+.editor-panel h2,
+.editor-panel h3 {
+    font-size: calc(var(--editor-font-size) * 1.05) !important;
+}
+
+/* 5. 註解、說明、警語、提示文字 (helper-text, field-hint, nuotai-hint, small, code 等) 連動縮放 */
+.editor-panel .helper-text,
+.editor-panel .field-hint,
+.editor-panel .nuotai-hint,
+.editor-panel small,
+.editor-panel code,
+.editor-panel .phrase-group-label,
+.editor-panel .quick-phrases-container,
+.editor-panel .quick-phrases-container span,
+.editor-panel #secrecy-warning,
+.editor-panel .card-badge-summary {
+    font-size: calc(var(--editor-font-size) * 0.9) !important;
+}
+
+/* 6. 編輯區內操作按鈕 (常用片語按鈕、展開/收合小按鈕、增刪段落鈕等) 全部套用基準字級 */
+.editor-panel button,
+.editor-panel .btn-xs,
+.editor-panel .phrase-tag,
+.editor-panel .btn-quick {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 7. 頁尾版權與一般純文字段落 */
+.editor-panel p,
+.editor-panel .sidebar-copyright,
+.editor-panel .sidebar-copyright p {
     font-size: var(--editor-font-size) !important;
 }
 

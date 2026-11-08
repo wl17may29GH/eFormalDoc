@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>長庚大學 線上函文製作系統 (Beta 9)</title>
+    <title>長庚大學 線上函文製作系統 (Beta 7)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,7 +193,7 @@ body {
     width: 100%;
 }
 
-/* Left Editor Panel */
+/* Left Editor Panel 全域字級連動系統 (依右上角選單即時設定 --editor-font-size) */
 .editor-panel {
     width: 45%; /* Default responsive percentage split */
     min-width: 340px;
@@ -205,13 +205,68 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    --editor-font-size: 16px; /* Default 16px */
+    --editor-font-size: 16px; /* 基準字級，預設 16px */
+    font-size: var(--editor-font-size);
 }
 
-/* 編輯器輸入欄位字型大小連動 --editor-font-size */
+/* 1. 提供填寫的欄位 (textarea, input, date input) 全部套用基準字級 */
 .editor-panel input:not([type="checkbox"]):not([type="radio"]),
+.editor-panel textarea,
+.editor-panel .date-input-group input {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 2. 選單 (select 下拉選單及其 option 選項) 全部套用基準字級 */
 .editor-panel select,
-.editor-panel textarea {
+.editor-panel select option {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 3. 欄位標籤 (label) 與單選/核取標籤全部套用基準字級 */
+.editor-panel label,
+.editor-panel .form-group label,
+.editor-panel .radio-label,
+.editor-panel .checkbox-label {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 4. 標題類 (卡片大標題、區塊標題、折疊標題、h2、h3、卡片標題列) 連動放大 */
+.editor-panel .card-title,
+.editor-panel .card-subtitle,
+.editor-panel .card-title-left,
+.editor-panel .card-title-left span,
+.editor-panel .editor-section-title,
+.editor-panel h2,
+.editor-panel h3 {
+    font-size: calc(var(--editor-font-size) * 1.05) !important;
+}
+
+/* 5. 註解、說明、警語、提示文字 (helper-text, field-hint, nuotai-hint, small, code 等) 連動縮放 */
+.editor-panel .helper-text,
+.editor-panel .field-hint,
+.editor-panel .nuotai-hint,
+.editor-panel small,
+.editor-panel code,
+.editor-panel .phrase-group-label,
+.editor-panel .quick-phrases-container,
+.editor-panel .quick-phrases-container span,
+.editor-panel #secrecy-warning,
+.editor-panel .card-badge-summary {
+    font-size: calc(var(--editor-font-size) * 0.9) !important;
+}
+
+/* 6. 編輯區內操作按鈕 (常用片語按鈕、展開/收合小按鈕、增刪段落鈕等) 全部套用基準字級 */
+.editor-panel button,
+.editor-panel .btn-xs,
+.editor-panel .phrase-tag,
+.editor-panel .btn-quick {
+    font-size: var(--editor-font-size) !important;
+}
+
+/* 7. 頁尾版權與一般純文字段落 */
+.editor-panel p,
+.editor-panel .sidebar-copyright,
+.editor-panel .sidebar-copyright p {
     font-size: var(--editor-font-size) !important;
 }
 
@@ -2005,7 +2060,7 @@ body {
 }
 
 /* ==========================================================================
-   Beta 6: Left Workspace Optimization (Plan D Base: Accordion + High-Density Layout)
+   Beta 7: Left Workspace Optimization (Plan D Base: Accordion + High-Density Layout)
    ========================================================================== */
 
 /* Quick Action Toolbar above Cards */
@@ -2194,7 +2249,7 @@ body {
                 <path d="M50,40 L65,55 L55,55 L55,75 L45,75 L45,55 L35,55 Z" fill="#FFFFFF" />
             </svg>
             <div class="logo-text">
-                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 9</span></h1>
+                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 7</span></h1>
                 <p>CGU Online Official Document Editor</p>
             </div>
         </div>
@@ -2222,15 +2277,14 @@ body {
             <button id="btn-export" class="btn btn-secondary" title="匯出 JSON 草稿"><i data-lucide="download"></i><span>匯出草稿</span></button>
             <button id="btn-import-trigger" class="btn btn-secondary" title="匯入 JSON 草稿"><i data-lucide="upload"></i><span>匯入草稿</span></button>
             <input type="file" id="file-import" accept=".json" style="display: none;">
-            <a href="user_guide_beta8.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明"><i data-lucide="help-circle"></i><span>使用指南</span></a>
-            <a href="outsourcing/dist/index.html?from=index_beta9" class="btn btn-secondary" title="切換至外包工作申請單作業檢核表系統" style="background-color: #f8fafc;"><i data-lucide="clipboard-check"></i><span>外包工作檢核表</span></a>
-            <a id="btn-download-offline" href="index_beta9off.html" download="長庚大學線上函文製作系統_離線版(Beta9).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;"><i data-lucide="download"></i><span>下載離線版</span></a>
+            <a href="user_guide_beta6.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明"><i data-lucide="help-circle"></i><span>使用指南</span></a>
+            <a id="btn-download-offline" href="index_beta7off.html" download="長庚大學線上函文製作系統_離線版(Beta7).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;"><i data-lucide="download"></i><span>下載離線版</span></a>
             <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF"><i data-lucide="printer"></i><span>列印 / PDF</span></button>
         </div>
     </header>
 
     <div class="app-container">
-        <!-- Left Editor Panel (Beta 6: Optimized Layout - Document Selection Top, Body Content Second, Auxiliaries Collapsed) -->
+        <!-- Left Editor Panel (Beta 7: Optimized Layout - Document Selection Top, Body Content Second, Auxiliaries Collapsed) -->
         <aside class="editor-panel">
             <form id="doc-form">
                 
@@ -2293,8 +2347,8 @@ body {
                             <span class="toggle-arrow">▼</span>
                         </div>
                         <div class="card-body-content">
-                            <div class="quick-phrases-container" style="margin-bottom: 12px; font-size: 0.85rem;">
-                                <span style="font-weight: bold; font-size: 0.85rem; color: var(--text-dark); display: block; margin-bottom: 6px;">常見公函用語：</span>
+                            <div class="quick-phrases-container" style="margin-bottom: 12px;">
+                                <span style="font-weight: bold; color: var(--text-dark); display: block; margin-bottom: 6px;">常見公函用語：</span>
                                 <div class="quick-phrases" style="margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
                                     <span class="phrase-group-label" style="font-weight: 500; color: var(--text-muted); min-width: 80px;">上行文：</span>
                                     <button type="button" class="phrase-tag" data-phrase="檢陳" data-target="up-subject">檢陳</button>
@@ -2374,7 +2428,7 @@ body {
                                         <option value="極機密">極機密</option>
                                         <option value="絕對機密">絕對機密</option>
                                     </select>
-                                    <div id="secrecy-warning" class="helper-text" style="color: var(--red-official); font-weight: bold; display: none; margin-top: 4px; font-size: 0.75rem;">⚠️ 密等以上不得電子交換</div>
+                                    <div id="secrecy-warning" class="helper-text" style="color: var(--red-official); font-weight: bold; display: none; margin-top: 4px;">⚠️ 密等以上不得電子交換</div>
                                 </div>
                                 <div class="form-group col-span-2">
                                     <label for="up-secrecy-duration">解密條件或保密期限</label>
@@ -2433,7 +2487,7 @@ body {
                                 <div class="form-group col-span-2">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                                         <label for="up-email" style="margin-bottom: 0;">電子信箱 (選填)</label>
-                                        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                                        <label style="display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); cursor: pointer; user-select: none;">
                                             <input type="checkbox" id="up-email-enable" style="width: auto; margin: 0; cursor: pointer;"> 勾選開啟填寫
                                         </label>
                                     </div>
@@ -2683,7 +2737,7 @@ body {
             </form>
             
             <footer class="sidebar-copyright">
-                <p>長庚大學 線上函文製作系統 Beta 6</p>
+                <p>長庚大學 線上函文製作系統 Beta 7</p>
                 <p>CGU Online Official Document Editor · © 2026</p>
             </footer>
         </aside>
@@ -2996,7 +3050,7 @@ body {
 
     <!-- Script imports -->
     <script>
-/* --- Embedded app_beta8.js --- */
+/* --- Embedded app_beta6.js --- */
 document.addEventListener('DOMContentLoaded', () => {
     // Lucide Icons initialization with safety check
     function initLucide() {
@@ -3761,6 +3815,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         checkAllNuoTaiFields(false);
         initLucide();
+        applyEditorFontSize(editorFontSizeSelect ? editorFontSizeSelect.value : 16);
         if (shouldSyncNow) syncPreview();
     }
 
@@ -4711,7 +4766,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Live preview controller
     function setLivePreviewMode(isLive, shouldSyncNow = false) {
         isLivePreview = !!isLive;
-        localStorage.setItem('cgu_formal_doc_live_preview_b8', isLivePreview ? 'true' : 'false');
+        localStorage.setItem('cgu_formal_doc_live_preview_b6', isLivePreview ? 'true' : 'false');
         if (previewModeSelect) previewModeSelect.value = isLivePreview ? 'live' : 'manual';
         if (toggleLivePreview) toggleLivePreview.checked = isLivePreview;
 
@@ -4830,7 +4885,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveDraft() {
         const category = docCategorySelect.value;
         const draft = {
-            version: 'Beta 9',
+            version: 'Beta 7',
             docCategory: category,
             docMode: docModeSelect.value,
             upReceiverManual: upReceiverManual.value,
@@ -4902,7 +4957,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paReplyDay: document.getElementById('pa-reply-day').value
         };
         try {
-            localStorage.setItem('cgu_formal_doc_draft_b8', JSON.stringify(draft));
+            localStorage.setItem('cgu_formal_doc_draft_b6', JSON.stringify(draft));
         } catch (e) {
             console.error("Draft save failed", e);
         }
@@ -4910,10 +4965,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadDraft() {
         try {
-            let raw = localStorage.getItem('cgu_formal_doc_draft_b8');
+            let raw = localStorage.getItem('cgu_formal_doc_draft_b6');
             if (!raw) {
-                // If no Beta 8 draft, check Beta 6 or Beta 5 fallback
-                raw = localStorage.getItem('cgu_formal_doc_draft_b6') || localStorage.getItem('cgu_formal_doc_draft_b5');
+                // If no Beta 6 draft, check Beta 5 fallback
+                raw = localStorage.getItem('cgu_formal_doc_draft_b5');
             }
             if (!raw) {
                 // If no saved draft, load demo
@@ -5243,7 +5298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Export Draft to JSON file
     function exportDraftFile() {
         saveDraft();
-        const raw = localStorage.getItem('cgu_formal_doc_draft_b8') || localStorage.getItem('cgu_formal_doc_draft_b6') || localStorage.getItem('cgu_formal_doc_draft_b5');
+        const raw = localStorage.getItem('cgu_formal_doc_draft_b6') || localStorage.getItem('cgu_formal_doc_draft_b5');
         if (!raw) return;
 
         const category = docCategorySelect.value;
@@ -5268,7 +5323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             try {
                 const data = JSON.parse(event.target.result);
-                localStorage.setItem('cgu_formal_doc_draft_b8', JSON.stringify(data));
+                localStorage.setItem('cgu_formal_doc_draft_b6', JSON.stringify(data));
                 loadDraft();
                 alert('公文草稿載入成功！');
             } catch (err) {
@@ -5285,16 +5340,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     function applyEditorFontSize(size) {
         if (!size) size = 16;
+        size = parseInt(size, 10) || 16;
         const sizePx = `${size}px`;
+        const titleSizePx = `${Math.round(size * 1.05)}px`;
+        const hintSizePx = `${Math.round(size * 0.9)}px`;
+
+        // 1. 設定全域及編輯面板 CSS 變數
         document.documentElement.style.setProperty('--editor-font-size', sizePx);
         const panel = document.querySelector('.editor-panel');
         if (panel) {
             panel.style.setProperty('--editor-font-size', sizePx);
         }
-        const formControls = document.querySelectorAll('.editor-panel textarea, .editor-panel input:not([type="checkbox"]):not([type="radio"]), .editor-panel select');
+
+        // 2. 提供填寫的欄位 (textarea, input, date input) 全部套用基準字級
+        const formControls = document.querySelectorAll('.editor-panel textarea, .editor-panel input:not([type="checkbox"]):not([type="radio"])');
         formControls.forEach(el => {
             el.style.setProperty('font-size', sizePx, 'important');
         });
+
+        // 3. 選單 (select 下拉選單及其 option 選項) 全部套用基準字級
+        const selects = document.querySelectorAll('.editor-panel select, .editor-panel select option');
+        selects.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 4. 欄位標籤 (label) 與單選/核取標籤全部套用基準字級
+        const labels = document.querySelectorAll('.editor-panel label, .editor-panel .form-group label, .editor-panel .radio-label, .editor-panel .checkbox-label');
+        labels.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 5. 標題類 (卡片大標題、區塊標題、折疊標題、h2、h3) 連動縮放加粗
+        const titles = document.querySelectorAll('.editor-panel .card-title, .editor-panel .card-subtitle, .editor-panel .card-title-left, .editor-panel .card-title-left span, .editor-panel .editor-section-title, .editor-panel h2, .editor-panel h3');
+        titles.forEach(el => {
+            el.style.setProperty('font-size', titleSizePx, 'important');
+        });
+
+        // 6. 註解、說明、警語、提示文字 (helper-text, field-hint, nuotai-hint, small, code 等) 連動縮放
+        const hints = document.querySelectorAll('.editor-panel .helper-text, .editor-panel .field-hint, .editor-panel .nuotai-hint, .editor-panel small, .editor-panel code, .editor-panel .phrase-group-label, .editor-panel .quick-phrases-container, .editor-panel .quick-phrases-container span, .editor-panel #secrecy-warning, .editor-panel .card-badge-summary');
+        hints.forEach(el => {
+            el.style.setProperty('font-size', hintSizePx, 'important');
+        });
+
+        // 7. 編輯區內操作按鈕 (常用片語按鈕、展開/收合小按鈕、增刪段落鈕等) 全部套用基準字級
+        const buttons = document.querySelectorAll('.editor-panel button, .editor-panel .btn-xs, .editor-panel .phrase-tag, .editor-panel .btn-quick');
+        buttons.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 8. 整個編輯區其他純文字與頁尾
+        const others = document.querySelectorAll('.editor-panel p, .editor-panel .sidebar-copyright, .editor-panel .sidebar-copyright p');
+        others.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 儲存至本地快取
+        try {
+            localStorage.setItem('cgu_formal_doc_editor_font_size', size);
+        } catch (e) {}
     }
 
     function setupQuickPhrases() {
@@ -5574,9 +5677,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setupSecrecyPreset();
         setupNuoTaiWarning();
 
-        let storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b8');
+        let storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b6');
         if (storedLive === null) {
-            storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b6') || localStorage.getItem('cgu_formal_doc_live_preview_b5');
+            storedLive = localStorage.getItem('cgu_formal_doc_live_preview_b5');
         }
         if (storedLive !== null) {
             setLivePreviewMode(storedLive === 'true', false);

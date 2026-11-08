@@ -762,6 +762,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         checkAllNuoTaiFields(false);
         initLucide();
+        applyEditorFontSize(editorFontSizeSelect ? editorFontSizeSelect.value : 16);
         if (shouldSyncNow) syncPreview();
     }
 
@@ -2286,16 +2287,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     function applyEditorFontSize(size) {
         if (!size) size = 16;
+        size = parseInt(size, 10) || 16;
         const sizePx = `${size}px`;
+        const titleSizePx = `${Math.round(size * 1.05)}px`;
+        const hintSizePx = `${Math.round(size * 0.9)}px`;
+
+        // 1. 設定全域及編輯面板 CSS 變數
         document.documentElement.style.setProperty('--editor-font-size', sizePx);
         const panel = document.querySelector('.editor-panel');
         if (panel) {
             panel.style.setProperty('--editor-font-size', sizePx);
         }
-        const formControls = document.querySelectorAll('.editor-panel textarea, .editor-panel input:not([type="checkbox"]):not([type="radio"]), .editor-panel select');
+
+        // 2. 提供填寫的欄位 (textarea, input, date input) 全部套用基準字級
+        const formControls = document.querySelectorAll('.editor-panel textarea, .editor-panel input:not([type="checkbox"]):not([type="radio"])');
         formControls.forEach(el => {
             el.style.setProperty('font-size', sizePx, 'important');
         });
+
+        // 3. 選單 (select 下拉選單及其 option 選項) 全部套用基準字級
+        const selects = document.querySelectorAll('.editor-panel select, .editor-panel select option');
+        selects.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 4. 欄位標籤 (label) 與單選/核取標籤全部套用基準字級
+        const labels = document.querySelectorAll('.editor-panel label, .editor-panel .form-group label, .editor-panel .radio-label, .editor-panel .checkbox-label');
+        labels.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 5. 標題類 (卡片大標題、區塊標題、折疊標題、h2、h3) 連動縮放加粗
+        const titles = document.querySelectorAll('.editor-panel .card-title, .editor-panel .card-subtitle, .editor-panel .card-title-left, .editor-panel .card-title-left span, .editor-panel .editor-section-title, .editor-panel h2, .editor-panel h3');
+        titles.forEach(el => {
+            el.style.setProperty('font-size', titleSizePx, 'important');
+        });
+
+        // 6. 註解、說明、警語、提示文字 (helper-text, field-hint, nuotai-hint, small, code 等) 連動縮放
+        const hints = document.querySelectorAll('.editor-panel .helper-text, .editor-panel .field-hint, .editor-panel .nuotai-hint, .editor-panel small, .editor-panel code, .editor-panel .phrase-group-label, .editor-panel .quick-phrases-container, .editor-panel .quick-phrases-container span, .editor-panel #secrecy-warning, .editor-panel .card-badge-summary');
+        hints.forEach(el => {
+            el.style.setProperty('font-size', hintSizePx, 'important');
+        });
+
+        // 7. 編輯區內操作按鈕 (常用片語按鈕、展開/收合小按鈕、增刪段落鈕等) 全部套用基準字級
+        const buttons = document.querySelectorAll('.editor-panel button, .editor-panel .btn-xs, .editor-panel .phrase-tag, .editor-panel .btn-quick');
+        buttons.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 8. 整個編輯區其他純文字與頁尾
+        const others = document.querySelectorAll('.editor-panel p, .editor-panel .sidebar-copyright, .editor-panel .sidebar-copyright p');
+        others.forEach(el => {
+            el.style.setProperty('font-size', sizePx, 'important');
+        });
+
+        // 儲存至本地快取
+        try {
+            localStorage.setItem('cgu_formal_doc_editor_font_size', size);
+        } catch (e) {}
     }
 
     function setupQuickPhrases() {
