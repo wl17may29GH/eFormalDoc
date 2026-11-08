@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>長庚大學 線上函文製作系統 (Beta 8)</title>
+    <title>長庚大學 線上函文製作系統 (公函製作 v1.0 Dev 1)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,8 +49,8 @@
                 <path d="M50,40 L65,55 L55,55 L55,75 L45,75 L45,55 L35,55 Z" fill="#FFFFFF" />
             </svg>
             <div class="logo-text">
-                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">Beta 8</span></h1>
-                <p>CGU Online Official Document Editor</p>
+                <h1>長庚大學 <span>線上函文製作系統</span> <span style="font-size: 0.75rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-left: 6px;">v1.0 Dev 1</span></h1>
+                <p>CGU Online Official Document Editor · 公函製作模組</p>
             </div>
         </div>
         <div class="header-actions">
@@ -72,14 +72,15 @@
                     <option value="24">24 px</option>
                 </select>
             </div>
+            <a href="index.html" class="btn btn-secondary" title="返回系統中央門戶入口網"><i data-lucide="home"></i><span>入口首頁</span></a>
+            <a href="outsourcing.html" class="btn btn-secondary" title="切換至外包工作申請單作業檢核表系統" style="background-color: #f8fafc;"><i data-lucide="clipboard-check"></i><span>外包檢核表</span></a>
             <button id="btn-demo" class="btn btn-secondary" title="載入模擬範例資料" style="background-color: var(--primary-light); color: var(--primary-color); border-color: var(--primary-color); font-weight: 500;"><i data-lucide="book-open"></i><span>載入範例</span></button>
             <button id="btn-new" class="btn btn-secondary" title="新建公文"><i data-lucide="file-plus"></i><span>新建</span></button>
             <button id="btn-export" class="btn btn-secondary" title="匯出 JSON 草稿"><i data-lucide="download"></i><span>匯出草稿</span></button>
             <button id="btn-import-trigger" class="btn btn-secondary" title="匯入 JSON 草稿"><i data-lucide="upload"></i><span>匯入草稿</span></button>
             <input type="file" id="file-import" accept=".json" style="display: none;">
-            <a href="user_guide_beta8.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明"><i data-lucide="help-circle"></i><span>使用指南</span></a>
-            <a href="outsourcing/dist/index.html?from=index_beta8" class="btn btn-secondary" title="切換至外包工作申請單作業檢核表系統" style="background-color: #f8fafc;"><i data-lucide="clipboard-check"></i><span>外包工作檢核表</span></a>
-            <a id="btn-download-offline" href="index_beta9off.html" download="長庚大學線上函文製作系統_離線版(Beta9).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;"><i data-lucide="download"></i><span>下載離線版</span></a>
+            <a href="user_guide_letters.html" target="_blank" class="btn btn-secondary" title="開啟使用手冊與功能說明"><i data-lucide="help-circle"></i><span>使用指南</span></a>
+            <a id="btn-download-offline" href="letters_v1.0_offline.html" download="長庚大學線上函文製作系統_公函離線版(v1.0).html" class="btn btn-secondary" title="下載單一 HTML 檔案，離線免連網直接使用" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;"><i data-lucide="download"></i><span>下載離線版</span></a>
             <button id="btn-print" class="btn btn-primary" title="列印公文 / 儲存 PDF"><i data-lucide="printer"></i><span>列印 / PDF</span></button>
         </div>
     </header>
@@ -148,8 +149,8 @@
                             <span class="toggle-arrow">▼</span>
                         </div>
                         <div class="card-body-content">
-                            <div class="quick-phrases-container" style="margin-bottom: 12px; font-size: 0.85rem;">
-                                <span style="font-weight: bold; font-size: 0.85rem; color: var(--text-dark); display: block; margin-bottom: 6px;">常見公函用語：</span>
+                            <div class="quick-phrases-container" style="margin-bottom: 12px;">
+                                <span style="font-weight: bold; color: var(--text-dark); display: block; margin-bottom: 6px;">常見公函用語：</span>
                                 <div class="quick-phrases" style="margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
                                     <span class="phrase-group-label" style="font-weight: 500; color: var(--text-muted); min-width: 80px;">上行文：</span>
                                     <button type="button" class="phrase-tag" data-phrase="檢陳" data-target="up-subject">檢陳</button>
@@ -229,7 +230,7 @@
                                         <option value="極機密">極機密</option>
                                         <option value="絕對機密">絕對機密</option>
                                     </select>
-                                    <div id="secrecy-warning" class="helper-text" style="color: var(--red-official); font-weight: bold; display: none; margin-top: 4px; font-size: 0.75rem;">⚠️ 密等以上不得電子交換</div>
+                                    <div id="secrecy-warning" class="helper-text" style="color: var(--red-official); font-weight: bold; display: none; margin-top: 4px;">⚠️ 密等以上不得電子交換</div>
                                 </div>
                                 <div class="form-group col-span-2">
                                     <label for="up-secrecy-duration">解密條件或保密期限</label>
@@ -288,7 +289,7 @@
                                 <div class="form-group col-span-2">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                                         <label for="up-email" style="margin-bottom: 0;">電子信箱 (選填)</label>
-                                        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                                        <label style="display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); cursor: pointer; user-select: none;">
                                             <input type="checkbox" id="up-email-enable" style="width: auto; margin: 0; cursor: pointer;"> 勾選開啟填寫
                                         </label>
                                     </div>
@@ -538,7 +539,7 @@
             </form>
             
             <footer class="sidebar-copyright">
-                <p>長庚大學 線上函文製作系統 Beta 6</p>
+                <p>長庚大學 線上函文製作系統 (公函製作 v1.0)</p>
                 <p>CGU Online Official Document Editor · © 2026</p>
             </footer>
         </aside>
@@ -850,6 +851,6 @@
     </template>
 
     <!-- Script imports -->
-    <script src="app_beta8.js"></script>
+    <script src="app_letters_dev1.js"></script>
 </body>
 </html>

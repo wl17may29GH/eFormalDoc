@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { 
+  Home,
   Printer, 
   Download, 
   RotateCcw, 
@@ -29,20 +30,19 @@ export default function HeaderNav({
 }) {
   const fileInputRef = useRef(null);
 
-  // 計算返回線上函文系統之路徑 (支援 beta8 開發版、beta9 線上版、beta9off 離線版或預設首頁)
-  const getBackToFormalDocUrl = () => {
-    if (typeof window === 'undefined') return '../../index.html';
-    const params = new URLSearchParams(window.location.search);
-    const from = params.get('from');
-    if (from && ['index_beta8', 'index_beta9', 'index_beta9off', 'index'].includes(from)) {
-      return `../../${from}.html`;
+  // 計算返回入口網與線上公函系統之路徑 (支援根目錄單檔 outsourcing.html 與子目錄 dist/index.html)
+  const isSubdir = typeof window !== 'undefined' && window.location.pathname.includes('/dist/');
+  const rootPath = isSubdir ? '../../' : './';
+  const getHomeUrl = () => `${rootPath}index.html`;
+  const getLettersUrl = () => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get('from');
+      if (from && ['letters', 'letters_dev1', 'index_beta6', 'index_beta7'].includes(from)) {
+        return `${rootPath}${from}.html`;
+      }
     }
-    if (typeof document !== 'undefined' && document.referrer) {
-      if (document.referrer.includes('beta8')) return '../../index_beta8.html';
-      if (document.referrer.includes('beta9off')) return '../../index_beta9off.html';
-      if (document.referrer.includes('beta9')) return '../../index_beta9.html';
-    }
-    return '../../index.html';
+    return `${rootPath}letters.html`;
   };
 
   const handleFileChange = (e) => {
@@ -144,15 +144,26 @@ export default function HeaderNav({
           </select>
         </div>
 
-        {/* 切換至線上函文製作系統 */}
+        {/* 返回入口首頁 */}
         <a
-          href={getBackToFormalDocUrl()}
+          href={getHomeUrl()}
           className="btn btn-secondary"
-          title="切換至長庚大學線上函文製作系統"
+          title="返回長庚大學線上函文製作系統入口門戶"
+          style={{ textDecoration: 'none' }}
+        >
+          <Home style={{ width: '15px', height: '15px' }} />
+          <span>入口首頁</span>
+        </a>
+
+        {/* 切換至線上公函製作系統 */}
+        <a
+          href={getLettersUrl()}
+          className="btn btn-secondary"
+          title="切換至長庚大學線上公函製作系統"
           style={{ textDecoration: 'none' }}
         >
           <FileText style={{ width: '15px', height: '15px' }} />
-          <span>線上函文系統</span>
+          <span>線上公函</span>
         </a>
 
         {/* 新建/清空 */}

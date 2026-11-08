@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>長庚大學 線上函文製作系統 Beta 8 功能說明暨使用指南</title>
+    <title>長庚大學 線上函文製作系統 Beta 6 功能說明暨使用指南</title>
     <style>
         :root {
             --primary: #c58000;
@@ -434,14 +434,15 @@
 
     <!-- Top Hero Header -->
     <header class="hero-header">
-        <span class="hero-badge">Beta 8 (2026.10 重大更新)</span>
+        <span class="hero-badge">v1.0 正式版</span>
         <h1 class="hero-title">長庚大學 線上函文製作系統 功能說明暨使用指南</h1>
         <p class="hero-subtitle">
             CGU Online Official Document Editor · 整合版作業指引<br>
             全面改善左側編輯工作區配置：公文選擇置頂、核心主旨與說明開頁即用、次要卡片智慧摺疊與高密度配置
         </p>
         <div class="hero-actions">
-            <a href="index_beta8.html" class="btn-action btn-print-hero">開啟 Beta 8 系統操作</a>
+            <a href="letters.html" class="btn-action btn-print-hero">開啟公函製作系統</a>
+            <a href="index.html" class="btn-action btn-app-hero" style="background: rgba(255,255,255,0.2); text-decoration: none;">返回入口首頁</a>
             <button onclick="window.print()" class="btn-action btn-app-hero">列印 / 另存本手冊 PDF</button>
         </div>
     </header>
@@ -450,9 +451,9 @@
     <nav class="toc-card">
         <div class="toc-title">📖 快速導覽目錄</div>
         <div class="toc-grid">
-            <div class="toc-item"><a href="#sec-overview">一、Beta 8 系統定位與架構概述</a></div>
+            <div class="toc-item"><a href="#sec-overview">一、Beta 6 系統定位與架構概述</a></div>
             <div class="toc-item"><a href="#sec-categories">二、三大公文類別與模式規格</a></div>
-            <div class="toc-item"><a href="#sec-beta6-features">三、Beta 8 工作區長度重構核心亮點</a></div>
+            <div class="toc-item"><a href="#sec-beta6-features">三、Beta 6 工作區長度重構核心亮點</a></div>
             <div class="toc-item"><a href="#sec-optimizations">四、歷次重大改善與功能精進歷程彙整</a></div>
             <div class="toc-item"><a href="#sec-user-manual">五、逐步操作使用手冊</a></div>
             <div class="toc-item"><a href="#sec-print-guide">六、瀏覽器列印與 PDF 設定 (極重要)</a></div>
@@ -463,12 +464,12 @@
 
     <!-- 一、系統定位與架構概述 -->
     <section class="guide-section" id="sec-overview">
-        <h2>一、Beta 8 系統定位與架構概述</h2>
+        <h2>一、Beta 6 系統定位與架構概述</h2>
         <p>
-            <strong>eFormalDoc Beta 8 (CGU Online Official Document Editor)</strong> 是長庚大學線上函文製作系統針對<strong>操作者日常作業人因工程與工作效率</strong>所打造的旗艦版本。延續 Beta 5 單一入口雙軌整合架構（全面涵蓋教育部上行文、校外機構平下行文、校內業務接洽便函），Beta 8 進一步解決公測期間使用者反映之「左側編輯工作區過長、滑動距離過多、核心主文被擠至下方」的困擾。
+            <strong>eFormalDoc Beta 6 (CGU Online Official Document Editor)</strong> 是長庚大學線上函文製作系統針對<strong>操作者日常作業人因工程與工作效率</strong>所打造的旗艦版本。延續 Beta 5 單一入口雙軌整合架構（全面涵蓋教育部上行文、校外機構平下行文、校內業務接洽便函），Beta 6 進一步解決公測期間使用者反映之「左側編輯工作區過長、滑動距離過多、核心主文被擠至下方」的困擾。
         </p>
         <p>
-            在 Beta 8 中，系統精確確立<strong>兩大不可動搖的核心佈局原則</strong>：
+            在 Beta 6 中，系統精確確立<strong>兩大不可動搖的核心佈局原則</strong>：
             <br>1. <strong>最上層固定為「公文選擇」</strong>：維持公文類別、陳核/發文模式、業洽函用途與手動受文者的全域設定權限。
             <br>2. <strong>次順位直達核心「本文內容編撰（主旨與說明）」</strong>：預設直接展開，進入系統即可在初始畫面開始編輯，免除向下捲動頁面尋找主文的不便。
             <br>3. <strong>次要資訊卡片智慧摺疊</strong>：「發文基本資訊」、「聯絡資訊」及業洽函「便函管理資訊」改採可摺疊卡片，預設收合並附即時動態摘要徽章（badge），兼具極簡清爽與資訊完整性。
@@ -501,7 +502,7 @@
     <!-- 二、三大公文類別與模式規格 -->
     <section class="guide-section" id="sec-categories">
         <h2>二、三大公文類別與模式規格</h2>
-        <p>Beta 8 依據行政行文方向與公文性質，完整劃分三大類別，並均享受緊湊版面之便利：</p>
+        <p>Beta 6 依據行政行文方向與公文性質，完整劃分三大類別，並均享受緊湊版面之便利：</p>
 
         <table>
             <thead>
@@ -569,16 +570,16 @@
         </table>
     </section>
 
-    <!-- 三、Beta 8 工作區長度重構核心亮點 -->
+    <!-- 三、Beta 6 工作區長度重構核心亮點 -->
     <section class="guide-section" id="sec-beta6-features">
-        <h2>三、Beta 8 工作區長度重構核心亮點</h2>
+        <h2>三、Beta 6 工作區長度重構核心亮點</h2>
 
         <h3>1. 階層順序嚴格重構：公文選擇最上、本文編撰次之</h3>
         <p>
-            過去版本中，發文日期、字號、速別、密等與承辦人資訊排在最前面，導致主旨與說明往往被排擠至畫面下方，每次修改都必須向下捲動頁面尋找主文。Beta 8 重新梳理填寫心理模型：
+            過去版本中，發文日期、字號、速別、密等與承辦人資訊排在最前面，導致主旨與說明往往被排擠至畫面下方，每次修改都必須向下捲動頁面尋找主文。Beta 6 重新梳理填寫心理模型：
         </p>
         <div class="callout callout-success">
-            <div class="callout-title">📐 Beta 8 最佳人因工學階層順序</div>
+            <div class="callout-title">📐 Beta 6 最佳人因工學階層順序</div>
             <strong>第 1 層【最上層】</strong>：<code>公文選擇</code>（類別、模式、業洽函用途、受文者手動輸入），永遠置頂固定。<br>
             <strong>第 2 層【其次直達】</strong>：<code>本文內容編撰</code>（常用詞彙快捷鍵、主旨、說明、正副本雙欄併排），預設展開，進入系統即可在初始畫面開始編輯！<br>
             <strong>第 3 層【輔助次要】</strong>：<code>發文與基本資訊</code>（日期、字號、速別、密等、附件），預設摺疊收合。<br>
@@ -587,7 +588,7 @@
 
         <h3>2. 智慧可摺疊卡片 (Collapsible Card) 與即時摘要徽章 (Live Badges)</h3>
         <p>
-            次要資訊雖然低頻修改，但撰稿人仍需要隨時掌握目前設定值。Beta 8 導入<strong>即時動態摘要徽章</strong>：卡片即使處於收合狀態，標題右側依然即時顯示最新數值，完全不需要展開卡片即可確認！
+            次要資訊雖然低頻修改，但撰稿人仍需要隨時掌握目前設定值。Beta 6 導入<strong>即時動態摘要徽章</strong>：卡片即使處於收合狀態，標題右側依然即時顯示最新數值，完全不需要展開卡片即可確認！
         </p>
         <ul>
             <li><strong>發文與基本資訊徽章</strong>：即時同步如 <code>普通件 ｜ 無密等 ｜ 1150001號 ｜ 115.10.10</code>。</li>
@@ -627,12 +628,22 @@
                 </tr>
             </thead>
             <tbody>
+                <tr style="background: #eff6ff;">
+                    <td><strong style="color: #1e40af;">★ v1.0 正式發布版</strong></td>
+                    <td><strong>全新入口門戶架構 (ode.cgu.edu.tw)</strong></td>
+                    <td>
+                        1. <strong>校園入口門戶架構</strong>：整合學校正式網域 <code>ode.cgu.edu.tw</code>，由中央入口網 <code>index.html</code> 提供「公函製作」與「外包工作檢核表」雙模組無縫切換。<br>
+                        2. <strong>全新單檔發布規格 (方案 A)</strong>：根目錄提供線上單檔 <code>letters.html</code> 與獨立單檔 <code>letters_v1.0_offline.html</code>，支援雙向一鍵返回入口首頁。<br>
+                        3. <strong>開發版本數字編號版控</strong>：以 <code>letters_dev1.html</code> 搭配獨立 JS/CSS，確保開發歷程嚴格隔離與版號清晰。<br>
+                        4. <strong>編輯區字級全域連動</strong>：全面重構字體大小設定（14px～24px），標題、標籤、註解、選單與填寫欄位全部同步等比縮放。
+                    </td>
+                </tr>
                 <tr style="background: #f0fdf4;">
                     <td><strong style="color: #166534;">★ Beta 7 合併發布版</strong></td>
                     <td><strong>雙軌發布制與單檔離線版支援</strong></td>
                     <td>
                         1. <strong>版本雙軌與命名規範確立</strong>：<br>
-                           • <strong>本機開發版</strong>：偶數號（範例：<code>index_beta8.html</code>），多檔案架構便於維護，待使用者指示時才執行合併打包。<br>
+                           • <strong>本機開發版</strong>：偶數號（範例：<code>index_beta6.html</code>），多檔案架構便於維護，待使用者指示時才執行合併打包。<br>
                            • <strong>正式發布線上版</strong>：奇數號（範例：<code>index_beta7.html</code>），整合單檔免除瀏覽器跨檔案快取衝突，並提供下載離線版連結。<br>
                            • <strong>正式發布離線下載版</strong>：奇數號+off（範例：<code>index_beta7off.html</code>），純單一 HTML 檔案，內嵌離線圖庫與使用指南彈窗，零網路依賴。<br>
                         2. <strong>系統中英文定名</strong>：正式定名為「長庚大學線上函文製作系統（CGU Online Official Document Editor）」。<br>
@@ -641,7 +652,7 @@
                     </td>
                 </tr>
                 <tr style="background: #fffdf5;">
-                    <td><strong style="color: var(--primary-dark);">★ Beta 8 重大更新</strong></td>
+                    <td><strong style="color: var(--primary-dark);">★ Beta 6 重大更新</strong></td>
                     <td><strong>左側工作區配置改善 (人因工程)</strong></td>
                     <td>
                         1. <strong>層級順序嚴格重構</strong>：最上層始終為「公文選擇」，第二順位緊接著「本文內容編撰（主旨及說明）」，開頁立即可見，無須向下捲動頁面。<br>
@@ -771,7 +782,7 @@
 
         <h3><span class="step-number">4</span> 第四步：儲存草稿與匯入</h3>
         <ul>
-            <li><strong>自動儲存</strong>：輸入任何字元，系統即會在瀏覽器本機快取（LocalStorage）即時自動儲存 Beta 8 最新草稿，關閉視窗重新開啟自動還原。</li>
+            <li><strong>自動儲存</strong>：輸入任何字元，系統即會在瀏覽器本機快取（LocalStorage）即時自動儲存 Beta 6 最新草稿，關閉視窗重新開啟自動還原。</li>
             <li><strong>匯出草稿</strong>：點擊頂端 <kbd>匯出草稿</kbd> 按鈕，可將當前公文下載為標準 <code>.json</code> 草稿檔案。</li>
             <li><strong>匯入草稿</strong>：點擊頂端 <kbd>匯入草稿</kbd> 按鈕，可隨時還原既有草稿（完全向下相容 Beta 5/4/3 草稿格式）。</li>
         </ul>
@@ -899,7 +910,7 @@
 
         <div class="callout callout-info">
             <div class="callout-title">Q2: 找不到發文字號或承辦人修改欄位在哪裡？</div>
-            <strong>解答</strong>：在 Beta 8 中，為了保持介面清爽並縮短頁面捲動長度，「發文與基本資訊」與「聯絡資訊」預設為收合卡片。請在左側工作區中找到對應標題列（例如帶有 <code>[普通件 ｜ 1150001號...]</code> 的卡片），點擊標題列任何處即可展開填寫，或點擊上方的 <kbd>全部展開</kbd>。若為業務接洽便函，「發文字號」與「發文日期」已直接納入「1. 發文資訊」區塊頂端；「覆文字號」與「收文時間」則位於「2. 回文資訊」區塊頂端。
+            <strong>解答</strong>：在 Beta 6 中，為了保持介面清爽並縮短頁面捲動長度，「發文與基本資訊」與「聯絡資訊」預設為收合卡片。請在左側工作區中找到對應標題列（例如帶有 <code>[普通件 ｜ 1150001號...]</code> 的卡片），點擊標題列任何處即可展開填寫，或點擊上方的 <kbd>全部展開</kbd>。若為業務接洽便函，「發文字號」與「發文日期」已直接納入「1. 發文資訊」區塊頂端；「覆文字號」與「收文時間」則位於「2. 回文資訊」區塊頂端。
         </div>
 
         <div class="callout callout-info">
