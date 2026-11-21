@@ -1,78 +1,192 @@
 import React from 'react';
 
-// 判斷是否需要自動延伸至第 2 頁 (第1次公測修正三：內容多時自動分頁避免破版)
-export function shouldPaginate(data) {
-  if (data.pageMode === 'single') return false;
-  if (data.pageMode === 'multi') return true;
-
-  const assetCount = (data.item6_asset_checked && Array.isArray(data.item6_assets)) ? data.item6_assets.length : 0;
-  const delayReason = (!data.item1_time_checked && data.item1_delay_reason) ? data.item1_delay_reason : '';
-  const diffReason = (data.item14_renew_type === 'diff' && data.item14_diff_reason) ? data.item14_diff_reason : '';
-  const notes = (data.item15_enabled && data.item15_notes) ? data.item15_notes : '';
-
-  const delayLines = delayReason.split(/\r?\n/).length;
-  const diffLines = diffReason.split(/\r?\n/).length;
-  const noteLines = notes.split(/\r?\n/).length;
-
-  if (assetCount >= 3) return true;
-  if (delayLines > 2 || delayReason.length > 50) return true;
-  if (diffLines > 2 || diffReason.length > 50) return true;
-  if (noteLines > 2 || notes.length > 50) return true;
-
-  let score = 0;
-  if (assetCount > 1) score += (assetCount - 1) * 2;
-  if (delayReason.trim()) score += Math.max(delayLines, Math.ceil(delayReason.length / 30));
-  if (diffReason.trim()) score += Math.max(diffLines, Math.ceil(diffReason.length / 30));
-  if (notes.trim()) score += Math.max(noteLines, Math.ceil(notes.length / 30));
-
-  return score >= 3;
+// 預估單個項目在 A4 橫式上的高度 (mm)
+export function estimateItemHeight(itemKey, data) {
+  if (itemKey === 'item1') {
+    if (data.item1_time_checked) return 8.5;
+    const text = data.item1_delay_reason || '';
+    const lines = text.split(/\r?\n/).reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / 24)), 0);
+    return 8.5 + (Math.max(1, lines) - 1) * 5.5;
+  }
+  if (itemKey === 'item6') {
+    if (data.purposeType !== 'asset') return 8.5;
+    const count = (data.item6_assets && Array.isArray(data.item6_assets)) ? data.item6_assets.length : 1;
+    return 7.5 + count * 5.5;
+  }
+  if (itemKey === 'item7') {
+    return 9.5;
+  }
+  if (itemKey === 'item11') {
+    // 擬外包資料
+    return data.outsourceType === 'initial' ? 13.5 : 8.5;
+  }
+  if (itemKey === 'item14') {
+    if (data.outsourceType === 'renew' && data.item14_renew_type === 'diff') {
+      const text = data.item14_diff_reason || '';
+      const lines = 1 + text.split(/\r?\n/).reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / 24)), 0);
+      return 8.5 + (lines - 1) * 5.5;
+    }
+    return data.outsourceType === 'initial' ? 12 : 8.5;
+  }
+  if (itemKey === 'item15') {
+    const text = data.item15_notes || '';
+    const lines = text.split(/\r?\n/).reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / 24)), 0);
+    return 8.5 + (Math.max(1, lines) - 1) * 5.5;
+  }
+  return 8.5;
 }
 
-export default function A4PreviewLandscape({ data, forceMultiPage }) {
+// 建立所有檢核項目清單
+export function getAllItems(data) {
   const isInitial = data.outsourceType === 'initial';
   const isRenew = data.outsourceType === 'renew';
   const isAsset = data.purposeType === 'asset';
 
-  const isMulti = forceMultiPage !== undefined ? forceMultiPage : shouldPaginate(data);
+  const items = [
+    // --- 共同項目 (項序 1 ~ 7) ---
+    {
+      key: 'item1',
+      category: '共同',
+      seq: 1,
+      title: '外包工作申請單時效',
+      checked: data.item1_time_checked ? '✓' : '',
+      content: data.item1_time_checked ? (
+        '已提前到期日或需求日至少二個月辦理。'
+      ) : (
+        <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+          延遲原因：{data.item1_delay_reason || '（未說明原因）'}
+        </div>
+      ),
+      height: estimateItemHeight('item1', data)
+    },
+    {
+      key: 'item2',
+      category: '共同',
+      seq: 2,
+      title: '付款週期',
+      checked: data.item2_payment_checked ? '✓' : '',
+      content: '已確認申請單與承攬書之付款週期一致。',
+      height: 8.5
+    },
+    {
+      key: 'item3',
+      category: '共同',
+      seq: 3,
+      title: '法務室業洽函',
+      checked: data.item3_legal_letter_checked ? '✓' : '',
+      content: '已提供。',
+      height: 8.5
+    },
+    {
+      key: 'item4',
+      category: '共同',
+      seq: 4,
+      title: '法務室斧正意見',
+      checked: data.item4_legal_opinion_checked ? '✓' : '',
+      content: '已提供。',
+      height: 8.5
+    },
+    {
+      key: 'item5',
+      category: '共同',
+      seq: 5,
+      title: (
+        <span>
+          修正後承攬書/合約書<span style={{ fontSize: '10pt', verticalAlign: 'super' }}>註1</span>
+        </span>
+      ),
+      checked: data.item5_contract_checked ? '✓' : '',
+      content: '已提供。',
+      height: 8.5
+    },
+    {
+      key: 'item6',
+      category: '共同',
+      seq: 6,
+      title: '固定資產建檔證明(*含取得價值)',
+      checked: data.item6_asset_checked ? '✓' : '',
+      content: isAsset ? (
+        <div>
+          <span>已提供。</span>
+          {data.item6_assets && data.item6_assets.length > 0 && (
+            <div style={{ marginTop: '2px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {data.item6_assets.map((a, i) => (
+                <div key={i} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                  {data.item6_assets.length > 1 ? `(${i + 1}) ` : ''}請購案號：{a.no || '_______'}；取得價值：{a.value || '_______'} 元。(未稅)
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        data.item6_asset_checked ? '已提供。' : <span style={{ color: '#475569' }}>免填 (非屬資產設備類)。</span>
+      ),
+      height: estimateItemHeight('item6', data)
+    },
+    {
+      key: 'item7',
+      category: '共同',
+      seq: 7,
+      title: '施工作業安全告知單',
+      checked: data.item7_safety_checked ? '✓' : '',
+      content: '已提供，合約工期與承攬書一致，並已完成簽名。',
+      height: estimateItemHeight('item7', data)
+    },
 
-  // 專屬項目清單
-  const exclusiveItems = [
+    // --- 專屬項目 (項序 8 ~ N) ---
     {
       key: 'item9',
+      category: '專屬',
+      seq: 8,
       title: '外包期間',
       checked: data.item9_checked ? '✓' : '',
       content: isInitial 
         ? '起訖時間已接續保固到期日或招商需求日。' 
-        : '起訖時間已接續原合約到期日。'
+        : '起訖時間已接續原合約到期日。',
+      height: 8.5
     },
     {
       key: 'item10',
+      category: '專屬',
+      seq: 9,
       title: '外包到期提示單',
       checked: isInitial ? '' : (data.item10_checked ? '✓' : ''),
-      content: isInitial ? '略。' : '已提供。'
+      content: isInitial ? '略。' : '已提供。',
+      height: 8.5
     },
     {
       key: 'item11',
+      category: '專屬',
+      seq: 10,
       title: '現狀外包單價(未稅)',
       checked: isInitial ? '' : (data.item11_checked ? '✓' : ''),
-      content: isInitial ? '略。' : '與「外包到期提示單」一致。'
+      content: isInitial ? '略。' : '與「外包到期提示單」一致。',
+      height: 8.5
     },
     {
       key: 'item12',
+      category: '專屬',
+      seq: 11,
       title: '擬外包資料(*金額皆未稅)',
       checked: '✓',
       content: isInitial 
         ? '月工作量、單價、總金額及付款週期等內容，均與相關佐證資料相符。' 
-        : (data.item12_type === 'same' ? '與前案一致。' : '與前案不一致。')
+        : (data.item12_type === 'same' ? '與前案一致。' : '與前案不一致。'),
+      height: estimateItemHeight('item11', data)
     },
     ...(isAsset ? [{
       key: 'item13',
+      category: '專屬',
+      seq: 12,
       title: '保固證明',
       checked: isInitial ? (data.item13_checked ? '✓' : '') : '✓',
-      content: isInitial ? '已提供。' : '可免。'
+      content: isInitial ? '已提供。' : '可免。',
+      height: 8.5
     }] : []),
     {
       key: 'item14',
+      category: '專屬',
+      seq: isAsset ? 13 : 12,
       title: `報價單${data.item14_ratio ? ` (約占 ${data.item14_ratio})` : ''}`,
       checked: '✓',
       content: isInitial ? (
@@ -94,21 +208,91 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
             )}
           </>
         )
-      )
+      ),
+      height: estimateItemHeight('item14', data)
     },
     ...(data.item15_enabled ? [{
       key: 'item15',
+      category: '專屬',
+      seq: isAsset ? 14 : 13,
       title: '其他',
       checked: '✓',
       content: data.item15_notes && data.item15_notes.trim() ? (
         <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
           {data.item15_notes}
         </div>
-      ) : ''
+      ) : '',
+      height: estimateItemHeight('item15', data)
     }] : [])
   ];
 
-  // A4 紙張基礎樣式（嚴格符合 297mm x 210mm 橫式規格，移除所有 oklch class 避免截圖或匯出失敗）
+  return items;
+}
+
+// 動態排版分頁計算：以用滿第 1 頁可印版面為原則
+export function calculatePages(data) {
+  const items = getAllItems(data);
+  const operatorRowHeight = 12;    // 經辦人員簽核欄高度 (mm)
+  const maxSinglePageHeight = 158; // 單頁模式下所有項目 + 簽核欄的最大可用高度 (mm)
+  const maxPage1Height = 152;      // 雙頁模式下第一頁項目的最大可用高度 (mm，保留底部接續提示)
+
+  const totalHeight = items.reduce((sum, item) => sum + item.height, 0) + operatorRowHeight;
+
+  if (totalHeight <= maxSinglePageHeight) {
+    return {
+      isMulti: false,
+      page1Items: items,
+      page2Items: []
+    };
+  }
+
+  // 雙頁模式：貪婪填滿第 1 頁可印版面
+  const page1Items = [];
+  const page2Items = [];
+  let currentHeight = 0;
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (currentHeight + item.height <= maxPage1Height) {
+      page1Items.push(item);
+      currentHeight += item.height;
+    } else {
+      page2Items.push(item);
+    }
+  }
+
+  // 防呆：若第 1 頁為空，至少放 1 個項目
+  if (page1Items.length === 0 && items.length > 0) {
+    page1Items.push(items[0]);
+    page2Items.splice(0, 1);
+  }
+
+  // 防呆：若所有項目剛好塞滿第 1 頁但加上簽名欄超出一頁，將最後一項移至第 2 頁陪伴簽名欄
+  if (page2Items.length === 0 && page1Items.length > 1) {
+    page2Items.unshift(page1Items.pop());
+  }
+
+  return {
+    isMulti: true,
+    page1Items,
+    page2Items
+  };
+}
+
+// 供外部調用判斷是否分頁
+export function shouldPaginate(data) {
+  return calculatePages(data).isMulti;
+}
+
+export default function A4PreviewLandscape({ data, forceMultiPage }) {
+  const isInitial = data.outsourceType === 'initial';
+  const isRenew = data.outsourceType === 'renew';
+  const isAsset = data.purposeType === 'asset';
+
+  const { isMulti: autoMulti, page1Items, page2Items } = calculatePages(data);
+  const isMulti = forceMultiPage !== undefined ? forceMultiPage : autoMulti;
+
+  // A4 紙張基礎樣式（嚴格符合 297mm x 210mm 橫式規格）
   const basePageStyle = {
     width: '297mm',
     minHeight: '210mm',
@@ -159,158 +343,56 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
     </thead>
   );
 
-  // 共同項目 (項序 1 ~ 7)
-  const renderCommonRows = () => (
-    <>
-      <tr>
-        <td 
-          rowSpan={7} 
-          style={{ 
-            border: '1px solid black', 
-            textAlign: 'center', 
-            fontWeight: 'bold', 
-            writingMode: 'vertical-rl', 
-            letterSpacing: '3px',
-            backgroundColor: '#f8fafc',
-            fontSize: '14pt'
-          }}
-        >
-          共同
-        </td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>1</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>外包工作申請單時效</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item1_time_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>
-          {data.item1_time_checked ? (
-            '已提前到期日或需求日至少二個月辦理。'
-          ) : (
-            <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-              延遲原因：{data.item1_delay_reason || '（未說明原因）'}
-            </div>
-          )}
-        </td>
-      </tr>
-
-      <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>2</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>付款週期</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item2_payment_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>
-          已確認申請單與承攬書之付款週期一致。
-        </td>
-      </tr>
-
-      <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>3</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>法務室業洽函</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item3_legal_letter_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>已提供。</td>
-      </tr>
-
-      <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>4</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>法務室斧正意見</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item4_legal_opinion_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>已提供。</td>
-      </tr>
-
-      <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>5</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>修正後承攬書/合約書<span style={{ fontSize: '10pt', verticalAlign: 'super' }}>註1</span></td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item5_contract_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>已提供。</td>
-      </tr>
-
-      {/* 項序 6：固定資產建檔證明 (支援多筆案號與換行) */}
-      <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>6</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-          固定資產建檔證明(*含取得價值)
-        </td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item6_asset_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>
-          {isAsset ? (
-            <div>
-              <span>已提供。</span>
-              {data.item6_assets && data.item6_assets.length > 0 && (
-                <div style={{ marginTop: '2px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  {data.item6_assets.map((a, i) => (
-                    <div key={i} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                      {data.item6_assets.length > 1 ? `(${i + 1}) ` : ''}請購案號：{a.no || '_______'}；取得價值：{a.value || '_______'} 元。(未稅)
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            data.item6_asset_checked ? '已提供。' : <span style={{ color: '#475569' }}>免填 (非屬資產設備類)。</span>
-          )}
-        </td>
-      </tr>
-
-      <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>7</td>
-        <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>施工作業安全告知單</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-          {data.item7_safety_checked ? '✓' : ''}
-        </td>
-        <td style={{ border: '1px solid black', padding: '1px 6px' }}>
-          已提供，合約工期與承攬書一致，並已完成簽名。
-        </td>
-      </tr>
-    </>
-  );
-
-  // 專屬項目 (項序 8 ~ N)
-  const renderExclusiveRows = () => (
-    exclusiveItems.map((item, index) => {
-      const itemSeq = 7 + index + 1;
-      return (
-        <tr key={item.key}>
-          {index === 0 && (
-            <td 
-              rowSpan={exclusiveItems.length} 
-              style={{ 
-                border: '1px solid black', 
-                textAlign: 'center', 
-                fontWeight: 'bold', 
-                writingMode: 'vertical-rl', 
-                letterSpacing: '3px',
-                backgroundColor: '#f8fafc',
-                fontSize: '14pt'
-              }}
-            >
-              專屬
+  // 動態渲染檢核項目列 (具備連續類別合併 rowSpan 能力)
+  const renderItemRows = (items) => {
+    const rows = [];
+    let i = 0;
+    while (i < items.length) {
+      const currentCat = items[i].category;
+      let span = 0;
+      while (i + span < items.length && items[i + span].category === currentCat) {
+        span++;
+      }
+      for (let j = 0; j < span; j++) {
+        const item = items[i + j];
+        const isFirstInCat = (j === 0);
+        rows.push(
+          <tr key={item.key || item.seq}>
+            {isFirstInCat && (
+              <td
+                rowSpan={span}
+                style={{
+                  border: '1px solid black',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  writingMode: 'vertical-rl',
+                  letterSpacing: '3px',
+                  backgroundColor: '#f8fafc',
+                  fontSize: '14pt'
+                }}
+              >
+                {currentCat}
+              </td>
+            )}
+            <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>
+              {item.seq}
             </td>
-          )}
-          <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold' }}>
-            {itemSeq}
-          </td>
-          <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-            {item.title}
-          </td>
-          <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
-            {item.checked}
-          </td>
-          <td style={{ border: '1px solid black', padding: '1px 6px' }}>
-            {item.content}
-          </td>
-        </tr>
-      );
-    })
-  );
+            <td style={{ border: '1px solid black', padding: '1px 6px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+              {item.title}
+            </td>
+            <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', fontSize: '15pt' }}>
+              {item.checked}
+            </td>
+            <td style={{ border: '1px solid black', padding: '1px 6px' }}>
+              {item.content}
+            </td>
+          </tr>
+        );
+      }
+      i += span;
+    }
+    return rows;
+  };
 
   // 經辦人員簽核欄
   const renderOperatorRow = () => (
@@ -344,7 +426,6 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
   return (
     <div id="a4-print-target-landscape" className="a4-print-container">
       
-      {/* 判斷為單頁或雙頁模式 */}
       {!isMulti ? (
         // ======================== 單頁模式 (標準 1 頁) ========================
         <div className="a4-page" style={basePageStyle}>
@@ -361,21 +442,20 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
               外包工作申請單作業檢核表
             </h1>
 
-            {/* 表格本體 (含共同 + 專屬 + 簽核) */}
+            {/* 表格本體 (填滿單頁，含簽名欄) */}
             <table style={tableStyle}>
               {renderTableHeader()}
               <tbody>
-                {renderCommonRows()}
-                {renderExclusiveRows()}
+                {renderItemRows(page1Items)}
                 {renderOperatorRow()}
               </tbody>
             </table>
           </div>
         </div>
       ) : (
-        // ======================== 雙頁模式 (內容較多自動延伸) ========================
+        // ======================== 雙頁模式 (第一頁填滿後自動換頁) ========================
         <>
-          {/* 第 1 頁：共同檢核項目 (含寬裕的多筆資產建檔證明空間) */}
+          {/* 第 1 頁：用滿版面，含底部接續提示 */}
           <div className="a4-page" style={basePageStyle}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13pt', marginBottom: '2mm' }}>
@@ -394,9 +474,9 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
               <table style={tableStyle}>
                 {renderTableHeader()}
                 <tbody>
-                  {renderCommonRows()}
+                  {renderItemRows(page1Items)}
                   <tr style={{ borderTop: '2px solid black', backgroundColor: '#f8fafc' }}>
-                    <td colSpan={5} style={{ padding: '6px 14px', textAlign: 'right', fontWeight: 'bold', color: '#475569', fontSize: '13pt' }}>
+                    <td colSpan={5} style={{ padding: '4px 14px', textAlign: 'right', fontWeight: 'bold', color: '#475569', fontSize: '13pt' }}>
                       （請翻閱次頁繼續檢核專屬項目與簽名 ➔）
                     </td>
                   </tr>
@@ -405,7 +485,7 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
             </div>
           </div>
 
-          {/* 第 2 頁：專屬檢核項目 (含寬裕的調價說明與其他備註空間) + 經辦簽署 */}
+          {/* 第 2 頁：承接剩餘項目 + 經辦人員簽核欄 */}
           <div className="a4-page a4-page-2" style={{ ...basePageStyle, marginTop: '24px' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13pt', marginBottom: '2mm' }}>
@@ -424,7 +504,7 @@ export default function A4PreviewLandscape({ data, forceMultiPage }) {
               <table style={tableStyle}>
                 {renderTableHeader()}
                 <tbody>
-                  {renderExclusiveRows()}
+                  {renderItemRows(page2Items)}
                   {renderOperatorRow()}
                 </tbody>
               </table>

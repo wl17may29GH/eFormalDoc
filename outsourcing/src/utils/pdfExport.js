@@ -1,39 +1,83 @@
-import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 /**
  * 匯出 A4 橫式 PDF 檔案
- * 支援單頁與多頁自動分頁匯出，具備全面的異常防護與 DOM 清理機制
+ * 直接針對 .a4-page 頁面進行高解析度純前端轉出，消除任何預覽縮放、陰影與分頁錯位問題
  */
-export const exportToPdf = async (elementId, filename = '外包工作申請單作業檢核表.pdf') => {
-  const element = document.getElementById(elementId);
-  if (!element) {
+export const exportToPdf = async (containerId, filename = '外包工作申請單作業檢核表.pdf') => {
+  const container = document.getElementById(containerId);
+  if (!container) {
     alert('找不到檢核表預覽元素');
     return false;
   }
 
-  // 匯出 PDF 選項配置
-  const opt = {
-    margin: 0, // 由內層 a4-page 的 8mm 10mm 6mm 10mm 精確控制
-    filename: filename,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      letterRendering: true,
-      scrollY: 0,
-      logging: false,
-    },
-    jsPDF: {
-      unit: 'mm',
-      format: 'a4',
-      orientation: 'landscape',
-    },
-    pagebreak: { mode: ['css', 'legacy'], after: '.a4-page:not(:last-child)' },
-  };
+  const pageElements = container.querySelectorAll('.a4-page');
+  if (!pageElements || pageElements.length === 0) {
+    alert('找不到可匯出的 A4 頁面');
+    return false;
+  }
+
+  // 建立離線渲染容器，保證 1:1 縮放與無陰影邊框
+  const offscreenContainer = document.createElement('div');
+  offscreenContainer.style.position = 'fixed';
+  offscreenContainer.style.top = '-99999px';
+  offscreenContainer.style.left = '-99999px';
+  offscreenContainer.style.width = '297mm';
+  offscreenContainer.style.zIndex = '-99999';
+  offscreenContainer.style.backgroundColor = '#ffffff';
+  document.body.appendChild(offscreenContainer);
 
   try {
-    // 執行純前端 PDF 產出並直接下載
-    await html2pdf().set(opt).from(element).save();
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4',
+      compress: true
+    });
+
+    for (let i = 0; i < pageElements.length; i++) {
+      const pageEl = pageElements[i];
+      const clone = pageEl.cloneNode(true);
+
+      // 清除預覽用的陰影與邊界
+      clone.style.boxShadow = 'none';
+      clone.style.margin = '0';
+      clone.style.transform = 'none';
+      clone.style.width = '297mm';
+      clone.style.height = '210mm';
+      clone.style.minHeight = '210mm';
+      clone.style.maxHeight = '210mm';
+      clone.style.overflow = 'hidden';
+      clone.style.backgroundColor = '#ffffff';
+
+      offscreenContainer.innerHTML = '';
+      offscreenContainer.appendChild(clone);
+
+      // 等待 DOM 繪製微秒
+      await new Promise(resolve => setTimeout(resolve, 60));
+
+      const canvas = await html2canvas(clone, {
+        scale: 2, // 2x 超取樣，產出 200+ DPI 銳利字體
+        useCORS: true,
+        letterRendering: true,
+        backgroundColor: '#ffffff',
+        width: clone.offsetWidth,
+        height: clone.offsetHeight,
+        logging: false
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+      if (i > 0) {
+        pdf.addPage('a4', 'landscape');
+      }
+
+      // 將圖片精確填滿 297mm x 210mm 的 A4 橫式頁面
+      pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
+    }
+
+    pdf.save(filename);
     return true;
   } catch (error) {
     console.error('PDF 匯出失敗:', error);
@@ -42,15 +86,10 @@ export const exportToPdf = async (elementId, filename = '外包工作申請單�
     }
     return false;
   } finally {
-    // 關鍵修復：無論成功或失敗，無條件清理 html2pdf 產生的殘留 iframe 與遮罩，避免按鈕失效
-    try {
-      const strayIframes = document.querySelectorAll('iframe[id^="html2pdf"], .html2pdf__overlay');
-      strayIframes.forEach(el => el.remove());
-      // 復原 body 可能被修改的樣式
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    } catch (cleanErr) {
-      console.warn('清理暫存 DOM 失敗:', cleanErr);
+    if (offscreenContainer.parentNode) {
+      offscreenContainer.parentNode.removeChild(offscreenContainer);
     }
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
   }
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import HeaderNav from './components/HeaderNav';
 import FormControls from './components/FormControls';
 import A4PreviewLandscape, { shouldPaginate } from './components/A4PreviewLandscape';
-import { INITIAL_FORM_DATA, PRESET_RENEW_ASSET } from './constants/formPresets';
+import { INITIAL_FORM_DATA } from './constants/formPresets';
 import { validateChecklist } from './utils/validation';
 import { exportToPdf } from './utils/pdfExport';
 import { 
@@ -17,14 +17,17 @@ import {
 const STORAGE_KEY = 'outsourcing_check_form_v3';
 
 export default function App() {
-  // 表單資料狀態
+  // 表單資料狀態 (預設以空白初始狀態開案)
   const [formData, setFormData] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : PRESET_RENEW_ASSET;
+      if (saved) return JSON.parse(saved);
     } catch {
-      return PRESET_RENEW_ASSET;
+      // ignore
     }
+    const fresh = JSON.parse(JSON.stringify(INITIAL_FORM_DATA));
+    fresh.fillDate = new Date().toISOString().slice(0, 10);
+    return fresh;
   });
 
   // PDF 匯出進行中狀態
@@ -181,19 +184,13 @@ export default function App() {
     reader.readAsText(file);
   };
 
-  // 載入預設公文範本
-  const handleLoadPreset = (preset) => {
-    if (confirm('確定要載入此公文範例嗎？未儲存的異動將被替換。')) {
-      setFormData(preset);
-      setValidationErrors(null);
-    }
-  };
-
-  // 重設表單
+  // 新建表單 (清空目前所有案件資料)
   const handleReset = () => {
-    if (confirm('確定要清空並重設為初始狀態嗎？')) {
-      setFormData(INITIAL_FORM_DATA);
-      localStorage.removeItem(STORAGE_KEY);
+    if (confirm('確定要新建案件並清空目前填寫內容嗎？')) {
+      const freshData = JSON.parse(JSON.stringify(INITIAL_FORM_DATA));
+      freshData.fillDate = new Date().toISOString().slice(0, 10);
+      setFormData(freshData);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
       setValidationErrors(null);
     }
   };
@@ -205,7 +202,6 @@ export default function App() {
       <HeaderNav
         onPrint={handlePrint}
         onDownloadPdf={handleDownloadPdf}
-        onLoadPreset={handleLoadPreset}
         onReset={handleReset}
         onExportJson={handleExportJson}
         onImportJson={handleImportJson}

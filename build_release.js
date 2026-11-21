@@ -41,11 +41,11 @@ if (outsourcingCssFile && outsourcingJsFile) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>長庚大學 外包工作申請單作業檢核表系統 (v1.0)</title>
     <link rel="icon" type="image/svg+xml" href="./outsourcing/dist/favicon.svg" />
-    <link rel="stylesheet" href="./outsourcing/dist/assets/${outsourcingCssFile}">
+    <link rel="stylesheet" crossorigin href="./outsourcing/dist/assets/${outsourcingCssFile}">
   </head>
   <body>
     <div id="root"></div>
-    <script src="./outsourcing/dist/assets/${outsourcingJsFile}"></script>
+    <script type="module" crossorigin src="./outsourcing/dist/assets/${outsourcingJsFile}"></script>
   </body>
 </html>`;
     fs.writeFileSync(path.join(baseDir, 'outsourcing.html'), outsourcingOnlineHtml, 'utf-8');

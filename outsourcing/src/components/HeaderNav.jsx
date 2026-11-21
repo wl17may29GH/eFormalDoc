@@ -12,16 +12,9 @@ import {
   CheckCircle2,
   FileDown
 } from 'lucide-react';
-import { 
-  PRESET_INITIAL_ASSET, 
-  PRESET_RENEW_ASSET, 
-  PRESET_LABOR 
-} from '../constants/formPresets';
-
 export default function HeaderNav({ 
   onPrint, 
   onDownloadPdf, 
-  onLoadPreset, 
   onReset,
   onExportJson,
   onImportJson,
@@ -116,32 +109,6 @@ export default function HeaderNav({
             <option value="17">17 px</option>
             <option value="18">18 px</option>
             <option value="20">20 px</option>
-          </select>
-        </div>
-
-        {/* 載入公文範本選單 */}
-        <div className="relative inline-block text-left">
-          <select
-            onChange={(e) => {
-              if (e.target.value === 'preset_renew') onLoadPreset(PRESET_RENEW_ASSET);
-              if (e.target.value === 'preset_initial') onLoadPreset(PRESET_INITIAL_ASSET);
-              if (e.target.value === 'preset_labor') onLoadPreset(PRESET_LABOR);
-              e.target.value = '';
-            }}
-            defaultValue=""
-            className="btn btn-secondary"
-            style={{ 
-              backgroundColor: 'var(--primary-light)', 
-              color: 'var(--primary-color)', 
-              borderColor: 'var(--primary-color)', 
-              fontWeight: 600,
-              padding: '7px 12px'
-            }}
-          >
-            <option value="" disabled>⚡ 載入公文範例...</option>
-            <option value="preset_renew">範本1: 長庚公文續外包維護案（142萬資產）</option>
-            <option value="preset_initial">範本2: 首次外包設備維護案（自動算比例）</option>
-            <option value="preset_labor">範本3: 純勞務案（非資產自動免填）</option>
           </select>
         </div>
 

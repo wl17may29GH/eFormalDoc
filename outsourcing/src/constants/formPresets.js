@@ -1,14 +1,14 @@
 // 系統固定版本號（由系統維護，非使用者填寫）
 export const SYSTEM_VERSION = "2026/10/05 版本";
 
-// 初始資料
+// 初始空白資料 (新建案件時清空為此狀態)
 export const INITIAL_FORM_DATA = {
-  // 基本公文資訊
-  projectName: "高效能伺服器系統維護保養案",
-  department: "資訊中心 / 技合處",
-  outsourceType: "renew", // "initial" (首次外包) | "renew" (續外包重新發包)
-  purposeType: "asset",   // "service" (純勞務) | "asset" (維護特定標的)
-  fillDate: "2026-10-05",
+  // 基本公文資訊 (空白待填)
+  projectName: "",
+  department: "",
+  outsourceType: "renew", // 預設續外包重新發包
+  purposeType: "asset",   // 預設維護特定標的
+  fillDate: "",
 
   // 共同項目 1~7
   item1_time_checked: true,
@@ -19,11 +19,10 @@ export const INITIAL_FORM_DATA = {
   item4_legal_opinion_checked: true,
   item5_contract_checked: true,
   
-  // 固定資產建檔證明 (資產類為必填，純勞務顯示免填)
+  // 固定資產建檔證明 (資產類為必填，預設提供一筆空白欄位供填寫)
   item6_asset_checked: true,
   item6_assets: [
-    { no: "H402V0", value: "1,420,000" },
-    { no: "K40261", value: "285,200" }
+    { no: "", value: "" }
   ],
   
   item7_safety_checked: true,
@@ -38,24 +37,24 @@ export const INITIAL_FORM_DATA = {
   // 現狀外包單價 (續外包必選)
   item11_checked: true,
 
-  // 擬外包資料 (單選：只保留所選結果，未勾不列入)
-  item12_type: "same", // "same" (與前案一致) | "diff" (與前案不一致)
+  // 擬外包資料 (單選：預設與前案一致)
+  item12_type: "same",
 
   // 保固證明 (綁定資產類；非資產類直接隱藏掠過)
   item13_checked: true,
 
-  // 報價單 (單選：只保留所選結果；四捨五入至第 1 位百分比格式)
-  item14_annual_fee: "352,800", // 本案報價單一年維護費(未稅)
-  item14_ratio: "20.7%",        // 自動計算占比 (於第2位四捨五入至第1位)
-  item14_renew_type: "diff",    // 續外包時: "same" | "diff"
-  item14_diff_reason: "因原廠零組件調漲及通膨調整，經議價後符合市場行情合理漲幅。",
+  // 報價單
+  item14_annual_fee: "",
+  item14_ratio: "",
+  item14_renew_type: "same",
+  item14_diff_reason: "",
 
-  // 其他事項 (第3次修正四：勾選後才填寫顯示，未勾選時 PDF 直接隱藏略過)
-  item15_enabled: true,
-  item15_notes: "廠商因回饋老客戶，故於此次維護保養續約提出贈送 2027 年 1 月 18 日至 2027 年 1 月 31 日無償保養。新合約起算日期更改為 2027/2/1 至 2030/1/31 日止。",
+  // 其他事項 (預設不勾選、空白)
+  item15_enabled: false,
+  item15_notes: "",
 
-  // 經辦人員
-  operator: "張廷甄"
+  // 經辦人員 (空白待填)
+  operator: ""
 };
 
 // 預設範本一：首次外包 + 維護特定標的 (資產類)

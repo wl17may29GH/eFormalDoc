@@ -57,13 +57,13 @@ export default function FormControls({ data, onChange }) {
   };
 
   const collapseAux = () => {
-    setCardStates({
-      core: true,
+    setCardStates(prev => ({
+      ...prev,
       common: false,
       exclusive: false,
       operator: false,
       guidelines: false
-    });
+    }));
   };
 
   // 自動計算資產總額
@@ -141,7 +141,7 @@ export default function FormControls({ data, onChange }) {
           <span className="toggle-arrow">▼</span>
         </div>
 
-        <div className="card-body-content">
+        <div className="card-body-content" style={{ display: cardStates.core ? 'block' : 'none' }}>
           <div className="form-grid">
             {/* 發包類型 */}
             <div className="form-group col-span-2">
@@ -225,7 +225,7 @@ export default function FormControls({ data, onChange }) {
           <span className="toggle-arrow">▼</span>
         </div>
 
-        <div className="card-body-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="card-body-content" style={{ display: cardStates.common ? 'flex' : 'none', flexDirection: 'column', gap: '12px' }}>
           
           {/* 項序 1 */}
           <div style={{ background: '#F8FAFC', padding: '10px 12px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
@@ -480,7 +480,7 @@ export default function FormControls({ data, onChange }) {
           <span className="toggle-arrow">▼</span>
         </div>
 
-        <div className="card-body-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="card-body-content" style={{ display: cardStates.exclusive ? 'flex' : 'none', flexDirection: 'column', gap: '12px' }}>
           
           {/* 外包期間 */}
           <div style={{ background: '#F8FAFC', padding: '10px 12px', borderRadius: '6px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -784,7 +784,7 @@ export default function FormControls({ data, onChange }) {
           <span className="toggle-arrow">▼</span>
         </div>
 
-        <div className="card-body-content">
+        <div className="card-body-content" style={{ display: cardStates.operator ? 'block' : 'none' }}>
           <div className="form-group">
             <label>經辦人員 <span style={{ color: '#EF4444' }}>* 必填署名</span></label>
             <input
@@ -810,7 +810,7 @@ export default function FormControls({ data, onChange }) {
           <span className="toggle-arrow">▼</span>
         </div>
 
-        <div className="card-body-content" style={{ display: 'flex', flexDirection: 'column', gap: '8px', color: '#334155', background: '#F8FAFC' }}>
+        <div className="card-body-content" style={{ display: cardStates.guidelines ? 'flex' : 'none', flexDirection: 'column', gap: '8px', color: '#334155', background: '#F8FAFC' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
             <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>1.</span>
             <span><strong>合約修訂：</strong>修正後承攬書/合約書，初審階段可以保留修訂情形；惟最終上傳 MIS 之定稿檔案不得有任何修正、註解痕跡。</span>

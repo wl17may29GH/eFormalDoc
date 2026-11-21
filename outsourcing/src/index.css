@@ -403,7 +403,7 @@ body {
 }
 
 .collapsible-card.collapsed .card-body-content {
-  display: none;
+  display: none !important;
 }
 
 /* Forms styling */
