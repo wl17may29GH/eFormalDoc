@@ -1,4 +1,4 @@
-# 長庚大學 線上函文製作系統 (CGU Online Official Document Editor)
+# 長庚大學 線上公文製作系統 (CGU Online Official Document Editor)
 
 [![Portal Live](https://img.shields.io/badge/GitHub%20Pages-Live%20Online-brightgreen)](https://wl17may29gh.github.io/eFormalDoc/)
 [![Domain](https://img.shields.io/badge/School%20Domain-ode.cgu.edu.tw-blue)](https://wl17may29gh.github.io/eFormalDoc/)
@@ -136,8 +136,10 @@ node build_release.js
 
 ---
 
-## 📄 版權與維護宣告
+## 📄 業管與技術支援
 
+- **業管單位**：長庚大學秘書室、總務處
+- **技術支援**：長庚大學資訊中心
+- **正式網址**：ode.cgu.edu.tw
 - **版權所有**：© 2026 長庚大學（Chang Gung University）
-- **開發維護**：長庚大學行政公文數位化團隊
 - **系統代碼**：[https://github.com/wl17may29GH/eFormalDoc](https://github.com/wl17may29GH/eFormalDoc)
