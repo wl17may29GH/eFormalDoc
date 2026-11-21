@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import HeaderNav from './components/HeaderNav';
 import FormControls from './components/FormControls';
-import A4PreviewLandscape from './components/A4PreviewLandscape';
+import A4PreviewLandscape, { shouldPaginate } from './components/A4PreviewLandscape';
 import { INITIAL_FORM_DATA, PRESET_RENEW_ASSET } from './constants/formPresets';
 import { validateChecklist } from './utils/validation';
 import { exportToPdf } from './utils/pdfExport';
@@ -26,6 +26,9 @@ export default function App() {
       return PRESET_RENEW_ASSET;
     }
   });
+
+  // PDF 匯出進行中狀態
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   // 預覽縮放倍率 (預設 85%)
   const [zoomScale, setZoomScale] = useState(0.85);
@@ -108,7 +111,7 @@ export default function App() {
     };
   }, []);
 
-  // 動態設置列印 orientation 標籤 (固定 A4 橫式)
+  // 動態設置列印 orientation 標籤 (固定 A4 橫式無邊距，由內層精確控制 297mm x 210mm)
   const setupPrintOrientation = () => {
     let styleEl = document.getElementById('dynamic-print-page-style');
     if (!styleEl) {
@@ -116,7 +119,7 @@ export default function App() {
       styleEl.id = 'dynamic-print-page-style';
       document.head.appendChild(styleEl);
     }
-    styleEl.innerHTML = `@media print { @page { size: A4 landscape; margin: 6mm 8mm; } }`;
+    styleEl.innerHTML = `@media print { @page { size: A4 landscape; margin: 0; } }`;
   };
 
   // 驗證表單並阻擋
@@ -139,11 +142,17 @@ export default function App() {
     }, 100);
   };
 
-  // 直接下載 PDF (固定橫式)
+  // 直接下載 PDF (固定橫式，支援單頁與多頁自動分頁)
   const handleDownloadPdf = async () => {
-    if (!checkValidation()) return;
-    const filename = `外包工作申請單作業檢核表_${formData.outsourceType === 'initial' ? '首次外包' : '續外包'}.pdf`;
-    await exportToPdf('a4-print-target-landscape', filename, true);
+    if (!checkValidation() || isExportingPdf) return;
+    setIsExportingPdf(true);
+    try {
+      const isMulti = shouldPaginate(formData);
+      const filename = `外包工作申請單作業檢核表_${formData.outsourceType === 'initial' ? '首次外包' : '續外包'}${isMulti ? '_共2頁' : ''}.pdf`;
+      await exportToPdf('a4-print-target-landscape', filename);
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   // 匯出 JSON 資料備份 (比照 index_beta7.html 匯出檔功能)
@@ -202,6 +211,7 @@ export default function App() {
         onImportJson={handleImportJson}
         editorFontSize={editorFontSize}
         setEditorFontSize={setEditorFontSize}
+        isExportingPdf={isExportingPdf}
       />
 
       {/* 必填驗證未通過提示彈窗 */}
@@ -294,6 +304,18 @@ export default function App() {
             <div className="preview-toolbar-title">
               <Eye style={{ width: '18px', height: '18px', color: 'var(--primary-color)' }} />
               <span>A4 橫式檢核表排版預覽</span>
+              <span style={{ 
+                fontSize: '0.78rem', 
+                padding: '2px 8px', 
+                borderRadius: '12px', 
+                background: shouldPaginate(formData) ? '#EFF6FF' : '#F1F5F9',
+                color: shouldPaginate(formData) ? '#1D4ED8' : '#475569',
+                border: shouldPaginate(formData) ? '1px solid #BFDBFE' : '1px solid #CBD5E1',
+                fontWeight: 600,
+                marginLeft: '6px'
+              }}>
+                {shouldPaginate(formData) ? '📄 自動延伸為 2 頁 (內容完整排版)' : '📄 標準單頁 A4 (共 1 頁)'}
+              </span>
             </div>
 
             <div className="preview-options">
@@ -335,6 +357,7 @@ export default function App() {
           {/* A4 紙張模擬器畫布容器 (.a4-sheet-container) */}
           <div className="a4-sheet-container">
             <div 
+              className="preview-scale-wrapper"
               style={{ 
                 margin: '0 auto',
                 width: 'fit-content',
@@ -342,7 +365,6 @@ export default function App() {
                 transformOrigin: 'top center',
                 transition: 'transform 0.15s ease-out'
               }}
-              className="print:transform-none"
             >
               <A4PreviewLandscape data={formData} />
             </div>

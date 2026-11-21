@@ -26,7 +26,8 @@ export default function HeaderNav({
   onExportJson,
   onImportJson,
   editorFontSize,
-  setEditorFontSize
+  setEditorFontSize,
+  isExportingPdf
 }) {
   const fileInputRef = useRef(null);
 
@@ -210,11 +211,13 @@ export default function HeaderNav({
         <button
           type="button"
           onClick={onDownloadPdf}
+          disabled={isExportingPdf}
           className="btn btn-secondary"
           title="純前端直接下載 PDF"
+          style={{ opacity: isExportingPdf ? 0.7 : 1, cursor: isExportingPdf ? 'wait' : 'pointer' }}
         >
           <FileDown style={{ width: '15px', height: '15px' }} />
-          <span>下載 PDF</span>
+          <span>{isExportingPdf ? '生成 PDF 中...' : '下載 PDF'}</span>
         </button>
 
         {/* 高清列印 / 另存為 PDF (主要按鈕) */}

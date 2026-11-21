@@ -478,14 +478,18 @@ body {
   transition: transform 0.15s ease-out;
 }
 
-/* Print Specific */
+/* Print Specific - 固定 A4 橫式無邊距高清輸出 */
 @media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
   html, body {
-    background: white !important;
+    background: #ffffff !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
+    width: 297mm !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     overflow: visible !important;
@@ -510,15 +514,35 @@ body {
     overflow: visible !important;
   }
 
-  .a4-page {
-    width: 100% !important;
-    box-shadow: none !important;
-    border: none !important;
-    page-break-after: avoid !important;
-    page-break-inside: avoid !important;
-    break-after: avoid !important;
-    break-inside: avoid !important;
+  .preview-scale-wrapper {
     transform: none !important;
     margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .a4-page {
+    width: 297mm !important;
+    min-height: 210mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
+    box-sizing: border-box !important;
+    padding: 8mm 10mm 6mm 10mm !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    overflow: hidden !important;
+  }
+
+  .a4-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  .a4-page-2 {
+    margin-top: 0 !important;
   }
 }

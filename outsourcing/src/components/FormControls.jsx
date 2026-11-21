@@ -46,12 +46,22 @@ export default function FormControls({ data, onChange }) {
     });
   };
 
+  const collapseAll = () => {
+    setCardStates({
+      core: false,
+      common: false,
+      exclusive: false,
+      operator: false,
+      guidelines: false
+    });
+  };
+
   const collapseAux = () => {
     setCardStates({
       core: true,
-      common: true,
-      exclusive: true,
-      operator: true,
+      common: false,
+      exclusive: false,
+      operator: false,
       guidelines: false
     });
   };
@@ -103,11 +113,14 @@ export default function FormControls({ data, onChange }) {
           檢核表編輯面板
         </span>
         <div className="editor-quick-actions">
-          <button type="button" className="btn-xs" onClick={expandAll} title="展開所有卡片">
-            展開全部
+          <button type="button" className="btn-xs" onClick={expandAll} title="展開所有填寫卡片">
+            全部展開
           </button>
-          <button type="button" className="btn-xs" onClick={collapseAux} title="僅保留核心檢核卡片">
-            收合非核心
+          <button type="button" className="btn-xs" onClick={collapseAll} title="收合所有卡片以瀏覽整體清單">
+            全部收合
+          </button>
+          <button type="button" className="btn-xs" onClick={collapseAux} title="僅保留核心發包條件，收合其他卡片">
+            收合次要
           </button>
         </div>
       </div>
@@ -242,13 +255,13 @@ export default function FormControls({ data, onChange }) {
             {!data.item1_time_checked && (
               <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #CBD5E1' }}>
                 <label style={{ fontWeight: 'bold', color: '#DC2626', display: 'block', marginBottom: '4px' }}>
-                  * 請說明延遲原因（未提前辦理時必填）：
+                  * 請說明延遲原因（未提前辦理時必填，支援換行輸入）：
                 </label>
-                <input
-                  type="text"
+                <textarea
+                  rows={2}
                   value={data.item1_delay_reason}
                   onChange={(e) => onChange({ ...data, item1_delay_reason: e.target.value })}
-                  placeholder="請填寫延遲辦理原因..."
+                  placeholder="請填寫延遲辦理原因（支援換行輸入）..."
                   style={{ width: '100%', padding: '6px 10px', border: '1px solid #F87171', borderRadius: '4px', background: '#FEF2F2' }}
                 />
               </div>
@@ -520,30 +533,35 @@ export default function FormControls({ data, onChange }) {
           </div>
 
           {/* 現狀外包單價 */}
-          <div style={{ background: '#F8FAFC', padding: '10px 12px', borderRadius: '6px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ fontWeight: 'bold', color: '#1E293B' }}>
-                現狀外包單價(未稅) {isRenew && <span style={{ color: '#EF4444' }}>*</span>}
-              </span>
-              <p style={{ color: 'var(--text-muted)' }}>
-                {isInitial ? '首次外包此項為略。' : '已確認與「外包到期提示單」一致。'}
-              </p>
-            </div>
-            {isInitial ? (
-              <span style={{ background: '#E2E8F0', color: '#64748B', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>略</span>
-            ) : (
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={data.item11_checked}
-                  onChange={(e) => onChange({ ...data, item11_checked: e.target.checked })}
-                  style={{ width: '18px', height: '18px', accentColor: 'var(--primary-color)' }}
-                />
-                <span style={{ fontWeight: 600, color: data.item11_checked ? '#1D4ED8' : '#64748B' }}>
-                  一致 [ ✓ ]
+          <div style={{ background: '#F8FAFC', padding: '10px 12px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontWeight: 'bold', color: '#1E293B' }}>
+                  現狀外包單價(未稅) {isRenew && <span style={{ color: '#EF4444' }}>*</span>}
                 </span>
-              </label>
-            )}
+                <p style={{ color: 'var(--text-muted)' }}>
+                  {isInitial ? '首次外包此項為略。' : '已確認與「外包到期提示單」一致。'}
+                </p>
+              </div>
+              {isInitial ? (
+                <span style={{ background: '#E2E8F0', color: '#64748B', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>略</span>
+              ) : (
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={data.item11_checked}
+                    onChange={(e) => onChange({ ...data, item11_checked: e.target.checked })}
+                    style={{ width: '18px', height: '18px', accentColor: 'var(--primary-color)' }}
+                  />
+                  <span style={{ fontWeight: 600, color: data.item11_checked ? '#1D4ED8' : '#64748B' }}>
+                    一致 [ ✓ ]
+                  </span>
+                </label>
+              )}
+            </div>
+            <div style={{ marginTop: '6px', fontSize: '0.82rem', color: '#64748B' }}>
+              💡 進位備註：單價遇小數點時，請採「四捨五入」取至整數元。
+            </div>
           </div>
 
           {/* 擬外包資料 */}
@@ -581,6 +599,9 @@ export default function FormControls({ data, onChange }) {
                 </button>
               </div>
             )}
+            <div style={{ marginTop: '8px', padding: '6px 10px', background: '#FEF3C7', color: '#92400E', borderRadius: '4px', fontSize: '0.82rem', border: '1px solid #FDE68A' }}>
+              💡 四捨五入規範：計算單價、月工作量乘積或總金額時，若遇小數點衍生計算差異，金額一律採「四捨五入」取至整數元，避免單價乘算月數與總價產生尾數進位誤差。
+            </div>
           </div>
 
           {/* 保固證明 (僅資產類顯示) */}
@@ -622,9 +643,12 @@ export default function FormControls({ data, onChange }) {
 
             {/* 年度維護費與占比計算 (第3次修正二：取到小數點第1位百分比) */}
             <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '6px', border: '1px solid #E2E8F0', marginTop: '6px' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
+              <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
                 年度維護費占比計算：本案一年維護費(未稅) ÷ 原固定資產取得價值(未稅)（以百分比呈現，四捨五入至第1位）。
               </span>
+              <div style={{ marginBottom: '8px', fontSize: '0.82rem', color: '#64748B' }}>
+                💡 進位規則：年度維護費與固定資產取得價值均以整數元計算；占比計算公式為「一年維護費(未稅) ÷ 原固定資產取得價值(未稅)」，以百分比呈現並採「四捨五入」至小數點後第 1 位（例如：20.7%）。
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 <div>
                   <label style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>
@@ -798,6 +822,10 @@ export default function FormControls({ data, onChange }) {
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
             <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>3.</span>
             <span><strong>呈報審查：</strong>備妥相關文件，先 email 至秘書室專人審查 (yuchen@gap.cgu.edu.tw)，信件主旨：「ＯＯＯ續外包案審查_ＯＯ/ＯＯ/ＯＯ到期」，審查完畢再至 MIS 辦理相關申請程序。</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+            <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>4.</span>
+            <span><strong>計價進位規範：</strong>計算單價、月工作量乘積或總價時，如有衍生小數點進位差異，一律以「四捨五入」方式取至整數元核算，確保合約金額、外包申請單與報價單各項金額完全一致。</span>
           </div>
         </div>
       </section>
