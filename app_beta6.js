@@ -1022,10 +1022,10 @@ document.addEventListener('DOMContentLoaded', () => {
             setSafeText('#p-up-speed', document.getElementById('up-speed').value);
 
             const secrecyVal = document.getElementById('up-secrecy').value;
-            const secrecyDurationVal = document.getElementById('up-secrecy-duration').value;
+            const secrecyDurationVal = document.getElementById('up-secrecy-duration').value.trim();
             let combinedSecrecy = secrecyVal || '';
-            if (secrecyDurationVal) {
-                combinedSecrecy += secrecyVal ? ` (${secrecyDurationVal})` : secrecyDurationVal;
+            if (secrecyVal && secrecyDurationVal) {
+                combinedSecrecy += ` (${secrecyDurationVal})`;
             }
             setSafeText('#p-up-secrecy', combinedSecrecy);
             setSafeText('#p-up-attachment', document.getElementById('up-attachment').value || '無');
@@ -1696,6 +1696,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     function syncPreview() {
         try {
+            updateSecrecyVisibility();
             const category = docCategorySelect.value;
             if (category === 'contact_letter') {
                 renderContactLetter();
@@ -1751,7 +1752,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (badgeBasic) {
             const speed = document.getElementById('up-speed')?.value || '普通件';
             const secVal = document.getElementById('up-secrecy')?.value;
-            const secrecy = secVal ? secVal : '無密等';
+            const durationVal = (document.getElementById('up-secrecy-duration')?.value || '').trim();
+            let secrecy = secVal ? secVal : '無密等';
+            if (secVal && durationVal) {
+                secrecy += ` (${durationVal})`;
+            }
             const idNum = (document.getElementById('up-id-num')?.value || '').trim() || '未填字號';
             const y = (document.getElementById('up-date-year')?.value || '').trim();
             const m = (document.getElementById('up-date-month')?.value || '').trim();
@@ -2416,6 +2421,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function updateSecrecyVisibility() {
+        const secrecySelect = document.getElementById('up-secrecy');
+        const secrecyWarning = document.getElementById('secrecy-warning');
+        const secrecyDurationGroup = document.getElementById('group-secrecy-duration');
+        const hasSecrecy = !!(secrecySelect && secrecySelect.value && secrecySelect.value.trim() !== '');
+
+        if (secrecyWarning) {
+            secrecyWarning.style.display = hasSecrecy ? 'block' : 'none';
+        }
+        if (secrecyDurationGroup) {
+            secrecyDurationGroup.style.display = hasSecrecy ? 'block' : 'none';
+        }
+    }
+
     function setupSecrecyPreset() {
         const presetEl = document.getElementById('up-secrecy-duration-preset');
         const durationEl = document.getElementById('up-secrecy-duration');
@@ -2432,12 +2451,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const secrecySelect = document.getElementById('up-secrecy');
-        const secrecyWarning = document.getElementById('secrecy-warning');
-        if (secrecySelect && secrecyWarning) {
+        if (secrecySelect) {
             secrecySelect.addEventListener('change', () => {
-                secrecyWarning.style.display = (secrecySelect.value && secrecySelect.value !== '') ? 'block' : 'none';
+                updateSecrecyVisibility();
+                handleFormInput();
             });
         }
+        updateSecrecyVisibility();
     }
 
     // ==========================================

@@ -232,8 +232,8 @@
                                     </select>
                                     <div id="secrecy-warning" class="helper-text" style="color: var(--red-official); font-weight: bold; display: none; margin-top: 4px;">⚠️ 密等以上不得電子交換</div>
                                 </div>
-                                <div class="form-group col-span-2">
-                                    <label for="up-secrecy-duration">解密條件或保密期限</label>
+                                <div class="form-group col-span-2" id="group-secrecy-duration" style="display: none;">
+                                    <label for="up-secrecy-duration">解密時間及條件 <span class="field-hint" style="color: var(--text-muted); font-size: 0.85em; font-weight: normal;">(選填)</span></label>
                                     <div style="display: flex; gap: 8px;">
                                         <select id="up-secrecy-duration-preset" style="flex: 1;">
                                             <option value="">空白(無)</option>
@@ -241,7 +241,10 @@
                                             <option value="本件於公布時解密">本件於公布時解密</option>
                                             <option value="other">其他 (自行輸入)</option>
                                         </select>
-                                        <input type="text" id="up-secrecy-duration" placeholder="請選擇或自行輸入..." style="flex: 2;">
+                                        <input type="text" id="up-secrecy-duration" placeholder="請選擇常用條件或直接輸入解密時間及條件文字..." style="flex: 2;">
+                                    </div>
+                                    <div class="helper-text" style="color: var(--text-muted); margin-top: 4px; font-size: 0.8em;">
+                                        💡 密等以上專用選填欄位：可視需求輸入解密時間或條件；留空則僅標註密等。
                                     </div>
                                 </div>
                                 <div class="form-group col-span-2">

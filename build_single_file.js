@@ -181,7 +181,7 @@ let beta7OnlineJs = js.replace(/version: 'Beta 6'/, "version: 'Beta 7'");
 onlineHtml = onlineHtml.replace('<script src="app_beta6.js"></script>', `<script>\n/* --- Embedded app_beta6.js --- */\n${beta7OnlineJs}\n</script>`);
 
 fs.writeFileSync(beta7OnlinePath, onlineHtml, 'utf-8');
-fs.writeFileSync(rootIndexPath, onlineHtml, 'utf-8'); // 同步更新根目錄 index.html
+// 注意：根目錄 index.html 已升級為入口門戶網 (ode.cgu.edu.tw)，此處僅更新 index_beta7.html 歷史穩定版
 console.log(`[1] 正式發布線上版完成: ${beta7OnlinePath} (${(fs.statSync(beta7OnlinePath).size / 1024).toFixed(1)} KB)`);
 
 // ============================================================
